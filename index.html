@@ -249,15 +249,18 @@ authentication and authorization.
 */
 const STAFF_PASSWORD="JIJI";
 
-const firebaseConfig={
-  apiKey:"PASTE_YOUR_FIREBASE_API_KEY",
-  authDomain:"PASTE_YOUR_PROJECT.firebaseapp.com",
-  databaseURL:"PASTE_YOUR_REAL_DATABASE_URL",
-  projectId:"PASTE_YOUR_PROJECT_ID",
-  storageBucket:"PASTE_YOUR_REAL_STORAGE_BUCKET",
-  messagingSenderId:"PASTE_YOUR_MESSAGING_SENDER_ID",
-  appId:"PASTE_YOUR_APP_ID"
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBg7mf9-RghLNKwspal_2d9jKHG4VMHy-w",
+  authDomain: "vyro-7d190.firebaseapp.com",
+  databaseURL: "https://vyro-7d190-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "vyro-7d190",
+  storageBucket: "vyro-7d190.firebasestorage.app",
+  messagingSenderId: "377590792321",
+  appId: "1:377590792321:web:f15a244aa0db16a7884d80",
+  measurementId: "G-QSB0BL3ECE"
 };
+
 const SDK="https://www.gstatic.com/firebasejs/10.14.1/";
 const configured=firebaseConfig.apiKey.startsWith("AIza")&&
   !firebaseConfig.projectId.startsWith("PASTE_")&&
