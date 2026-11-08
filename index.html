@@ -1,321 +1,180 @@
 
+
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="fr">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-<meta name="theme-color" content="#080808">
+<meta name="theme-color" content="#176FE5">
 
-<title>🇹🇳 LEVEL-Up</title>
+<title>Tout de suite — Livraison</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
 <style>
 
-:root{--bg:#080808;--panel:#151515;--line:#303030;--muted:#999;--red:#a970ff;--purple:#a970ff;--green:#28d17c;--yellow:#f3c84b}
+:root{--blue:#176fe5;--dark:#1055b5;--light:#edf5ff;--white:#fff;--bg:#f6f8fc;--text:#17243a;--muted:#8491a5;--border:#e8edf5;--green:#18a66a;--red:#e34d5b;--shadow:0 5px 25px #173c7010}
 
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 
-html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
-
-body{margin:0;background:var(--bg);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,Helvetica,sans-serif;letter-spacing:.1px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);padding-bottom:90px}
 
 button,input,textarea,select{font:inherit}
 
-button{cursor:pointer;transition:transform .18s ease,background .2s ease,border-color .2s ease,opacity .2s ease}
+button{cursor:pointer;border:0}
 
-button:active{transform:scale(.97)}
+button:disabled{opacity:.45;cursor:not-allowed}
 
-button:disabled{opacity:.5;cursor:not-allowed}
+.top{background:white;padding:17px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)}
+
+.brand{font-size:23px;font-weight:900;letter-spacing:-1px;color:var(--blue)}
+
+.brand span{color:#17243a}
+
+.top-right{display:flex;gap:9px;align-items:center}
+
+.icon-btn{width:39px;height:39px;border-radius:13px;background:var(--light);color:var(--blue);font-size:18px}
+
+.container{max-width:850px;margin:auto;padding:18px}
+
+.page{display:none}.page.active{display:block}
+
+.hero{background:linear-gradient(130deg,#176fe5,#439bff);border-radius:23px;padding:24px;color:white;position:relative;overflow:hidden;margin-bottom:22px}
+
+.hero:after{content:"";position:absolute;width:180px;height:180px;border:30px solid #ffffff19;border-radius:50%;right:-55px;top:-55px}
+
+.hero h1{font-size:29px;line-height:1.2;max-width:260px;margin-bottom:10px}
+
+.hero p{font-size:13px;opacity:.9;margin-bottom:18px}
+
+.hero button{background:white;color:var(--blue);padding:12px 18px;border-radius:12px;font-weight:800}
+
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:23px 0 13px}
+
+.section-head h2{font-size:19px;font-weight:850}
+
+.section-head small{color:var(--blue);cursor:pointer}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+
+.card{background:white;border:1px solid var(--border);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}
+
+.card-img{width:100%;height:125px;object-fit:cover;background:var(--light)}
+
+.card-body{padding:11px}
+
+.card h3{font-size:14px;margin-bottom:5px}
+
+.muted{color:var(--muted);font-size:12px}
+
+.price{font-weight:900;color:var(--blue);font-size:15px}
+
+.card-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+
+.add{background:var(--blue);color:white;border-radius:10px;padding:8px 13px;font-weight:800}
+
+.pill{display:inline-block;padding:5px 9px;border-radius:20px;background:var(--light);color:var(--blue);font-size:11px;font-weight:750}
+
+.categories{display:flex;gap:9px;overflow-x:auto;padding-bottom:8px}
+
+.cat{white-space:nowrap;background:white;border:1px solid var(--border);border-radius:13px;padding:11px 15px;color:var(--text);font-weight:700}
+
+.cat.active{background:var(--blue);color:white;border-color:var(--blue)}
+
+.search{width:100%;padding:14px 15px;background:white;border:1px solid var(--border);border-radius:14px;outline:none;margin:10px 0 15px}
+
+.search:focus,input:focus,textarea:focus,select:focus{border-color:var(--blue)!important}
+
+.bottom{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:9px 3px max(10px,env(safe-area-inset-bottom));z-index:20}
+
+.nav{background:transparent;color:var(--muted);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:55px}
+
+.nav b{font-size:20px}.nav.active{color:var(--blue);font-weight:850}
+
+.panel{background:white;border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+
+.panel h3{margin-bottom:13px}
+
+.field{display:flex;flex-direction:column;gap:6px;margin:11px 0}
+
+.field label{font-size:12px;font-weight:800;color:#52647c}
+
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--border);border-radius:11px;padding:12px;background:#fff;outline:none;color:var(--text)}
+
+.field textarea{min-height:80px;resize:vertical}
+
+.primary{background:var(--blue);color:white;padding:13px 17px;border-radius:12px;font-weight:850;width:100%}
+
+.secondary{background:var(--light);color:var(--blue);padding:11px 14px;border-radius:11px;font-weight:800}
+
+.danger{background:#fff0f1;color:var(--red);padding:9px 12px;border-radius:10px;font-weight:800}
+
+.success{color:var(--green)}
+
+.row{display:flex;gap:10px;align-items:center}
+
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+
+.stat{background:var(--light);padding:15px;border-radius:15px}
+
+.stat strong{font-size:22px;color:var(--blue);display:block}
+
+.stat small{color:var(--muted)}
+
+.list-item{padding:12px 0;border-bottom:1px solid var(--border)}
+
+.list-item:last-child{border:0}
+
+.avatar{width:52px;height:52px;object-fit:cover;border-radius:14px;background:var(--light)}
+
+.empty{text-align:center;padding:35px 15px;color:var(--muted)}
+
+.empty b{font-size:32px;display:block;margin-bottom:8px}
+
+.modal{position:fixed;inset:0;background:#07162b88;z-index:50;display:none;align-items:flex-end;justify-content:center}
+
+.modal.show{display:flex}
+
+.modal-box{background:white;width:100%;max-width:600px;max-height:88vh;overflow:auto;border-radius:24px 24px 0 0;padding:22px}
+
+.close{float:right;background:var(--light);color:var(--blue);border-radius:50%;width:33px;height:33px}
+
+.tag{background:#eef9f3;color:var(--green);padding:5px 9px;border-radius:15px;font-size:11px;font-weight:800}
 
 .hidden{display:none!important}
 
-header{height:68px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,8,8,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);z-index:10}
+.notice{background:#fff8e8;color:#92620c;padding:12px;border-radius:12px;font-size:12px;margin-bottom:12px}
 
-.logo{font-weight:950;font-size:22px;letter-spacing:1.5px;text-shadow:0 0 22px #a970ff30}
+.admin-tabs{display:flex;gap:7px;overflow:auto;margin-bottom:15px}
 
-.logo span{color:var(--purple)}
+.admin-tab{padding:10px 13px;border-radius:11px;background:white;border:1px solid var(--border);white-space:nowrap;font-weight:750;font-size:12px}
 
-.actions{display:flex;gap:8px}
+.admin-tab.active{background:var(--blue);color:white}
 
-.btn{border:1px solid white;background:white;color:#080808;padding:12px 17px;font-weight:850;border-radius:15px;box-shadow:0 2px 8px #0002}
+.badge-count{background:#eaf2ff;color:var(--blue);border-radius:30px;padding:3px 8px;font-size:11px;font-weight:800}
 
-.btn:hover{opacity:.87}
+.product-line{display:flex;align-items:center;gap:10px}
 
-.outline{background:#ffffff08;color:white;border-color:#444}
+.product-line img{width:55px;height:55px;object-fit:cover;border-radius:11px}
 
-.red{background:var(--purple);border-color:var(--purple);color:white}
+.qty{display:flex;align-items:center;gap:9px}
 
-.small{padding:9px 12px;font-size:12px;border-radius:12px}
+.qty button{width:27px;height:27px;border-radius:8px;background:var(--light);color:var(--blue);font-weight:900}
 
-.hero{min-height:calc(100vh - 68px);min-height:calc(100svh - 68px);display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:radial-gradient(ellipse at 50% 25%,#28183e 0%,#17131c 42%,#080808 78%);position:relative;overflow:hidden}
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#17243a;color:white;padding:12px 18px;border-radius:12px;z-index:100;display:none;max-width:90%;font-size:13px}
 
-.hero:before{content:"";position:absolute;width:310px;height:310px;border:1px solid #a970ff35;border-radius:50%;top:12%;left:50%;transform:translateX(-50%);box-shadow:0 0 90px #a970ff20,inset 0 0 70px #a970ff15;pointer-events:none}
-
-.hero:after{content:"";position:absolute;width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--purple),transparent);top:24%;left:50%;transform:translateX(-50%) rotate(-25deg);opacity:.65;pointer-events:none}
-
-.hero-content{max-width:760px;position:relative;z-index:1;animation:rise .8s ease both}
-
-.eyebrow{color:#c9b2f5;letter-spacing:3px;font-size:10px;font-weight:800}
-
-.hero h1{font-size:clamp(58px,13vw,118px);letter-spacing:-3px;line-height:.95;margin:24px 0 18px;font-weight:950;text-shadow:0 8px 35px #000}
-
-.hero h1:after{content:".";color:var(--purple)}
-
-.hero p{color:#ddd;line-height:1.8;font-size:clamp(15px,2vw,18px);max-width:560px;margin:16px auto 0}
-
-.hero-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
-
-.section{max-width:1400px;margin:auto;padding:40px 5% 65px;min-height:70vh}
-
-.heading{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:25px}
-
-.heading h2{margin:8px 0 0;font-size:clamp(25px,4vw,34px);font-weight:900;letter-spacing:-.7px}
-
-.muted{color:var(--muted)}
-
-.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:19px}
-
-.product{background:linear-gradient(145deg,#19151f,#0c0c0c);border:1px solid #292331;min-width:0;border-radius:20px;overflow:hidden;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;animation:rise .45s ease both}
-
-.product:hover{transform:translateY(-4px);border-color:#8053bb;box-shadow:0 12px 35px #0005}
-
-.product-image{aspect-ratio:4/4.7;background:radial-gradient(ellipse at center,#292331,#101010);position:relative;overflow:hidden;cursor:pointer;padding:10px}
-
-.product-image img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .5s ease}
-
-.product:hover .product-image img{transform:scale(1.045)}
-
-.image-hint{position:absolute;right:10px;bottom:10px;width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:#080808c9;border:1px solid #ffffff45;backdrop-filter:blur(10px);font-size:20px}
-
-.product-info{padding:15px}
-
-.product-info h3{margin:0 0 8px;font-size:clamp(14px,1.3vw,17px);letter-spacing:-.2px;font-weight:850}
-
-.description{font-size:12px;line-height:1.7;color:#c1c1c1;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-
-.price{font-weight:950;font-size:18px;margin:13px 0;color:#fff}
-
-.product-info button{width:100%}
-
-.stock{font-size:11px;color:var(--green);margin-bottom:13px;display:flex;align-items:center;gap:6px}
-
-.stock:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;flex-shrink:0}
-
-.stock.low{color:#ffbd65}
-
-.stock.sold{color:#ff6c6c}
-
-.product .btn{border-radius:13px;box-shadow:0 5px 18px #a970ff14}
-
-.empty{border:1px dashed #383838;border-radius:18px;padding:35px;text-align:center;color:#888;grid-column:1/-1}
-
-footer{padding:25px 16px;text-align:center;color:#aaa;border-top:1px solid #38284b;font-size:12px;background:linear-gradient(180deg,#0b0b0b,#100b17);line-height:2}
-
-footer .owner{color:#fff;font-weight:800;margin-bottom:5px}
-
-footer .creator{color:#c5a4ff;font-weight:750;letter-spacing:.3px}
-
-footer .contact{display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;padding:8px 13px;border:1px solid #7651a5;border-radius:12px;color:#fff;text-decoration:none;background:#a970ff12;font-weight:800}
-
-footer .contact:hover{background:#a970ff25}
-
-footer .contact svg{width:17px;height:17px;fill:#a970ff}
-
-.overlay{position:fixed;inset:0;background:#000c;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:20;display:flex;align-items:center;justify-content:center;padding:18px;animation:fade .2s ease}
-
-.modal{width:min(440px,100%);max-height:90vh;max-height:90svh;overflow:auto;background:linear-gradient(150deg,#19151f,#101010);border:1px solid #49365f;border-radius:25px;padding:24px;box-shadow:0 25px 100px #0009;animation:rise .25s ease}
-
-.modal h2{margin-top:0;letter-spacing:-.5px}
-
-.modal.product-modal{width:min(1000px,100%);max-height:94vh;max-height:94svh;padding:0;overflow:auto}
-
-#productDetailContent{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);min-height:500px}
-
-.detail-image{min-height:500px;background:radial-gradient(ellipse at center,#292331,#101010);position:relative;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
-
-.detail-image img{width:100%;height:100%;max-height:75vh;min-height:0;object-fit:contain;display:block}
-
-.close-detail{position:absolute;z-index:2;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:1px solid #ffffff45;background:#080808d9;color:white;font-size:23px;display:grid;place-items:center}
-
-.detail-content{padding:clamp(22px,4vw,42px);align-self:center}
-
-.detail-content h2{font-size:clamp(25px,3vw,36px);font-weight:950;line-height:1.15;margin:14px 0}
-
-.detail-description{white-space:pre-wrap;line-height:1.9;color:#ccc;font-size:14px;margin:20px 0}
-
-.detail-price{font-size:30px;font-weight:950;margin:20px 0;color:white}
-
-.field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
-
-.field label{font-size:12px;color:#bbb;font-weight:700}
-
-.field input,.field textarea,.field select{width:100%;padding:13px;background:#080808;color:white;border:1px solid #383838;border-radius:13px;outline:none;transition:border-color .2s}
-
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--purple)}
-
-.field textarea{min-height:85px;resize:vertical}
-
-.field input[type=file]{padding:9px}
-
-.row{display:flex;gap:9px}
-
-.row>*{flex:1;min-width:0}
-
-.admin-layout{display:grid;grid-template-columns:185px minmax(0,1fr);gap:25px}
-
-.admin-nav{display:flex;flex-direction:column;gap:8px}
-
-.admin-nav button{text-align:left;border-radius:13px}
-
-.admin-nav button.active{border-color:var(--purple);color:#c9a8ff;background:#a970ff10}
-
-.admin-content{min-width:0}
-
-.notice{padding:14px;background:#19151f;border:1px solid #49365f;border-radius:15px;color:#c9bfd7;font-size:12px;line-height:1.7;margin-bottom:20px}
-
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}
-
-.stat{background:linear-gradient(145deg,#19151f,#111);border:1px solid #38303f;border-radius:17px;padding:16px}
-
-.stat span{display:block;color:#999;font-size:11px;margin-bottom:8px}
-
-.stat strong{font-size:25px;overflow-wrap:anywhere}
-
-.admin-product,.order-card{background:linear-gradient(145deg,#17141c,#0d0d0d);border:1px solid #36303f;border-radius:17px;padding:16px;margin-bottom:12px}
-
-.admin-product{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-
-.admin-product img{width:65px;height:78px;object-fit:contain;background:#222;border-radius:10px}
-
-.admin-product-info{flex:1;min-width:100px}
-
-.admin-product-info strong{display:block;margin-bottom:6px;font-weight:900}
-
-.admin-product-actions{display:flex;gap:6px;flex-wrap:wrap}
-
-.order-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-
-.order-top strong{font-size:17px;font-weight:950;letter-spacing:.2px}
-
-.order-details{white-space:pre-wrap;color:#f1f1f1;font-size:15px;line-height:1.9;margin:14px 0;font-weight:650;overflow-wrap:anywhere}
-
-.badge{font-size:12px;font-weight:900;padding:7px 10px;background:#292929;border-radius:9px}
-
-.badge.status-done{background:#157347;color:#fff;border:1px solid #28a66b}
-
-.badge.status-wait{background:#f3c84b;color:#171717;border:1px solid #f8d66e}
-
-.badge.status-reject{background:#d62832;color:#fff;border:1px solid #f0444d}
-
-.order-items{border-top:1px solid #383838;padding-top:12px;font-size:14px;line-height:1.9;color:#eee;overflow-wrap:anywhere}
-
-.order-items strong{font-size:16px;font-weight:950;color:#fff}
-
-.order-status-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:15px}
-
-.order-status-actions button{font-size:13px;font-weight:950;padding:12px 8px;border-radius:12px;border:1px solid transparent;min-width:0}
-
-.order-status-actions .status-done{background:#157347;color:#fff;border-color:#28a66b}
-
-.order-status-actions .status-wait{background:#f3c84b;color:#171717;border-color:#f8d66e}
-
-.order-status-actions .status-reject{background:#d62832;color:#fff;border-color:#f0444d}
-
-.order-status-actions button.current{outline:2px solid #fff;outline-offset:2px}
-
-.check{display:flex;align-items:center;gap:9px;font-size:13px}
-
-.check input{width:auto}
-
-#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#f6f6f6;color:#111;padding:13px 18px;z-index:40;max-width:90%;font-size:13px;border-radius:15px;box-shadow:0 8px 35px #0008;text-align:center}
-
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-@keyframes fade{from{opacity:0}to{opacity:1}}
-
-@media(max-width:900px){
-
-.products{grid-template-columns:repeat(3,minmax(0,1fr))}
-
-.admin-layout{grid-template-columns:1fr}
-
-.admin-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
-
-.admin-nav button{text-align:center;font-size:12px;padding:10px 4px}
-
-#productDetailContent{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-
-.detail-image{min-height:420px}
-
-}
-
-@media(max-width:600px){
-
-header{height:60px;padding:0 4%}
-
-.logo{font-size:16px;letter-spacing:.6px}
-
-.actions{gap:5px}
-
-.actions .btn{padding:9px 9px;font-size:10px}
-
-.hero{min-height:85vh;min-height:85svh}
-
-.hero h1{letter-spacing:-2px}
-
-.section{padding:30px 4% 50px}
-
-.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-
-.product{border-radius:16px}
-
-.product-image{padding:6px}
-
-.product-info{padding:10px}
-
-.product-info h3{font-size:14px}
-
-.product-info button{font-size:11px;padding:11px 4px}
-
-.price{font-size:15px}
-
-.stock{font-size:10px}
-
-.stats{grid-template-columns:1fr 1fr}
-
-.stat:last-child{grid-column:1/-1}
-
-.admin-product-actions{width:100%}
-
-.admin-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
-
-#productDetailContent{grid-template-columns:1fr;min-height:0}
-
-.detail-image{min-height:0;height:min(48vh,420px);padding:14px}
-
-.detail-image img{height:100%;max-height:46vh;min-height:0}
-
-.detail-content{padding:20px}
-
-.detail-content h2{font-size:25px}
-
-.detail-price{font-size:27px}
-
-.modal.product-modal{max-height:92vh;max-height:92svh}
-
-.order-details{font-size:14px}
-
-.order-status-actions{gap:6px}
-
-.order-status-actions button{font-size:12px;padding:12px 4px}
-
-}
-
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.card-img{height:155px}.modal{align-items:center}.modal-box{border-radius:22px}}
 
 </style>
 
@@ -323,1201 +182,1315 @@ header{height:60px;padding:0 4%}
 
 <body>
 
-<header>
+<header class="top">
 
-  <div class="logo">🇹🇳 LEVEL<span>-Up</span></div>
+ <div class="brand">Tout <span>de suite.</span></div>
 
-  <div class="actions">
+ <div class="top-right">
 
-    <button class="btn outline small" onclick="showPage('home')">HOME</button>
+  <button class="icon-btn" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
 
-    <button class="btn small" onclick="openParameters()">PARAMETERS</button>
+  <button class="icon-btn" onclick="showPage('profile')">👤</button>
 
-  </div>
+ </div>
 
 </header>
 
-<main>
+<main class="container">
 
-<section id="homePage" class="hero">
+<section id="home" class="page active">
 
-  <div class="hero-content">
+ <div class="hero">
 
-    <div class="eyebrow" id="heroTag">THE OFFICIAL COLLECTION</div>
+  <h1>Tout ce dont vous avez besoin.</h1>
 
-    <h1 id="heroTitle">LEVEL-Up</h1>
+  <p>Vos envies, vos courses et vos repas livrés chez vous.</p>
 
-    <p id="heroDescription">Discover the collection. Define your style.</p>
+  <button onclick="document.getElementById('homeProducts').scrollIntoView({behavior:'smooth'})">Découvrir maintenant →</button>
 
-    <div class="hero-buttons">
+ </div>
 
-      <button class="btn" onclick="showPage('shop')">START SHOPPING</button>
+ <input class="search" id="homeSearch" placeholder="🔍  Rechercher un plat, un produit..." oninput="renderHome()">
 
-      <button class="btn outline" onclick="openParameters()">PARAMETERS</button>
+ <div class="section-head"><h2>🔥 Offres spéciales</h2></div>
 
-    </div>
+ <div id="offers" class="grid"></div>
 
-  </div>
+ <div class="section-head"><h2>🍽️ Restaurants</h2><small onclick="filterHome('restaurant')">Voir tout</small></div>
 
-</section>
+ <div id="restaurants" class="grid"></div>
 
-<section id="shopPage" class="section hidden">
+ <div class="section-head"><h2>🛍️ Nos produits</h2></div>
 
-  <div class="heading">
+ <div id="homeCategories" class="categories"></div>
 
-    <div><div class="eyebrow">🇹🇳 LEVEL-Up COLLECTION</div><h2 id="shopTitle">OUR PRODUCTS</h2></div>
-
-    <button class="btn outline small" onclick="showPage('home')">BACK HOME</button>
-
-  </div>
-
-  <p id="shopDescription" class="muted"></p>
-
-  <div id="productsGrid" class="products"></div>
+ <div id="homeProducts" class="grid"></div>
 
 </section>
 
-<section id="adminPage" class="section hidden">
+<section id="everything" class="page">
 
-  <div class="heading">
+ <h2 style="font-size:25px;margin:8px 0">Everything.</h2>
 
-    <div><div class="eyebrow">PRIVATE AREA</div><h2>CONTROL PANEL</h2></div>
+ <p class="muted">Tous vos achats au même endroit.</p>
 
-    <button class="btn outline small" onclick="logout()">LOG OUT</button>
+ <input class="search" id="everythingSearch" placeholder="🔍 Rechercher..." oninput="renderEverything()">
 
-  </div>
+ <div id="categories" class="categories"></div>
 
-  <div id="connectionNotice" class="notice"></div>
+ <div class="section-head"><h2 id="categoryTitle">Tous les produits</h2></div>
 
-  <div class="admin-layout">
+ <div id="everythingProducts" class="grid"></div>
 
-    <nav class="admin-nav">
+</section>
 
-      <button class="btn outline active" data-tab="dashboard" onclick="openTab('dashboard')">Dashboard</button>
+<section id="profile" class="page">
 
-      <button class="btn outline" data-tab="products" onclick="openTab('products')">Products</button>
+ <h2 style="font-size:25px;margin:8px 0 5px">Votre profil</h2>
 
-      <button class="btn outline" data-tab="orders" onclick="openTab('orders')">Orders</button>
+ <p class="muted" style="margin-bottom:18px">Rejoignez l'équipe Tout de suite.</p>
 
-      <button class="btn outline" data-tab="customize" onclick="openTab('customize')">Customize</button>
+ <div id="profileContent"></div>
 
-      <button class="btn outline" data-tab="settings" onclick="openTab('settings')">Settings</button>
+</section>
 
-    </nav>
+<section id="work" class="page">
 
-    <div id="adminContent" class="admin-content"></div>
+ <div id="workContent"></div>
 
-  </div>
+</section>
+
+<section id="staff" class="page">
+
+ <div id="staffContent"></div>
 
 </section>
 
 </main>
 
-<footer id="footerText">
+<nav class="bottom">
 
-  <div class="owner">Owner: JASSER NOUAILI</div>
+ <button class="nav active" data-page="home" onclick="showPage('home')"><b>⌂</b>HOME</button>
 
-  <div class="creator">Site created by Jasser nouaili</div>
+ <button class="nav" data-page="everything" onclick="showPage('everything')"><b>▦</b>EVERYTHING</button>
 
-  <a class="contact" href="https://wa.me/21656525744" target="_blank" rel="noopener noreferrer" aria-label="Contact Jasser on WhatsApp">
+ <button class="nav" data-page="profile" onclick="showPage('profile')"><b>♙</b>PROFILE</button>
 
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.8 11.8 0 0 0 12.13 0C5.58 0 .25 5.32.25 11.87c0 2.1.55 4.15 1.6 5.96L.15 24l6.32-1.66a11.9 11.9 0 0 0 5.66 1.44h.01c6.55 0 11.87-5.32 11.87-11.87 0-3.17-1.23-6.15-3.49-8.43ZM12.14 21.76a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.75.98 1-3.65-.24-.38a9.84 9.84 0 0 1-1.51-5.25c0-5.46 4.44-9.9 9.9-9.9 2.65 0 5.14 1.03 7.01 2.9a9.84 9.84 0 0 1 2.9 7.01c0 5.46-4.44 9.88-9.91 9.88Zm5.43-7.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.71.63.72.23 1.37.2 1.88.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg>
+ <button class="nav" data-page="work" onclick="showPage('work')"><b>🚴</b>WORK</button>
 
-    WhatsApp · 56525744
+ <button class="nav" data-page="staff" onclick="showPage('staff')"><b>⚙</b>STAFF</button>
 
-  </a>
+</nav>
 
-</footer>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
 
-<div id="passwordOverlay" class="overlay hidden">
-
-  <form class="modal" onsubmit="login(event)">
-
-    <h2>STAFF ACCESS</h2>
-
-    <p class="muted">Enter your staff password.</p>
-
-    <div class="field"><label>PASSWORD</label><input id="passwordInput" type="password" required autocomplete="current-password"></div>
-
-    <div class="row"><button class="btn outline" type="button" onclick="closePassword()">CANCEL</button><button class="btn" type="submit">ENTER</button></div>
-
-  </form>
+ <div class="modal-box" id="modalContent"></div>
 
 </div>
 
-<div id="orderOverlay" class="overlay hidden">
-
-  <form class="modal" onsubmit="submitOrder(event)">
-
-    <h2>PLACE YOUR ORDER</h2>
-
-    <p id="orderSummary" class="muted"></p>
-
-    <div class="field"><label>FULL NAME *</label><input id="customerName" maxlength="100" required autocomplete="name"></div>
-
-    <div class="field"><label>PHONE NUMBER *</label><input id="customerPhone" type="tel" maxlength="30" required autocomplete="tel"></div>
-
-    <div class="field"><label>DELIVERY ADDRESS *</label><textarea id="customerAddress" maxlength="500" required autocomplete="street-address"></textarea></div>
-
-    <div class="field"><label>QUANTITY *</label><input id="customerQuantity" type="number" min="1" step="1" value="1" required></div>
-
-    <div id="orderStockInfo" class="stock"></div>
-
-    <div class="field"><label>NOTES (OPTIONAL)</label><textarea id="customerNotes" maxlength="500"></textarea></div>
-
-    <div class="row"><button class="btn outline" type="button" onclick="closeOrder()">CANCEL</button><button class="btn" type="submit">CONFIRM ORDER</button></div>
-
-  </form>
-
-</div>
-
-<div id="productDetailOverlay" class="overlay hidden" onclick="if(event.target===this)closeProductDetails()">
-
-  <div class="modal product-modal">
-
-    <div id="productDetailContent"></div>
-
-  </div>
-
-</div>
-
-<div id="toast" class="hidden" role="status" aria-live="polite"></div>
+<div id="toast"></div>
 
 <script>
 
-/*
+/* FIREBASE */
 
-Firebase configuration and database path are preserved.
+const firebaseConfig={
 
-The password check is client-side and is not secure against
+ apiKey:"AIzaSyBg7mf9-RghLNKwspal_2d9jKHG4VMHy-w",
 
-someone inspecting the source code. Production authentication
+ authDomain:"vyro-7d190.firebaseapp.com",
 
-should use server-side authentication and authorization.
+ databaseURL:"https://vyro-7d190-default-rtdb.europe-west1.firebasedatabase.app",
 
-*/
+ projectId:"vyro-7d190",
 
-const STAFF_PASSWORD="DJOU01";
+ storageBucket:"vyro-7d190.firebasestorage.app",
 
-const firebaseConfig = {
+ messagingSenderId:"377590792321",
 
-  apiKey: "AIzaSyBg7mf9-RghLNKwspal_2d9jKHG4VMHy-w",
-
-  authDomain: "vyro-7d190.firebaseapp.com",
-
-  databaseURL: "https://vyro-7d190-default-rtdb.europe-west1.firebasedatabase.app",
-
-  projectId: "vyro-7d190",
-
-  storageBucket: "vyro-7d190.firebasestorage.app",
-
-  messagingSenderId: "377590792321",
-
-  appId: "1:377590792321:web:f15a244aa0db16a7884d80",
-
-  measurementId: "G-QSB0BL3ECE"
+ appId:"1:377590792321:web:f15a244aa0db16a7884d80"
 
 };
 
-const SDK="https://www.gstatic.com/firebasejs/10.14.1/";
+firebase.initializeApp(firebaseConfig);
 
-const configured=firebaseConfig.apiKey.startsWith("AIza")&&
+const db=firebase.database();
 
-  !firebaseConfig.projectId.startsWith("PASTE_")&&
+const auth=firebase.auth();
 
-  !firebaseConfig.databaseURL.startsWith("PASTE_")&&
+const ADMIN_PASSWORD="RASLEN199";
 
-  !firebaseConfig.storageBucket.startsWith("PASTE_");
+const ROOT="ToutDeSuite";
 
-const defaults={
+let data={
 
-  settings:{
+ settings:{name:"Tout de suite",deliveryPrice:3,currency:"DT"},
 
-    heroTag:"THE OFFICIAL COLLECTION",
+ products:[],restaurants:[],categories:[
 
-    heroTitle:"LEVEL-Up",
+  {id:"c1",name:"Fruits",emoji:"🍎"},
 
-    heroDescription:"Discover the collection. Define your style.",
+  {id:"c2",name:"Légumes",emoji:"🥦"},
 
-    shopTitle:"OUR PRODUCTS",
+  {id:"c3",name:"Épicerie",emoji:"🛒"},
 
-    shopDescription:"Find your next favourite piece.",
+  {id:"c4",name:"Boulangerie",emoji:"🥖"},
 
-    footerText:"Site created by Jasser nouaili",
+  {id:"c5",name:"Viande",emoji:"🥩"},
 
-    currency:"TND"
+  {id:"c6",name:"Boissons",emoji:"🥤"},
 
-  },
+  {id:"c7",name:"Maison",emoji:"🧹"}
 
-  products:[],
+ ],
 
-  orders:[]
+ workers:[],applications:[],orders:[],offers:[],notifications:[]
 
 };
 
-let state=JSON.parse(JSON.stringify(defaults));
+let cart=[];
 
-let db=null,storage=null,cloudReady=false,loggedIn=false;
+let selectedCategory="all";
 
-let activeTab="dashboard",selectedProduct=null,editingProduct=null,toastTimer;
+let selectedAdminTab="dashboard";
 
-let audioContext=null,lastCloudUpdate=0;
+let currentWorker=null;
+
+let isAdmin=false;
+
+let activePage="home";
+
+let dbReady=false;
+
+let initialized=false;
+
+let currentFilter="all";
 
 const $=id=>document.getElementById(id);
 
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+const money=n=>Number(n||0).toFixed(2)+" DT";
 
-function esc(v){
+const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-  return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const imgFallback="https://placehold.co/500x350/eaf2ff/176fe5?text=Tout+de+suite";
 
-}
+const imageUrl=s=>s||imgFallback;
 
-function imageURL(v){
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 
-  if(!v)return "";
+function toast(msg){
 
-  if(String(v).startsWith("data:image/"))return String(v);
+ const t=$("toast");t.textContent=msg;t.style.display="block";
 
-  try{const u=new URL(v,location.href);if(["https:","http:"].includes(u.protocol))return u.href;}catch(e){}
-
-  return "";
+ clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display="none",3000);
 
 }
 
-function money(v){
+function openModal(html){$("modalContent").innerHTML=html;$("modal").classList.add("show")}
 
-  return (Number(v)||0).toLocaleString(undefined,{maximumFractionDigits:3})+" "+(state.settings.currency||"TND");
-
-}
-
-function stockOf(p){return Math.max(0,Math.floor(Number(p?.stock)||0));}
-
-function playClick(){
-
-  try{
-
-    const AudioCtx=window.AudioContext||window.webkitAudioContext;
-
-    if(!AudioCtx)return;
-
-    if(!audioContext)audioContext=new AudioCtx();
-
-    if(audioContext.state==="suspended")audioContext.resume();
-
-    const oscillator=audioContext.createOscillator();
-
-    const gain=audioContext.createGain();
-
-    oscillator.type="sine";
-
-    oscillator.frequency.setValueAtTime(520,audioContext.currentTime);
-
-    oscillator.frequency.exponentialRampToValueAtTime(390,audioContext.currentTime+.045);
-
-    gain.gain.setValueAtTime(.0001,audioContext.currentTime);
-
-    gain.gain.exponentialRampToValueAtTime(.025,audioContext.currentTime+.006);
-
-    gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.055);
-
-    oscillator.connect(gain);gain.connect(audioContext.destination);
-
-    oscillator.start();oscillator.stop(audioContext.currentTime+.06);
-
-  }catch(e){}
-
-}
-
-document.addEventListener("click",e=>{
-
-  if(e.target.closest("button"))playClick();
-
-});
-
-function notify(message){
-
-  $("toast").textContent=message;
-
-  $("toast").classList.remove("hidden");
-
-  clearTimeout(toastTimer);
-
-  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3000);
-
-}
-
-function saveLocal(){
-
-  try{localStorage.setItem("vyro01_store",JSON.stringify(state));}catch(e){notify("Storage is full. Try using smaller product images.");}
-
-}
-
-function loadLocal(){
-
-  try{
-
-    const d=JSON.parse(localStorage.getItem("vyro01_store")||"null");
-
-    if(d)state={settings:{...defaults.settings,...(d.settings||{})},products:Array.isArray(d.products)?d.products:[],orders:Array.isArray(d.orders)?d.orders:[]};
-
-  }catch(e){}
-
-}
-
-async function saveState(){
-
-  saveLocal();
-
-  renderStore();
-
-  if(cloudReady){
-
-    try{await db.ref("vyro01").set(state);}
-
-    catch(e){console.error(e);notify("Cloud save failed. Check Firebase configuration and permissions.");}
-
-  }
-
-  updateNotice();
-
-}
-
-function renderSettings(){
-
-  const s=state.settings;
-
-  $("heroTag").textContent=s.heroTag;
-
-  $("heroTitle").textContent=s.heroTitle;
-
-  $("heroDescription").textContent=s.heroDescription;
-
-  $("shopTitle").textContent=s.shopTitle;
-
-  $("shopDescription").textContent=s.shopDescription;
-
-  $("footerText").innerHTML=`<div class="owner">Owner: JASSER NOUAILI</div>
-
-    <div class="creator">Site created by Jasser nouaili</div>
-
-    <a class="contact" href="https://wa.me/21656525744" target="_blank" rel="noopener noreferrer" aria-label="Contact Jasser on WhatsApp">
-
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.8 11.8 0 0 0 12.13 0C5.58 0 .25 5.32.25 11.87c0 2.1.55 4.15 1.6 5.96L.15 24l6.32-1.66a11.9 11.9 0 0 0 5.66 1.44h.01c6.55 0 11.87-5.32 11.87-11.87 0-3.17-1.23-6.15-3.49-8.43ZM12.14 21.76a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.75.98 1-3.65-.24-.38a9.84 9.84 0 0 1-1.51-5.25c0-5.46 4.44-9.9 9.9-9.9 2.65 0 5.14 1.03 7.01 2.9a9.84 9.84 0 0 1 2.9 7.01c0 5.46-4.44 9.88-9.91 9.88Zm5.43-7.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.71.63.72.23 1.37.2 1.88.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg>
-
-    WhatsApp · 56525744</a>`;
-
-  document.title=(s.heroTitle||"LEVEL-Up")+" | Official Store";
-
-}
+function closeModal(){$("modal").classList.remove("show")}
 
 function showPage(page){
 
-  $("homePage").classList.toggle("hidden",page!=="home");
+ activePage=page;
 
-  $("shopPage").classList.toggle("hidden",page!=="shop");
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 
-  $("adminPage").classList.toggle("hidden",page!=="admin");
+ $(page).classList.add("active");
 
-  if(page==="shop")renderStore();
+ document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
 
-  if(page==="admin"&&loggedIn)renderAdmin();
+ if(page==="home")renderHome();
 
-  window.scrollTo({top:0,behavior:"smooth"});
+ if(page==="everything")renderEverything();
 
-}
+ if(page==="profile")renderProfile();
 
-function openParameters(){
+ if(page==="work")renderWork();
 
-  if(loggedIn){showPage("admin");return;}
+ if(page==="staff")renderStaff();
 
-  $("passwordInput").value="";
-
-  $("passwordOverlay").classList.remove("hidden");
+ window.scrollTo({top:0,behavior:"smooth"});
 
 }
 
-function closePassword(){$("passwordOverlay").classList.add("hidden");}
+function save(){
 
-function login(e){
+ if(!dbReady)return;
 
-  e.preventDefault();
-
-  if($("passwordInput").value!==STAFF_PASSWORD){notify("Incorrect password.");return;}
-
-  loggedIn=true;closePassword();showPage("admin");notify("Welcome to the control panel.");
+ return db.ref(ROOT).set(data).catch(e=>toast("Erreur Firebase : "+e.message));
 
 }
 
-function logout(){loggedIn=false;editingProduct=null;showPage("home");}
+function subscribe(){
 
-function renderStore(){
+ db.ref(ROOT).on("value",snap=>{
 
-  renderSettings();
+  if(snap.exists()){
 
-  const list=state.products.filter(p=>p&&p.active!==false);
+   const d=snap.val();
 
-  $("productsGrid").innerHTML=list.length?list.map((p,index)=>{
+   data={...data,...d};
 
-    const stock=stockOf(p),sold=stock<=0,img=imageURL(p.image);
+   data.settings={...{name:"Tout de suite",deliveryPrice:3,currency:"DT"},...data.settings};
 
-    const stockClass=sold?"sold":stock<=3?"low":"";
+   ["products","restaurants","categories","workers","applications","orders","offers","notifications"].forEach(k=>{
 
-    const stockText=sold?"OUT OF STOCK":stock<=3?`ONLY ${stock} LEFT`:`${stock} AVAILABLE`;
+    if(!Array.isArray(data[k]))data[k]=[];
 
-    return `<article class="product" style="animation-delay:${Math.min(index,8)*.045}s">
-
-      <div class="product-image" role="button" tabindex="0" aria-label="View ${esc(p.name)} details" onclick="openProductDetails('${esc(p.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProductDetails('${esc(p.id)}')}">
-
-        ${img?`<img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy">`:'<div style="height:100%;display:grid;place-items:center;color:#666;font-size:12px">NO IMAGE</div>'}
-
-        <span class="image-hint" aria-hidden="true">⌕</span>
-
-      </div>
-
-      <div class="product-info">
-
-        <h3>${esc(p.name)}</h3>
-
-        <div class="description">${esc(p.description||"")}</div>
-
-        <div class="price">${money(p.price)}</div>
-
-        <div class="stock ${stockClass}">${stockText}</div>
-
-        <button class="btn ${sold?"outline":""}" ${sold?"disabled":""} onclick="openOrder('${esc(p.id)}')">${sold?"SOLD OUT":"ORDER NOW"}</button>
-
-      </div></article>`;
-
-  }).join(""):'<div class="empty">No products available yet.</div>';
-
-}
-
-function openProductDetails(id){
-
-  const p=state.products.find(x=>x.id===id&&x.active!==false);
-
-  if(!p){notify("Product unavailable.");return;}
-
-  const stock=stockOf(p),img=imageURL(p.image),sold=stock<=0;
-
-  $("productDetailContent").innerHTML=`
-
-    <div class="detail-image">
-
-      <button class="close-detail" type="button" aria-label="Close details" onclick="closeProductDetails()">×</button>
-
-      ${img?`<img src="${esc(img)}" alt="${esc(p.name)}">`:'<div style="height:100%;min-height:220px;display:grid;place-items:center;color:#777">NO IMAGE</div>'}
-
-    </div>
-
-    <div class="detail-content">
-
-      <div class="eyebrow">LEVEL-Up · PRODUCT DETAILS</div>
-
-      <h2>${esc(p.name)}</h2>
-
-      <div class="detail-price">${money(p.price)}</div>
-
-      <div class="stock ${sold?"sold":stock<=3?"low":""}">${sold?"OUT OF STOCK":`${stock} PIECE${stock===1?"":"S"} LEFT`}</div>
-
-      <div class="detail-description">${esc(p.description||"No additional description available.")}</div>
-
-      <button class="btn ${sold?"outline":""}" style="width:100%" ${sold?"disabled":""} onclick="closeProductDetails();openOrder('${esc(p.id)}')">${sold?"SOLD OUT":"ORDER THIS PRODUCT"}</button>
-
-      <p class="muted" style="font-size:11px;margin-top:15px">Limited pieces. Availability may change.</p>
-
-    </div>`;
-
-  $("productDetailOverlay").classList.remove("hidden");
-
-}
-
-function closeProductDetails(){$("productDetailOverlay").classList.add("hidden");}
-
-function openOrder(id){
-
-  const p=state.products.find(x=>x.id===id);
-
-  if(!p||p.active===false||stockOf(p)<=0){notify("Product unavailable.");return;}
-
-  selectedProduct=id;
-
-  $("orderSummary").textContent=p.name+" — "+money(p.price);
-
-  $("customerQuantity").max=String(stockOf(p));
-
-  $("customerQuantity").value="1";
-
-  $("orderStockInfo").textContent=`${stockOf(p)} piece${stockOf(p)===1?"":"s"} currently available`;
-
-  ["customerName","customerPhone","customerAddress","customerNotes"].forEach(id=>$(id).value="");
-
-  $("orderOverlay").classList.remove("hidden");
-
-}
-
-function closeOrder(){$("orderOverlay").classList.add("hidden");selectedProduct=null;}
-
-async function submitOrder(e){
-
-  e.preventDefault();
-
-  const p=state.products.find(x=>x.id===selectedProduct);
-
-  if(!p||p.active===false){notify("Product not found or unavailable.");return;}
-
-  const qty=Number($("customerQuantity").value),available=stockOf(p);
-
-  if(!Number.isInteger(qty)||qty<1||qty>available){
-
-    notify(`Only ${available} piece${available===1?"":"s"} available.`);
-
-    $("customerQuantity").max=String(available);
-
-    $("orderStockInfo").textContent=`Only ${available} piece${available===1?"":"s"} available now`;
-
-    return;
+   });
 
   }
 
-  const customer={
+  dbReady=true;
 
-    name:$("customerName").value.trim(),
+  if(!initialized){
 
-    phone:$("customerPhone").value.trim(),
+   initialized=true;
 
-    address:$("customerAddress").value.trim(),
+   renderHome();renderEverything();renderProfile();
 
-    notes:$("customerNotes").value.trim()
+  }else{
+
+   renderHome();
+
+   if(activePage==="everything")renderEverything();
+
+   if(activePage==="profile")renderProfile();
+
+   if(activePage==="work")renderWork();
+
+   if(activePage==="staff")renderStaff();
+
+  }
+
+ });
+
+}
+
+auth.signInAnonymously().then(subscribe).catch(e=>{
+
+ toast("Connexion Firebase impossible : "+e.message);
+
+});
+
+if("Notification"in window){
+
+ // Les notifications système nécessitent une autorisation utilisateur.
+
+}
+
+function askNotifications(){
+
+ if("Notification"in window && Notification.permission==="default")Notification.requestPermission();
+
+}
+
+function notify(title,body){
+
+ if("Notification"in window && Notification.permission==="granted"){
+
+  try{new Notification(title,{body})}catch(e){}
+
+ }
+
+}
+
+function notifyWorker(id,title,message){
+
+ data.notifications.unshift({id:uid(),workerId:id,title,message,createdAt:Date.now(),read:false});
+
+ notify(title,message);
+
+}
+
+/* IMAGE */
+
+function readImage(file,callback){
+
+ if(!file)return;
+
+ const reader=new FileReader();
+
+ reader.onload=e=>{
+
+  const image=new Image();
+
+  image.onload=()=>{
+
+   const canvas=document.createElement("canvas");
+
+   const scale=Math.min(1,800/Math.max(image.width,image.height));
+
+   canvas.width=image.width*scale;canvas.height=image.height*scale;
+
+   canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+
+   callback(canvas.toDataURL("image/jpeg",.68));
 
   };
 
-  if(!customer.name||!customer.phone||!customer.address){notify("Complete all required fields.");return;}
+  image.src=e.target.result;
 
-  const order={
+ };
 
-    id:uid(),createdAt:new Date().toISOString(),status:"New",customer,
-
-    items:[{productId:p.id,name:p.name,price:Number(p.price)||0,quantity:qty}],
-
-    total:(Number(p.price)||0)*qty,
-
-    stockDeducted:true
-
-  };
-
-  p.stock=available-qty;
-
-  state.orders.unshift(order);
-
-  closeOrder();
-
-  await saveState();
-
-  notify(cloudReady?"Order submitted.":"Order saved on this device only.");
-
-  showPage("shop");
+ reader.readAsDataURL(file);
 
 }
 
-function updateNotice(){
+function imageInput(id,label="Photo"){
 
-  const n=$("connectionNotice");if(!n)return;
-
-  n.textContent=cloudReady
-
-    ?"CLOUD CONNECTED — products and orders synchronize through Firebase."
-
-    :"LOCAL MODE — configure Firebase to share changes and orders across phones.";
+ return `<div class="field"><label>${label}</label><input type="file" id="${id}" accept="image/*"></div>`;
 
 }
 
-function openTab(tab){
+/* HOME */
 
-  activeTab=tab;
+function productCard(p){
 
-  document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+ return `<article class="card">
 
-  renderAdmin();
+ <img class="card-img" src="${imageUrl(p.image)}" onerror="this.src=imgFallback">
 
-}
+ <div class="card-body">
 
-function renderAdmin(){
+  <h3>${safe(p.name)}</h3>
 
-  if(!loggedIn)return;
+  <div class="muted">${safe(p.description||p.category||"")}</div>
 
-  updateNotice();
+  <div class="card-actions"><span class="price">${money(p.price)}</span>
 
-  const c=$("adminContent");
+  <button class="add" onclick="addToCart('${p.id}')">+</button></div>
 
-  if(activeTab==="dashboard")c.innerHTML=dashboardHTML();
-
-  if(activeTab==="products")c.innerHTML=productsHTML();
-
-  if(activeTab==="orders")c.innerHTML=ordersHTML();
-
-  if(activeTab==="customize")c.innerHTML=customizeHTML();
-
-  if(activeTab==="settings")c.innerHTML=settingsHTML();
+ </div></article>`;
 
 }
 
-function dashboardHTML(){
+function restaurantCard(r){
 
-  const total=state.orders.reduce((s,o)=>s+(Number(o.total)||0),0);
+ return `<article class="card" onclick="openRestaurant('${r.id}')">
 
-  return `<h2>Dashboard</h2><div class="stats">
+ <img class="card-img" src="${imageUrl(r.image)}" onerror="this.src=imgFallback">
 
-  <div class="stat"><span>PRODUCTS</span><strong>${state.products.length}</strong></div>
+ <div class="card-body"><h3>${safe(r.name)}</h3>
 
-  <div class="stat"><span>ORDERS</span><strong>${state.orders.length}</strong></div>
+ <div class="muted">${safe(r.description||"Restaurant")}</div>
 
-  <div class="stat"><span>ORDER TOTALS</span><strong style="font-size:19px">${money(total)}</strong></div>
+ <div class="card-actions"><span class="pill">🍽️ Restaurant</span><span class="muted">${money(r.deliveryPrice??data.settings.deliveryPrice)}</span></div>
 
-  </div><div class="heading"><h3>Recent orders</h3><button class="btn outline small" onclick="openTab('orders')">VIEW ALL</button></div>
-
-  ${state.orders.length?state.orders.slice(0,5).map(orderHTML).join(""):'<div class="empty">No orders yet.</div>'}
-
-  <p><button class="btn" onclick="newProduct()">+ ADD PRODUCT</button></p>`;
+ </div></article>`;
 
 }
 
-function productsHTML(){
+function renderHome(){
 
-  return `<div class="heading"><h2>Products</h2><button class="btn" onclick="newProduct()">+ ADD PRODUCT</button></div>
+ if(!$("home"))return;
 
-  <div id="productEditor"></div>
+ const q=($("homeSearch")?.value||"").toLowerCase();
 
-  ${state.products.length?state.products.map(p=>`<div class="admin-product">
+ $("offers").innerHTML=data.offers.filter(o=>o.active!==false).map(o=>
 
-  ${imageURL(p.image)?`<img src="${esc(imageURL(p.image))}" alt="">`:'<div style="width:65px;height:78px;background:#222;border-radius:10px"></div>'}
+ `<article class="card"><img class="card-img" src="${imageUrl(o.image)}" onerror="this.src=imgFallback">
 
-  <div class="admin-product-info"><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} · Stock: ${stockOf(p)}</div><div class="muted">${p.active===false?"Hidden":"Visible"}</div></div>
+ <div class="card-body"><span class="pill">OFFRE</span><h3>${safe(o.name)}</h3><p class="muted">${safe(o.description||"")}</p></div></article>`).join("");
 
-  <div class="admin-product-actions">
+ $("restaurants").innerHTML=data.restaurants.filter(r=>(r.active!==false)&&(!q||r.name.toLowerCase().includes(q))).map(restaurantCard).join("")||'<div class="empty">Aucun restaurant disponible.</div>';
 
-  <button class="btn outline small" onclick="editProduct('${esc(p.id)}')">EDIT</button>
+ $("homeCategories").innerHTML=data.categories.map(c=>`<button class="cat" onclick="goCategory('${c.id}')">${safe(c.emoji||"▦")} ${safe(c.name)}</button>`).join("");
 
-  <button class="btn outline small" onclick="toggleProduct('${esc(p.id)}')">${p.active===false?"SHOW":"HIDE"}</button>
-
-  <button class="btn red small" onclick="deleteProduct('${esc(p.id)}')">DELETE</button>
-
-  </div></div>`).join(""):'<div class="empty">No products yet. Add your first product.</div>'}`;
+ $("homeProducts").innerHTML=data.products.filter(p=>p.active!==false&&(!q||p.name.toLowerCase().includes(q)||String(p.category).toLowerCase().includes(q))).slice(0,12).map(productCard).join("")||'<div class="empty">Aucun produit disponible.</div>';
 
 }
 
-function newProduct(){editingProduct=null;openTab("products");setTimeout(()=>productEditor(null),0);}
+function filterHome(type){showPage("home");}
 
-function editProduct(id){editingProduct=id;openTab("products");setTimeout(()=>{const p=state.products.find(x=>x.id===id);if(p)productEditor(p);},0);}
+function goCategory(id){selectedCategory=id;showPage("everything")}
 
-function productEditor(p){
+function renderEverything(){
 
-  const root=$("productEditor");if(!root)return;
+ $("categories").innerHTML=`<button class="cat ${selectedCategory==="all"?"active":""}" onclick="selectCategory('all')">Tout</button>`+data.categories.map(c=>`<button class="cat ${selectedCategory===c.id?"active":""}" onclick="selectCategory('${c.id}')">${safe(c.emoji||"")} ${safe(c.name)}</button>`).join("");
 
-  root.innerHTML=`<div class="modal" style="width:100%;max-height:none;margin-bottom:22px">
+ const c=data.categories.find(x=>x.id===selectedCategory);
 
-  <h3>${p?"Edit product":"Add product"}</h3>
+ $("categoryTitle").textContent=selectedCategory==="all"?"Tous les produits":(c?.name||"Produits");
 
-  <form id="productForm" onsubmit="saveProduct(event)">
+ const q=($("everythingSearch")?.value||"").toLowerCase();
 
-  <div class="field"><label>PRODUCT NAME *</label><input name="name" required maxlength="120" value="${esc(p?.name||"")}"></div>
+ const products=data.products.filter(p=>p.active!==false&&(selectedCategory==="all"||p.category===selectedCategory)&&(!q||p.name.toLowerCase().includes(q)));
 
-  <div class="field"><label>DESCRIPTION</label><textarea name="description" maxlength="2000">${esc(p?.description||"")}</textarea></div>
-
-  <div class="row">
-
-  <div class="field"><label>PRICE *</label><input name="price" type="number" min="0" step="0.001" required value="${Number(p?.price||0)}"></div>
-
-  <div class="field"><label>STOCK *</label><input name="stock" type="number" min="0" step="1" required value="${Number(p?.stock??1)}"></div>
-
-  </div>
-
-  <div class="field"><label>UPLOAD IMAGE FROM PHONE</label><input id="imageFile" type="file" accept="image/*"></div>
-
-  <div class="field"><label>OR IMAGE URL</label><input name="imageUrl" type="url" value="${esc(p?.image||"")}" placeholder="https://..."></div>
-
-  <label class="check"><input id="productActive" type="checkbox" ${p?.active===false?"":"checked"}> Show product in store</label>
-
-  <div class="row" style="margin-top:18px"><button type="button" class="btn outline" onclick="renderAdmin()">CANCEL</button><button type="submit" class="btn">SAVE PRODUCT</button></div>
-
-  </form></div>`;
-
-  root.scrollIntoView({behavior:"smooth",block:"start"});
+ $("everythingProducts").innerHTML=products.map(productCard).join("")||'<div class="empty"><b>🛍️</b>Aucun produit dans cette catégorie.</div>';
 
 }
 
-async function uploadImage(file){
+function selectCategory(id){selectedCategory=id;renderEverything()}
 
-  if(!file)return null;
+function openRestaurant(id){
 
-  if(!file.type.startsWith("image/"))throw Error("Choose an image file.");
+ const r=data.restaurants.find(x=>x.id===id);if(!r)return;
 
-  if(file.size>8*1024*1024)throw Error("Image must be smaller than 8 MB.");
+ const items=data.products.filter(p=>p.restaurantId===id&&p.active!==false);
 
-  const original=await new Promise((resolve,reject)=>{
+ openModal(`<button class="close" onclick="closeModal()">×</button>
 
-    const reader=new FileReader();
+ <img src="${imageUrl(r.image)}" style="width:100%;height:180px;object-fit:cover;border-radius:15px;margin:12px 0">
 
-    reader.onload=()=>resolve(reader.result);
+ <h2>${safe(r.name)}</h2><p class="muted">${safe(r.description||"")}</p>
 
-    reader.onerror=()=>reject(Error("Could not read image."));
+ <p style="margin:10px 0">Livraison : <b class="price">${money(r.deliveryPrice??data.settings.deliveryPrice)}</b></p>
 
-    reader.readAsDataURL(file);
+ <div class="section-head"><h3>Menu</h3></div>
+
+ <div class="grid">${items.map(productCard).join("")||"Aucun plat disponible."}</div>`);
+
+}
+
+/* CART */
+
+function addToCart(id){
+
+ const p=data.products.find(x=>x.id===id);if(!p)return;
+
+ const existing=cart.find(x=>x.id===id);
+
+ if(existing)existing.qty++;else cart.push({id:p.id,name:p.name,price:Number(p.price),qty:1,restaurantId:p.restaurantId||null});
+
+ updateCart();toast("Ajouté au panier");
+
+}
+
+function updateCart(){
+
+ $("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
+
+}
+
+function cartTotal(){return cart.reduce((s,x)=>s+x.price*x.qty,0)}
+
+function openCart(){
+
+ if(!cart.length){openModal('<button class="close" onclick="closeModal()">×</button><div class="empty"><b>🛒</b>Votre panier est vide.</div>');return}
+
+ const restaurantIds=[...new Set(cart.map(x=>x.restaurantId).filter(Boolean))];
+
+ const delivery=restaurantIds.length?Math.max(...restaurantIds.map(id=>Number(data.restaurants.find(r=>r.id===id)?.deliveryPrice??data.settings.deliveryPrice))):Number(data.settings.deliveryPrice);
+
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>Votre panier 🛒</h2>
+
+ <div style="margin:15px 0">${cart.map((x,i)=>`<div class="list-item between">
+
+ <div><b>${safe(x.name)}</b><div class="muted">${money(x.price)} / unité</div></div>
+
+ <div class="qty"><button onclick="changeQty(${i},-1)">−</button>${x.qty}<button onclick="changeQty(${i},1)">+</button></div>
+
+ </div>`).join("")}</div>
+
+ <div class="list-item between">Sous-total <b>${money(cartTotal())}</b></div>
+
+ <div class="list-item between">Livraison <b>${money(delivery)}</b></div>
+
+ <div class="list-item between"><b>Total</b><strong class="price">${money(cartTotal()+delivery)}</strong></div>
+
+ <h3 style="margin-top:20px">Informations de livraison</h3>
+
+ <div class="field"><label>Nom complet</label><input id="orderName" placeholder="Votre nom"></div>
+
+ <div class="field"><label>Téléphone</label><input id="orderPhone" type="tel" placeholder="Votre numéro"></div>
+
+ <div class="field"><label>Adresse complète</label><textarea id="orderAddress" placeholder="Gouvernorat, ville, rue, détails..."></textarea></div>
+
+ <div class="field"><label>Note (facultatif)</label><input id="orderNote" placeholder="Instructions supplémentaires"></div>
+
+ <button class="primary" onclick="submitOrder(${delivery})">Confirmer la commande · ${money(cartTotal()+delivery)}</button>`);
+
+}
+
+function changeQty(i,d){
+
+ cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);
+
+ updateCart();openCart();
+
+}
+
+async function submitOrder(delivery){
+
+ const name=$("orderName").value.trim(),phone=$("orderPhone").value.trim(),address=$("orderAddress").value.trim();
+
+ if(!name||!phone||!address){toast("Remplissez tous les champs obligatoires.");return}
+
+ if(!dbReady){toast("Connexion en cours.");return}
+
+ const order={
+
+  id:uid(),customerName:name,phone,address,note:$("orderNote").value,
+
+  items:cart.map(x=>({...x})),subtotal:cartTotal(),deliveryPrice:delivery,
+
+  total:cartTotal()+delivery,status:"pending",workerId:null,
+
+  createdAt:Date.now(),customerUid:auth.currentUser?.uid||""
+
+ };
+
+ try{
+
+  await db.ref(ROOT+"/orders/"+order.id).set(order);
+
+  data.orders.unshift(order);
+
+  cart=[];updateCart();closeModal();toast("Commande envoyée avec succès !");
+
+  notify("Commande confirmée","Votre demande a été enregistrée.");
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+/* PROFILE / APPLICATIONS */
+
+function renderProfile(){
+
+ const app=auth.currentUser?.uid;
+
+ const existing=data.applications.find(x=>x.uid===app);
+
+ const worker=data.workers.find(x=>x.uid===app);
+
+ if(worker){
+
+  $("profileContent").innerHTML=`<div class="panel"><div class="row"><img class="avatar" src="${imageUrl(worker.image)}"><div><h3>${safe(worker.firstName)} ${safe(worker.lastName)}</h3><span class="tag">Membre de l'équipe</span></div></div><p style="margin-top:15px">Votre candidature a été acceptée.</p><button class="primary" style="margin-top:15px" onclick="showPage('work')">Accéder à WORK</button></div>`;
+
+  return;
+
+ }
+
+ if(existing){
+
+  $("profileContent").innerHTML=`<div class="panel"><h3>Votre candidature</h3><span class="pill">${safe(existing.status==="pending"?"En attente":existing.status==="rejected"?"Refusée":"Acceptée")}</span><p class="muted" style="margin-top:15px">${safe(existing.firstName)} ${safe(existing.lastName)}</p><p class="muted">${safe(existing.phone)}</p>${existing.status==="rejected"?'<p style="color:var(--red);margin-top:10px">Votre demande a été refusée.</p>':""}</div>`;
+
+  return;
+
+ }
+
+ $("profileContent").innerHTML=`<div class="panel">
+
+ <h3>Devenir livreur 🚴</h3>
+
+ <p class="muted">Complétez votre profil pour rejoindre notre équipe.</p>
+
+ <div class="field"><label>Prénom *</label><input id="appFirst" placeholder="Prénom"></div>
+
+ <div class="field"><label>Nom *</label><input id="appLast" placeholder="Nom"></div>
+
+ <div class="field"><label>Âge *</label><input id="appAge" type="number" min="16" placeholder="Âge"></div>
+
+ <div class="field"><label>Téléphone *</label><input id="appPhone" type="tel" placeholder="Numéro de téléphone"></div>
+
+ <div class="field"><label>Type de moto *</label><input id="appMoto" placeholder="Ex : PISTA HR 110cc"></div>
+
+ ${imageInput("appImage","Photo personnelle")}
+
+ ${imageInput("appMotoImage","Photo de votre moto")}
+
+ <div class="field"><label>Note personnelle</label><textarea id="appNote" placeholder="Présentez-vous..."></textarea></div>
+
+ <button class="primary" onclick="submitApplication()">Envoyer ma candidature</button>
+
+ </div>`;
+
+}
+
+async function submitApplication(){
+
+ const firstName=$("appFirst").value.trim(),lastName=$("appLast").value.trim(),age=Number($("appAge").value),phone=$("appPhone").value.trim(),moto=$("appMoto").value.trim();
+
+ if(!firstName||!lastName||!age||!phone||!moto){toast("Veuillez remplir les champs obligatoires.");return}
+
+ if(age<16){toast("Âge non admissible.");return}
+
+ const uidUser=auth.currentUser?.uid;if(!uidUser)return;
+
+ let image="",motoImage="";
+
+ const f=$("appImage").files[0],mf=$("appMotoImage").files[0];
+
+ try{
+
+  if(f)image=await fileToData(f);
+
+  if(mf)motoImage=await fileToData(mf);
+
+  const app={id:uid(),uid:uidUser,firstName,lastName,age,phone,moto,image,motoImage,note:$("appNote").value,status:"pending",createdAt:Date.now()};
+
+  await db.ref(ROOT+"/applications/"+app.id).set(app);
+
+  data.applications.push(app);
+
+  toast("Candidature envoyée !");
+
+  notify("Candidature envoyée","Votre demande est en attente.");
+
+  renderProfile();
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+function fileToData(file){
+
+ return new Promise(resolve=>readImage(file,resolve));
+
+}
+
+/* WORK */
+
+function renderWork(){
+
+ const content=$("workContent");
+
+ if(isAdmin){
+
+  content.innerHTML=`<div class="between"><h2>WORK — Administration</h2><button class="secondary" onclick="logoutWork()">Déconnexion</button></div><p class="muted" style="margin:8px 0 18px">Vue globale de l'équipe et des opérations.</p>${workerDashboard()}`;
+
+  return;
+
+ }
+
+ if(currentWorker){
+
+  const w=data.workers.find(x=>x.id===currentWorker.id);
+
+  if(!w){currentWorker=null;renderWork();return}
+
+  const myOrders=data.orders.filter(o=>o.workerId===w.id);
+
+  const earnings=myOrders.filter(o=>o.status==="delivered").reduce((s,o)=>s+Number(o.workerEarning||0),0);
+
+  content.innerHTML=`<div class="between"><h2>Mon espace</h2><button class="secondary" onclick="logoutWork()">Quitter</button></div>
+
+  <div class="panel" style="margin-top:15px"><div class="row"><img class="avatar" src="${imageUrl(w.image)}"><div><h3>${safe(w.firstName)} ${safe(w.lastName)}</h3><span class="tag">Livreur actif</span></div></div>
+
+  <div class="stat-grid" style="margin-top:18px"><div class="stat"><strong>${money(earnings)}</strong><small>Mes gains</small></div><div class="stat"><strong>${myOrders.filter(o=>o.status==="delivered").length}</strong><small>Livraisons terminées</small></div></div></div>
+
+  <div class="section-head"><h2>Commandes disponibles</h2></div>
+
+  <div id="availableOrders">${availableOrdersHTML()}</div>
+
+  <div class="section-head"><h2>Mes commandes</h2></div>
+
+  <div>${myOrders.map(orderWorkerCard).join("")||'<div class="empty">Aucune commande pour le moment.</div>'}</div>
+
+  <div class="section-head"><h2>Notifications</h2></div>
+
+  ${data.notifications.filter(n=>n.workerId===w.id).slice(0,15).map(n=>`<div class="panel"><b>${safe(n.title)}</b><p class="muted">${safe(n.message)}</p></div>`).join("")}`;
+
+  return;
+
+ }
+
+ content.innerHTML=`<h2 style="font-size:25px">Espace WORK</h2><p class="muted" style="margin:7px 0 20px">Accédez à votre espace professionnel.</p>
+
+ <div class="panel"><h3>Connexion livreur</h3><div class="field"><label>Mot de passe personnel</label><input id="workerPassword" type="password" placeholder="Votre mot de passe"></div><button class="primary" onclick="loginWorker()">Se connecter</button></div>
+
+ <div class="panel"><h3>Administration</h3><div class="field"><label>Mot de passe administrateur</label><input id="workAdminPassword" type="password" placeholder="Mot de passe"></div><button class="secondary" style="width:100%" onclick="loginAdminWork()">Connexion administrateur</button></div>`;
+
+}
+
+function availableOrdersHTML(){
+
+ return data.orders.filter(o=>o.status==="pending"&&!o.workerId).map(o=>`<div class="panel">
+
+ <div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="tag">Disponible</span></div>
+
+ <p class="muted" style="margin:8px 0">${o.items.map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
+
+ <div class="between"><span>Montant</span><b class="price">${money(o.total)}</b></div>
+
+ <p class="muted" style="margin:7px 0">Adresse : ${safe(o.address)}</p>
+
+ <button class="primary" style="margin-top:12px" onclick="acceptOrder('${o.id}')">ACCEPTER LA COMMANDE</button>
+
+ </div>`).join("")||'<div class="empty">Aucune commande disponible.</div>';
+
+}
+
+function orderWorkerCard(o){
+
+ return `<div class="panel"><div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
+
+ <p class="muted" style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p>
+
+ <p class="muted">${safe(o.address)}</p><b class="price">${money(o.total)}</b>
+
+ ${o.status==="accepted"?`<button class="primary" style="margin-top:12px" onclick="updateOrderStatus('${o.id}','picked_up')">Commande récupérée</button>`:""}
+
+ ${o.status==="picked_up"?`<button class="primary" style="margin-top:12px" onclick="updateOrderStatus('${o.id}','delivered')">Confirmer la livraison</button>`:""}
+
+ </div>`;
+
+}
+
+async function loginWorker(){
+
+ const pass=$("workerPassword").value;
+
+ const w=data.workers.find(x=>x.password===pass&&x.active!==false);
+
+ if(!w){toast("Mot de passe incorrect.");return}
+
+ currentWorker=w;isAdmin=false;renderWork();
+
+}
+
+function loginAdminWork(){
+
+ if($("workAdminPassword").value!==ADMIN_PASSWORD){toast("Mot de passe incorrect.");return}
+
+ isAdmin=true;currentWorker=null;renderWork();
+
+}
+
+function logoutWork(){currentWorker=null;isAdmin=false;renderWork()}
+
+async function acceptOrder(id){
+
+ if(!currentWorker)return;
+
+ const ref=db.ref(ROOT+"/orders/"+id);
+
+ try{
+
+  const result=await ref.transaction(o=>{
+
+   if(!o||o.status!=="pending"||o.workerId)return;
+
+   o.workerId=currentWorker.id;o.status="accepted";o.acceptedAt=Date.now();
+
+   return o;
 
   });
 
-  const img=await new Promise((resolve,reject)=>{
+  if(!result.committed){toast("Cette commande a déjà été prise.");return}
 
-    const image=new Image();
+  toast("Commande acceptée !");
 
-    image.onload=()=>resolve(image);
+  notify("Nouvelle commande","Vous avez accepté une commande.");
 
-    image.onerror=()=>reject(Error("Could not process image."));
+  renderWork();
 
-    image.src=original;
-
-  });
-
-  const maxSide=900;
-
-  const scale=Math.min(1,maxSide/Math.max(img.width,img.height));
-
-  const canvas=document.createElement("canvas");
-
-  canvas.width=Math.max(1,Math.round(img.width*scale));
-
-  canvas.height=Math.max(1,Math.round(img.height*scale));
-
-  const ctx=canvas.getContext("2d");
-
-  ctx.drawImage(img,0,0,canvas.width,canvas.height);
-
-  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.7));
-
-  if(!blob)throw Error("Could not compress image.");
-
-  return await new Promise((resolve,reject)=>{
-
-    const reader=new FileReader();
-
-    reader.onload=()=>resolve(reader.result);
-
-    reader.onerror=()=>reject(Error("Could not prepare image."));
-
-    reader.readAsDataURL(blob);
-
-  });
+ }catch(e){toast(e.message)}
 
 }
 
-async function saveProduct(e){
+async function updateOrderStatus(id,status){
 
-  e.preventDefault();
+ const o=data.orders.find(x=>x.id===id);
 
-  const form=e.target,data=new FormData(form),submit=form.querySelector('[type=submit]');
+ if(!o||!currentWorker||o.workerId!==currentWorker.id)return;
 
-  submit.disabled=true;submit.textContent="SAVING...";
+ const update={status,updatedAt:Date.now()};
 
-  try{
+ if(status==="delivered"){
 
-    const old=state.products.find(p=>p.id===editingProduct);
+  update.deliveredAt=Date.now();
 
-    let image=String(data.get("imageUrl")||"").trim();
+  update.workerEarning=Number(o.workerEarning??(Number(o.deliveryPrice||data.settings.deliveryPrice)*0.8));
 
-    const file=$("imageFile").files[0];
+ }
 
-    if(file)image=await uploadImage(file);
+ await db.ref(ROOT+"/orders/"+id).update(update);
 
-    else if(old&&!image)image=old.image||"";
-
-    const enteredStock=Number(data.get("stock"));
-
-    const p={
-
-      id:editingProduct||uid(),name:String(data.get("name")||"").trim(),
-
-      description:String(data.get("description")||"").trim(),
-
-      price:Number(data.get("price")),stock:enteredStock,image,
-
-      active:$("productActive").checked,createdAt:old?.createdAt||new Date().toISOString(),
-
-      updatedAt:new Date().toISOString()
-
-    };
-
-    if(!p.name||!Number.isFinite(p.price)||p.price<0||!Number.isInteger(p.stock)||p.stock<0)throw Error("Check product name, price and stock.");
-
-    if(old){
-
-      const alreadyReserved=state.orders.reduce((sum,o)=>{
-
-        if(!o.stockDeducted||(o.status||"New")==="Cancelled")return sum;
-
-        return sum+(o.items||[]).reduce((n,i)=>n+(i.productId===old.id?(Number(i.quantity)||0):0),0);
-
-      },0);
-
-      if(enteredStock<alreadyReserved)throw Error(`Stock cannot be lower than ${alreadyReserved} pieces reserved by active orders.`);
-
-      state.products=state.products.map(x=>x.id===old.id?p:x);
-
-    }else state.products.unshift(p);
-
-    editingProduct=null;await saveState();renderAdmin();
-
-    notify(cloudReady?"Product saved and synchronized.":"Product saved locally. Configure Firebase to share it.");
-
-  }catch(err){notify(err.message||"Could not save product.");submit.disabled=false;submit.textContent="SAVE PRODUCT";}
+ toast("Statut mis à jour.");renderWork();
 
 }
 
-async function toggleProduct(id){
+function workerDashboard(){
 
-  const p=state.products.find(x=>x.id===id);if(!p)return;
+ const delivered=data.orders.filter(o=>o.status==="delivered");
 
-  p.active=p.active===false;await saveState();renderAdmin();
+ const total=delivered.reduce((s,o)=>s+Number(o.total),0);
 
-}
+ return `<div class="stat-grid">
 
-async function deleteProduct(id){
+ <div class="stat"><strong>${data.workers.length}</strong><small>Livreurs</small></div>
 
-  const p=state.products.find(x=>x.id===id);if(!p||!confirm("Delete "+p.name+"?"))return;
+ <div class="stat"><strong>${data.orders.length}</strong><small>Commandes</small></div>
 
-  state.products=state.products.filter(x=>x.id!==id);await saveState();renderAdmin();notify("Product deleted.");
+ <div class="stat"><strong>${money(total)}</strong><small>Volume livré</small></div>
 
-}
+ <div class="stat"><strong>${data.applications.filter(a=>a.status==="pending").length}</strong><small>Candidatures</small></div>
 
-function ordersHTML(){
-
-  return `<div class="heading"><div><h2>Orders</h2><p class="muted">${state.orders.length} orders</p></div><button class="btn outline small" onclick="exportOrders()">EXPORT CSV</button></div>
-
-  <div class="field"><label>FILTER</label><select id="orderFilter" onchange="filterOrders()"><option value="all">All orders</option>${["New","Confirmed","Shipped","Completed","Cancelled"].map(s=>`<option value="${s}">${({New:"انتظار",Confirmed:"تم",Shipped:"تم",Completed:"تم",Cancelled:"رفض"})[s]}</option>`).join("")}</select></div>
-
-  <div id="ordersList">${state.orders.length?state.orders.map(orderHTML).join(""):'<div class="empty">No orders yet.</div>'}</div>`;
+ </div><div class="section-head"><h2>Commandes récentes</h2></div>${data.orders.slice(0,10).map(o=>`<div class="panel"><b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span><p class="muted">${safe(o.customerName)} · ${safe(o.phone)}</p><b>${money(o.total)}</b></div>`).join("")}`;
 
 }
 
-function orderHTML(o){
+/* STAFF */
 
-  const c=o.customer||{},items=Array.isArray(o.items)?o.items:[];
+function renderStaff(){
 
-  const status=o.status||"New";
+ if(!isAdmin){
 
-  const done=["Confirmed","Shipped","Completed"].includes(status);
+  $("staffContent").innerHTML=`<h2 style="font-size:25px">STAFF</h2><p class="muted" style="margin:7px 0 20px">Centre de contrôle Tout de suite.</p>
 
-  const rejected=status==="Cancelled";
+  <div class="panel"><h3>Accès administrateur</h3><div class="field"><label>Mot de passe</label><input id="staffPassword" type="password" placeholder="Mot de passe administrateur"></div><button class="primary" onclick="loginStaff()">Entrer dans STAFF</button></div>`;
 
-  const label=rejected?"رفض":done?"تم":"انتظار";
+  return;
 
-  const badgeClass=rejected?"status-reject":done?"status-done":"status-wait";
+ }
 
-  return `<div class="order-card" data-status="${esc(status)}">
+ const tabs=["dashboard","applications","workers","orders","products","restaurants","categories","offers","finance","settings"];
 
-  <div class="order-top"><strong>طلب رقم #${esc(o.id)}</strong><span class="badge ${badgeClass}">${label}</span></div>
+ $("staffContent").innerHTML=`<div class="between"><div><h2>STAFF</h2><p class="muted">Control Center</p></div><button class="secondary" onclick="logoutStaff()">Quitter</button></div>
 
-  <p class="muted" style="font-size:12px;font-weight:700">${esc(o.createdAt?new Date(o.createdAt).toLocaleString():"")}</p>
+ <div class="admin-tabs" style="margin-top:18px">${tabs.map(t=>`<button class="admin-tab ${selectedAdminTab===t?"active":""}" onclick="adminTab('${t}')">${t.toUpperCase()}</button>`).join("")}</div>
 
-  <div class="order-details">الاسم: ${esc(c.name)}
+ <div id="adminContent"></div>`;
 
-رقم الهاتف: ${esc(c.phone)}
-
-العنوان: ${esc(c.address)}
-
-ملاحظات: ${esc(c.notes||"—")}</div>
-
-  <div class="order-items">${items.map(i=>`<div><strong>${esc(i.name)} × ${Number(i.quantity)||1}</strong> — ${money((Number(i.price)||0)*(Number(i.quantity)||1))}</div>`).join("")}
-
-  <strong style="display:block;margin-top:8px;font-size:17px">المجموع: ${money(o.total)}</strong></div>
-
-  <div class="order-status-actions">
-
-    <button type="button" class="status-done ${done?"current":""}" onclick="changeStatus('${esc(o.id)}','Confirmed')">✓ تم</button>
-
-    <button type="button" class="status-wait ${status==="New"?"current":""}" onclick="changeStatus('${esc(o.id)}','New')">◷ انتظار</button>
-
-    <button type="button" class="status-reject ${rejected?"current":""}" onclick="changeStatus('${esc(o.id)}','Cancelled')">✕ رفض</button>
-
-  </div>
-
-  <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn red small" onclick="deleteOrder('${esc(o.id)}')">حذف الطلب</button></div>
-
-  </div>`;
+ renderAdminTab();
 
 }
 
-function filterOrders(){
+function loginStaff(){
 
-  const f=$("orderFilter").value;
+ if($("staffPassword").value!==ADMIN_PASSWORD){toast("Mot de passe incorrect.");return}
 
-  document.querySelectorAll("#ordersList .order-card").forEach(card=>{
-
-    const status=card.dataset.status;
-
-    const matches=f==="all"||status===f||(f==="Confirmed"&&["Confirmed","Shipped","Completed"].includes(status));
-
-    card.classList.toggle("hidden",!matches);
-
-  });
+ isAdmin=true;selectedAdminTab="dashboard";renderStaff();
 
 }
 
-async function changeStatus(id,status){
+function logoutStaff(){isAdmin=false;renderStaff()}
 
-  const o=state.orders.find(x=>x.id===id);if(!o)return;
+function adminTab(t){selectedAdminTab=t;renderStaff()}
 
-  const oldStatus=o.status||"New";
+function renderAdminTab(){
 
-  if(status==="Cancelled"&&oldStatus!=="Cancelled"&&o.stockDeducted){
+ const el=$("adminContent");if(!el)return;
 
-    for(const item of (o.items||[])){
+ switch(selectedAdminTab){
 
-      const p=state.products.find(x=>x.id===item.productId);
+ case"dashboard":
 
-      if(p)p.stock=stockOf(p)+(Number(item.quantity)||0);
+ el.innerHTML=`<h3>Dashboard</h3><div class="stat-grid">
 
-    }
+ <div class="stat"><strong>${data.products.length}</strong><small>Produits</small></div>
 
-    o.stockDeducted=false;
+ <div class="stat"><strong>${data.restaurants.length}</strong><small>Restaurants</small></div>
 
-  }else if(oldStatus==="Cancelled"&&status!=="Cancelled"&&!o.stockDeducted){
+ <div class="stat"><strong>${data.workers.length}</strong><small>Travailleurs</small></div>
 
-    for(const item of (o.items||[])){
+ <div class="stat"><strong>${data.orders.length}</strong><small>Commandes</small></div>
 
-      const p=state.products.find(x=>x.id===item.productId);
+ <div class="stat"><strong>${money(data.orders.filter(o=>o.status==="delivered").reduce((s,o)=>s+Number(o.total),0))}</strong><small>Volume livré</small></div>
 
-      if(!p||stockOf(p)<(Number(item.quantity)||0)){
+ <div class="stat"><strong>${data.applications.filter(a=>a.status==="pending").length}</strong><small>Demandes en attente</small></div>
 
-        notify(`Cannot reactivate order: insufficient stock for ${item.name}.`);
+ </div><div class="panel" style="margin-top:15px"><h3>Actions rapides</h3><button class="secondary" onclick="adminTab('products')">+ Produit</button> <button class="secondary" onclick="adminTab('restaurants')">+ Restaurant</button> <button class="secondary" onclick="adminTab('offers')">+ Offre</button></div>`;
 
-        renderAdmin();return;
+ break;
 
-      }
+ case"applications":
 
-    }
+ el.innerHTML=`<h3>Candidatures (${data.applications.filter(a=>a.status==="pending").length})</h3>`+
 
-    for(const item of (o.items||[])){
+ data.applications.slice().reverse().map(a=>`<div class="panel">
 
-      const p=state.products.find(x=>x.id===item.productId);
+ <div class="row"><img class="avatar" src="${imageUrl(a.image)}"><div><b>${safe(a.firstName)} ${safe(a.lastName)}</b><p class="muted">${safe(a.phone)} · ${safe(a.age)} ans</p></div></div>
 
-      if(p)p.stock=stockOf(p)-(Number(item.quantity)||0);
+ <p style="margin-top:12px">Moto : ${safe(a.moto)}</p><p class="muted">${safe(a.note)}</p>
 
-    }
+ ${a.motoImage?`<img src="${imageUrl(a.motoImage)}" style="width:100%;max-height:150px;object-fit:contain;margin-top:10px">`:""}
 
-    o.stockDeducted=true;
+ <p class="muted" style="margin:10px 0">Statut : ${safe(a.status)}</p>
 
-  }
+ ${a.status==="pending"?`<button class="primary" onclick="approveApplication('${a.id}')">ACCEPTER</button><button class="danger" style="margin:8px" onclick="rejectApplication('${a.id}')">REFUSER</button>`:""}
 
-  o.status=status;await saveState();renderAdmin();notify("Order updated.");
+ </div>`).join("")||'<div class="empty">Aucune candidature.</div>';
+
+ break;
+
+ case"workers":
+
+ el.innerHTML=`<div class="between"><h3>Équipe (${data.workers.length})</h3></div>`+
+
+ data.workers.map(w=>`<div class="panel"><div class="row"><img class="avatar" src="${imageUrl(w.image)}"><div><b>${safe(w.firstName)} ${safe(w.lastName)}</b><p class="muted">${safe(w.phone)} · ${safe(w.moto)}</p></div></div>
+
+ <p class="muted" style="margin:10px 0">Livraisons : ${data.orders.filter(o=>o.workerId===w.id&&o.status==="delivered").length}</p>
+
+ <div class="row"><button class="secondary" onclick="editWorker('${w.id}')">Modifier</button><button class="danger" onclick="toggleWorker('${w.id}')">${w.active===false?"Activer":"Désactiver"}</button></div></div>`).join("")||'<div class="empty">Aucun livreur.</div>';
+
+ break;
+
+ case"orders":
+
+ el.innerHTML=`<h3>Toutes les commandes</h3>`+data.orders.slice().reverse().map(o=>`<div class="panel">
+
+ <div class="between"><b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
+
+ <p style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p><p class="muted">${safe(o.address)}</p>
+
+ <p class="muted" style="margin:7px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
+
+ <div class="between"><b>${money(o.total)}</b><span class="muted">${new Date(o.createdAt).toLocaleString("fr-FR")}</span></div>
+
+ <div class="field"><label>Changer le statut</label><select onchange="adminOrderStatus('${o.id}',this.value)">${["pending","accepted","picked_up","delivered","cancelled"].map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+
+ </div>`).join("")||'<div class="empty">Aucune commande.</div>';
+
+ break;
+
+ case"products":
+
+ el.innerHTML=`<div class="between"><h3>Produits</h3><button class="primary" style="width:auto" onclick="productForm()">+ Ajouter</button></div>`+
+
+ data.products.map(p=>`<div class="list-item between"><div class="product-line"><img src="${imageUrl(p.image)}"><div><b>${safe(p.name)}</b><p class="muted">${money(p.price)}</p></div></div><div><button class="secondary" onclick="productForm('${p.id}')">✎</button><button class="danger" onclick="deleteItem('products','${p.id}')">×</button></div></div>`).join("")||'<div class="empty">Aucun produit.</div>';
+
+ break;
+
+ case"restaurants":
+
+ el.innerHTML=`<div class="between"><h3>Restaurants</h3><button class="primary" style="width:auto" onclick="restaurantForm()">+ Ajouter</button></div>`+
+
+ data.restaurants.map(r=>`<div class="list-item between"><div class="product-line"><img src="${imageUrl(r.image)}"><div><b>${safe(r.name)}</b><p class="muted">Livraison : ${money(r.deliveryPrice??data.settings.deliveryPrice)}</p></div></div><div><button class="secondary" onclick="restaurantForm('${r.id}')">✎</button><button class="danger" onclick="deleteItem('restaurants','${r.id}')">×</button></div></div>`).join("")||'<div class="empty">Aucun restaurant.</div>';
+
+ break;
+
+ case"categories":
+
+ el.innerHTML=`<div class="between"><h3>Catégories</h3><button class="primary" style="width:auto" onclick="categoryForm()">+ Ajouter</button></div>`+
+
+ data.categories.map(c=>`<div class="list-item between"><b>${safe(c.emoji)} ${safe(c.name)}</b><div><button class="secondary" onclick="categoryForm('${c.id}')">✎</button><button class="danger" onclick="deleteItem('categories','${c.id}')">×</button></div></div>`).join("");
+
+ break;
+
+ case"offers":
+
+ el.innerHTML=`<div class="between"><h3>Offres spéciales</h3><button class="primary" style="width:auto" onclick="offerForm()">+ Ajouter</button></div>`+
+
+ data.offers.map(o=>`<div class="list-item between"><div><b>${safe(o.name)}</b><p class="muted">${safe(o.description)}</p></div><div><button class="secondary" onclick="offerForm('${o.id}')">✎</button><button class="danger" onclick="deleteItem('offers','${o.id}')">×</button></div></div>`).join("");
+
+ break;
+
+ case"finance":
+
+ const completed=data.orders.filter(o=>o.status==="delivered");
+
+ const gross=completed.reduce((s,o)=>s+Number(o.total),0);
+
+ const workerTotal=completed.reduce((s,o)=>s+Number(o.workerEarning||0),0);
+
+ el.innerHTML=`<h3>Finances</h3><div class="stat-grid">
+
+ <div class="stat"><strong>${money(gross)}</strong><small>Montant des commandes livrées</small></div>
+
+ <div class="stat"><strong>${money(workerTotal)}</strong><small>Gains enregistrés des livreurs</small></div>
+
+ <div class="stat"><strong>${money(gross-workerTotal)}</strong><small>Solde théorique</small></div>
+
+ </div><p class="notice" style="margin-top:15px">Ces montants sont calculés à partir des commandes enregistrées. Ils ne représentent pas une confirmation de paiement réel.</p>
+
+ <h3>Par livreur</h3>${data.workers.map(w=>`<div class="panel"><b>${safe(w.firstName)} ${safe(w.lastName)}</b><p class="muted">${money(completed.filter(o=>o.workerId===w.id).reduce((s,o)=>s+Number(o.workerEarning||0),0))}</p></div>`).join("")}`;
+
+ break;
+
+ case"settings":
+
+ el.innerHTML=`<h3>Paramètres du site</h3>
+
+ <div class="panel"><div class="field"><label>Nom du site</label><input id="settingName" value="${safe(data.settings.name)}"></div>
+
+ <div class="field"><label>Prix de livraison par défaut (DT)</label><input id="settingDelivery" type="number" step=".1" value="${Number(data.settings.deliveryPrice)}"></div>
+
+ <button class="primary" onclick="saveSettings()">Enregistrer</button></div>`;
+
+ break;
+
+ }
 
 }
 
-async function deleteOrder(id){
+async function approveApplication(id){
 
-  const o=state.orders.find(x=>x.id===id);
+ const a=data.applications.find(x=>x.id===id);if(!a)return;
 
-  if(!o||!confirm("Delete this order permanently?"))return;
+ const pass=prompt("Définir le mot de passe du livreur :");
 
-  if(o.stockDeducted&&(o.status||"New")!=="Cancelled"){
+ if(!pass||pass.length<6){toast("Mot de passe trop court (6 caractères minimum).");return}
 
-    for(const item of (o.items||[])){
+ const w={...a,id:uid(),password:pass,active:true,joinedAt:Date.now()};
 
-      const p=state.products.find(x=>x.id===item.productId);
+ delete w.status;
 
-      if(p)p.stock=stockOf(p)+(Number(item.quantity)||0);
+ await db.ref(ROOT+"/workers/"+w.id).set(w);
 
-    }
+ await db.ref(ROOT+"/applications/"+id).update({status:"accepted",workerId:w.id});
 
-  }
+ a.status="accepted";
 
-  state.orders=state.orders.filter(x=>x.id!==id);await saveState();renderAdmin();notify("Order deleted.");
+ data.workers.push(w);
 
-}
+ notifyWorker(w.id,"Candidature acceptée","Bienvenue dans l'équipe Tout de suite !");
 
-function exportOrders(){
+ toast("Livreur accepté.");
 
-  const rows=[["Order ID","Date","Status","Name","Phone","Address","Notes","Products","Total"]];
-
-  state.orders.forEach(o=>{const c=o.customer||{};rows.push([o.id,o.createdAt,o.status,c.name,c.phone,c.address,c.notes,(o.items||[]).map(i=>i.name+" x"+i.quantity).join("; "),o.total]);});
-
-  const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
-
-  const url=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
-
-  const a=document.createElement("a");a.href=url;a.download="LEVEL-Up_orders.csv";a.click();URL.revokeObjectURL(url);
+ renderStaff();
 
 }
 
-function customizeHTML(){
+async function rejectApplication(id){
 
-  const s=state.settings;
+ if(!confirm("Refuser cette candidature ?"))return;
 
-  return `<h2>Customize storefront</h2><form onsubmit="saveCustomization(event)">
+ await db.ref(ROOT+"/applications/"+id).update({status:"rejected"});
 
-  <div class="field"><label>HERO LABEL</label><input name="heroTag" maxlength="100" value="${esc(s.heroTag)}"></div>
-
-  <div class="field"><label>HERO TITLE</label><input name="heroTitle" maxlength="100" value="${esc(s.heroTitle)}"></div>
-
-  <div class="field"><label>HERO DESCRIPTION</label><textarea name="heroDescription" maxlength="1000">${esc(s.heroDescription)}</textarea></div>
-
-  <div class="field"><label>SHOP TITLE</label><input name="shopTitle" maxlength="100" value="${esc(s.shopTitle)}"></div>
-
-  <div class="field"><label>SHOP DESCRIPTION</label><textarea name="shopDescription" maxlength="1000">${esc(s.shopDescription)}</textarea></div>
-
-  <div class="field"><label>FOOTER TEXT</label><input name="footerText" maxlength="200" value="${esc(s.footerText)}"></div>
-
-  <button class="btn">SAVE CHANGES</button></form><p><button class="btn outline" onclick="showPage('shop')">PREVIEW STORE</button></p>`;
+ toast("Candidature refusée.");renderStaff();
 
 }
 
-async function saveCustomization(e){
+async function toggleWorker(id){
 
-  e.preventDefault();const d=new FormData(e.target);
+ const w=data.workers.find(x=>x.id===id);if(!w)return;
 
-  ["heroTag","heroTitle","heroDescription","shopTitle","shopDescription","footerText"].forEach(k=>state.settings[k]=String(d.get(k)||"").trim());
+ const active=w.active===false;
 
-  await saveState();renderAdmin();notify("Storefront updated.");
+ await db.ref(ROOT+"/workers/"+id).update({active});
+
+ toast(active?"Compte activé":"Compte désactivé");renderStaff();
 
 }
 
-function settingsHTML(){
+function editWorker(id){
 
-  return `<h2>Settings</h2><div class="field"><label>CURRENCY</label><select id="currency">${["TND","EUR","USD","GBP","SAR","AED","DZD","MAD"].map(x=>`<option ${state.settings.currency===x?"selected":""}>${x}</option>`).join("")}</select></div>
+ const w=data.workers.find(x=>x.id===id);if(!w)return;
 
-  <button class="btn" onclick="saveSettings()">SAVE SETTINGS</button><hr style="border:0;border-top:1px solid #49365f;margin:25px 0">
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>Modifier le livreur</h2>
 
-  <h3>Backup</h3><div class="row"><button class="btn outline" onclick="exportBackup()">EXPORT</button><button class="btn outline" onclick="$('backupFile').click()">IMPORT</button></div>
+ <div class="field"><label>Prénom</label><input id="editWFirst" value="${safe(w.firstName)}"></div>
 
-  <input id="backupFile" class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)">
+ <div class="field"><label>Nom</label><input id="editWLast" value="${safe(w.lastName)}"></div>
 
-  <p class="muted" style="margin-top:20px">${cloudReady?"Firebase cloud synchronization is active.":"Firebase is not configured; data is limited to this browser."}</p>`;
+ <div class="field"><label>Téléphone</label><input id="editWPhone" value="${safe(w.phone)}"></div>
+
+ <div class="field"><label>Type de moto</label><input id="editWMoto" value="${safe(w.moto)}"></div>
+
+ <div class="field"><label>Nouveau mot de passe (facultatif)</label><input id="editWPass" type="password"></div>
+
+ <button class="primary" onclick="saveWorker('${id}')">Enregistrer</button>`);
+
+}
+
+async function saveWorker(id){
+
+ const w=data.workers.find(x=>x.id===id);
+
+ const update={firstName:$("editWFirst").value,lastName:$("editWLast").value,phone:$("editWPhone").value,moto:$("editWMoto").value};
+
+ if($("editWPass").value)update.password=$("editWPass").value;
+
+ await db.ref(ROOT+"/workers/"+id).update(update);closeModal();toast("Profil modifié");renderStaff();
+
+}
+
+async function adminOrderStatus(id,status){
+
+ await db.ref(ROOT+"/orders/"+id).update({status,updatedAt:Date.now()});
+
+ toast("Statut modifié.");renderStaff();
+
+}
+
+function deleteItem(collection,id){
+
+ if(!confirm("Confirmer la suppression ?"))return;
+
+ db.ref(ROOT+"/"+collection+"/"+id).remove().then(()=>toast("Supprimé."));
 
 }
 
 async function saveSettings(){
 
-  state.settings.currency=$("currency").value;await saveState();renderAdmin();notify("Settings saved.");
+ data.settings.name=$("settingName").value;
+
+ data.settings.deliveryPrice=Number($("settingDelivery").value);
+
+ await db.ref(ROOT+"/settings").set(data.settings);
+
+ toast("Paramètres enregistrés.");
 
 }
 
-function exportBackup(){
+/* PRODUCT EDITOR */
 
-  const url=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
+function productForm(id){
 
-  const a=document.createElement("a");a.href=url;a.download="LEVEL-Up_backup.json";a.click();URL.revokeObjectURL(url);
+ const p=data.products.find(x=>x.id===id)||{name:"",price:"",description:"",category:"",restaurantId:"",image:""};
 
-}
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?"Modifier":"Ajouter"} un produit</h2>
 
-async function importBackup(e){
+ <div class="field"><label>Nom</label><input id="pName" value="${safe(p.name)}"></div>
 
-  const f=e.target.files[0];if(!f)return;
+ <div class="field"><label>Description</label><textarea id="pDesc">${safe(p.description)}</textarea></div>
 
-  try{
+ <div class="field"><label>Prix (DT)</label><input id="pPrice" type="number" step=".01" value="${safe(p.price)}"></div>
 
-    const d=JSON.parse(await f.text());
+ <div class="field"><label>Catégorie</label><select id="pCategory"><option value="">Aucune</option>${data.categories.map(c=>`<option value="${c.id}" ${p.category===c.id?"selected":""}>${safe(c.name)}</option>`).join("")}</select></div>
 
-    if(!Array.isArray(d.products)||!Array.isArray(d.orders))throw Error("Invalid backup.");
+ <div class="field"><label>Restaurant (facultatif)</label><select id="pRestaurant"><option value="">Produit indépendant</option>${data.restaurants.map(r=>`<option value="${r.id}" ${p.restaurantId===r.id?"selected":""}>${safe(r.name)}</option>`).join("")}</select></div>
 
-    if(!confirm("Replace current store data with this backup?"))return;
+ ${imageInput("pImage")}
 
-    state={settings:{...defaults.settings,...(d.settings||{})},products:d.products,orders:d.orders};
-
-    await saveState();renderAdmin();notify("Backup imported.");
-
-  }catch(err){notify(err.message||"Import failed.");}
-
-  finally{e.target.value="";}
+ <button class="primary" onclick="saveProduct('${id||""}')">Enregistrer</button>`);
 
 }
 
-function loadScript(src){
+async function saveProduct(id){
 
-  return new Promise((resolve,reject)=>{
+ const name=$("pName").value.trim(),price=Number($("pPrice").value);
 
-    const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=()=>reject(Error("Firebase SDK failed to load."));document.head.appendChild(s);
+ if(!name||!Number.isFinite(price)||price<0){toast("Nom et prix valides obligatoires.");return}
 
-  });
+ const old=data.products.find(x=>x.id===id);
 
-}
+ let image=old?.image||"";
 
-async function initFirebase(){
+ const f=$("pImage").files[0];if(f)image=await fileToData(f);
 
-  if(!configured){updateNotice();return;}
+ const p={id:id||uid(),name,price,description:$("pDesc").value,category:$("pCategory").value,restaurantId:$("pRestaurant").value,image,active:true};
 
-  try{
+ await db.ref(ROOT+"/products/"+p.id).set(p);
 
-    await loadScript(SDK+"firebase-app-compat.js");
-
-    await loadScript(SDK+"firebase-database-compat.js");
-
-    await loadScript(SDK+"firebase-storage-compat.js");
-
-    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-
-    db=firebase.database();storage=firebase.storage();
-
-    const ref=db.ref("vyro01");
-
-    const snap=await ref.once("value");
-
-    const cloud=snap.val();
-
-    if(cloud&&typeof cloud==="object"){
-
-      state={settings:{...defaults.settings,...(cloud.settings||{})},products:Array.isArray(cloud.products)?cloud.products:[],orders:Array.isArray(cloud.orders)?cloud.orders:[]};
-
-    }else{
-
-      await ref.set(state);
-
-    }
-
-    cloudReady=true;saveLocal();renderStore();updateNotice();
-
-    ref.on("value",s=>{
-
-      const d=s.val();if(!d||typeof d!=="object")return;
-
-      lastCloudUpdate=Date.now();
-
-      state={settings:{...defaults.settings,...(d.settings||{})},products:Array.isArray(d.products)?d.products:[],orders:Array.isArray(d.orders)?d.orders:[]};
-
-      saveLocal();renderStore();
-
-      if(loggedIn&&!$("adminPage").classList.contains("hidden"))renderAdmin();
-
-    },err=>{console.error(err);cloudReady=false;updateNotice();});
-
-  }catch(err){console.error("Firebase initialization error:",err);cloudReady=false;updateNotice();}
+ closeModal();toast("Produit enregistré.");renderStaff();
 
 }
 
-loadLocal();
+function restaurantForm(id){
 
-renderStore();
+ const r=data.restaurants.find(x=>x.id===id)||{name:"",description:"",deliveryPrice:data.settings.deliveryPrice,image:""};
 
-updateNotice();
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?"Modifier":"Ajouter"} un restaurant</h2>
 
-initFirebase();
+ <div class="field"><label>Nom</label><input id="rName" value="${safe(r.name)}"></div>
 
-$("passwordOverlay").addEventListener("click",e=>{if(e.target===$("passwordOverlay"))closePassword();});
+ <div class="field"><label>Description</label><textarea id="rDesc">${safe(r.description)}</textarea></div>
 
-$("orderOverlay").addEventListener("click",e=>{if(e.target===$("orderOverlay"))closeOrder();});
+ <div class="field"><label>Prix de livraison (DT)</label><input id="rDelivery" type="number" step=".1" value="${Number(r.deliveryPrice)}"></div>
 
-document.addEventListener("keydown",e=>{
+ ${imageInput("rImage")}
 
-  if(e.key==="Escape"){
+ <button class="primary" onclick="saveRestaurant('${id||""}')">Enregistrer</button>`);
 
-    closePassword();
+}
 
-    closeOrder();
+async function saveRestaurant(id){
 
-    closeProductDetails();
+ const name=$("rName").value.trim();if(!name){toast("Nom obligatoire.");return}
 
-  }
+ const old=data.restaurants.find(x=>x.id===id);let image=old?.image||"";
 
-});
+ if($("rImage").files[0])image=await fileToData($("rImage").files[0]);
+
+ const r={id:id||uid(),name,description:$("rDesc").value,deliveryPrice:Number($("rDelivery").value),image,active:true};
+
+ await db.ref(ROOT+"/restaurants/"+r.id).set(r);
+
+ closeModal();toast("Restaurant enregistré.");renderStaff();
+
+}
+
+function categoryForm(id){
+
+ const c=data.categories.find(x=>x.id===id)||{name:"",emoji:"🛍️"};
+
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>Catégorie</h2>
+
+ <div class="field"><label>Nom</label><input id="cName" value="${safe(c.name)}"></div>
+
+ <div class="field"><label>Emoji</label><input id="cEmoji" value="${safe(c.emoji)}"></div>
+
+ <button class="primary" onclick="saveCategory('${id||""}')">Enregistrer</button>`);
+
+}
+
+async function saveCategory(id){
+
+ const c={id:id||uid(),name:$("cName").value.trim(),emoji:$("cEmoji").value.trim()};
+
+ if(!c.name)return;
+
+ await db.ref(ROOT+"/categories/"+c.id).set(c);closeModal();renderStaff();
+
+}
+
+function offerForm(id){
+
+ const o=data.offers.find(x=>x.id===id)||{name:"",description:"",image:""};
+
+ openModal(`<button class="close" onclick="closeModal()">×</button><h2>Offre spéciale</h2>
+
+ <div class="field"><label>Titre</label><input id="oName" value="${safe(o.name)}"></div>
+
+ <div class="field"><label>Description</label><textarea id="oDesc">${safe(o.description)}</textarea></div>
+
+ ${imageInput("oImage")}
+
+ <button class="primary" onclick="saveOffer('${id||""}')">Enregistrer</button>`);
+
+}
+
+async function saveOffer(id){
+
+ const old=data.offers.find(x=>x.id===id);let image=old?.image||"";
+
+ if($("oImage").files[0])image=await fileToData($("oImage").files[0]);
+
+ const o={id:id||uid(),name:$("oName").value,description:$("oDesc").value,image,active:true};
+
+ if(!o.name.trim())return;
+
+ await db.ref(ROOT+"/offers/"+o.id).set(o);closeModal();renderStaff();
+
+}
+
+/* LIVE REFRESH */
+
+setInterval(()=>{
+
+ if(activePage==="work"&&currentWorker){
+
+  const el=$("availableOrders");
+
+  if(el)el.innerHTML=availableOrdersHTML();
+
+ }
+
+},5000);
+
+/* DATA MIGRATION / STRUCTURE */
+
+db.ref(ROOT).once("value").then(s=>{
+
+ if(!s.exists()){
+
+  const initial={
+
+   settings:data.settings,
+
+   categories:Object.fromEntries(data.categories.map(x=>[x.id,x])),
+
+   products:{},restaurants:{},workers:{},applications:{},orders:{},offers:{},notifications:{}
+
+  };
+
+  return db.ref(ROOT).set(initial);
+
+ }
+
+}).catch(e=>console.error(e));
+
+/* SYSTEM */
+
+window.addEventListener("online",()=>toast("Connexion rétablie."));
+
+window.addEventListener("offline",()=>toast("Connexion Internet perdue."));
 
 </script>
 
