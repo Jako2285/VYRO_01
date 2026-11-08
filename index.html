@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 
 <html lang="fr">
@@ -254,17 +252,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 </section>
 
-<section id="work" class="page">
+<section id="work" class="page"><div id="workContent"></div></section>
 
- <div id="workContent"></div>
-
-</section>
-
-<section id="staff" class="page">
-
- <div id="staffContent"></div>
-
-</section>
+<section id="staff" class="page"><div id="staffContent"></div></section>
 
 </main>
 
@@ -378,11 +368,25 @@ const imageUrl=s=>s||imgFallback;
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 
+/* تحويل بيانات Firebase إلى قوائم JavaScript */
+
+function normalizeCollection(value){
+
+ if(Array.isArray(value))return value.filter(Boolean);
+
+ if(value&&typeof value==="object")return Object.values(value).filter(Boolean);
+
+ return [];
+
+}
+
 function toast(msg){
 
  const t=$("toast");t.textContent=msg;t.style.display="block";
 
- clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display="none",3000);
+ clearTimeout(window.toastTimer);
+
+ window.toastTimer=setTimeout(()=>t.style.display="none",3000);
 
 }
 
@@ -414,13 +418,59 @@ function showPage(page){
 
 }
 
-function save(){
+/* حفظ آمن يحافظ على بنية Firebase */
 
- if(!dbReady)return;
+function collectionToObject(list){
 
- return db.ref(ROOT).set(data).catch(e=>toast("Erreur Firebase : "+e.message));
+ const result={};
+
+ (Array.isArray(list)?list:[]).filter(Boolean).forEach(item=>{
+
+  if(item.id)result[item.id]=item;
+
+ });
+
+ return result;
 
 }
+
+function save(){
+
+ if(!dbReady)return Promise.reject(new Error("Firebase n'est pas connecté."));
+
+ const payload={
+
+  settings:data.settings,
+
+  products:collectionToObject(data.products),
+
+  restaurants:collectionToObject(data.restaurants),
+
+  categories:collectionToObject(data.categories),
+
+  workers:collectionToObject(data.workers),
+
+  applications:collectionToObject(data.applications),
+
+  orders:collectionToObject(data.orders),
+
+  offers:collectionToObject(data.offers),
+
+  notifications:collectionToObject(data.notifications)
+
+ };
+
+ return db.ref(ROOT).update(payload).catch(e=>{
+
+  toast("Erreur Firebase : "+e.message);
+
+  throw e;
+
+ });
+
+}
+
+/* الاستماع إلى قاعدة البيانات */
 
 function subscribe(){
 
@@ -428,67 +478,105 @@ function subscribe(){
 
   if(snap.exists()){
 
-   const d=snap.val();
+   const d=snap.val()||{};
 
-   data={...data,...d};
+   data.settings={
 
-   data.settings={...{name:"Tout de suite",deliveryPrice:3,currency:"DT"},...data.settings};
+    name:"Tout de suite",
+
+    deliveryPrice:3,
+
+    currency:"DT",
+
+    ...(d.settings||{})
+
+   };
 
    ["products","restaurants","categories","workers","applications","orders","offers","notifications"].forEach(k=>{
 
-    if(!Array.isArray(data[k]))data[k]=[];
+    data[k]=normalizeCollection(d[k]);
 
    });
+
+  }else{
+
+   data.settings={name:"Tout de suite",deliveryPrice:3,currency:"DT"};
+
+   data.products=[];
+
+   data.restaurants=[];
+
+   data.workers=[];
+
+   data.applications=[];
+
+   data.orders=[];
+
+   data.offers=[];
+
+   data.notifications=[];
 
   }
 
   dbReady=true;
 
-  if(!initialized){
+  initialized=true;
 
-   initialized=true;
+  renderHome();
 
-   renderHome();renderEverything();renderProfile();
+  renderEverything();
 
-  }else{
+  renderProfile();
 
-   renderHome();
+  if(activePage==="work")renderWork();
 
-   if(activePage==="everything")renderEverything();
+  if(activePage==="staff")renderStaff();
 
-   if(activePage==="profile")renderProfile();
+  console.log("Firebase connecté — données chargées :",data);
 
-   if(activePage==="work")renderWork();
+ },error=>{
 
-   if(activePage==="staff")renderStaff();
+  dbReady=false;
 
-  }
+  toast("Erreur Firebase : "+error.message);
+
+  console.error("Firebase Database:",error);
 
  });
 
 }
 
-auth.signInAnonymously().then(subscribe).catch(e=>{
+auth.signInAnonymously()
 
- toast("Connexion Firebase impossible : "+e.message);
+ .then(()=>{
 
-});
+  console.log("Firebase Auth connecté.");
 
-if("Notification"in window){
+  subscribe();
 
- // Les notifications système nécessitent une autorisation utilisateur.
+ })
 
-}
+ .catch(e=>{
+
+  dbReady=false;
+
+  toast("Connexion Firebase impossible : "+e.message);
+
+  console.error("Firebase Auth:",e);
+
+ });
+
+if("Notification"in window){}
 
 function askNotifications(){
 
- if("Notification"in window && Notification.permission==="default")Notification.requestPermission();
+ if("Notification"in window&&Notification.permission==="default")Notification.requestPermission();
 
 }
 
 function notify(title,body){
 
- if("Notification"in window && Notification.permission==="granted"){
+ if("Notification"in window&&Notification.permission==="granted"){
 
   try{new Notification(title,{body})}catch(e){}
 
@@ -499,8 +587,6 @@ function notify(title,body){
 function notifyWorker(id,title,message){
 
  data.notifications.unshift({id:uid(),workerId:id,title,message,createdAt:Date.now(),read:false});
-
- notify(title,message);
 
 }
 
@@ -522,7 +608,9 @@ function readImage(file,callback){
 
    const scale=Math.min(1,800/Math.max(image.width,image.height));
 
-   canvas.width=image.width*scale;canvas.height=image.height*scale;
+   canvas.width=image.width*scale;
+
+   canvas.height=image.height*scale;
 
    canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
 
@@ -530,9 +618,13 @@ function readImage(file,callback){
 
   };
 
+  image.onerror=()=>toast("Impossible de lire cette image.");
+
   image.src=e.target.result;
 
  };
+
+ reader.onerror=()=>toast("Erreur lors de la lecture de l'image.");
 
  reader.readAsDataURL(file);
 
@@ -541,6 +633,18 @@ function readImage(file,callback){
 function imageInput(id,label="Photo"){
 
  return `<div class="field"><label>${label}</label><input type="file" id="${id}" accept="image/*"></div>`;
+
+}
+
+function fileToData(file){
+
+ return new Promise((resolve,reject)=>{
+
+  if(!file){resolve("");return}
+
+  readImage(file,result=>result?resolve(result):reject(new Error("Image invalide")));
+
+ });
 
 }
 
@@ -588,27 +692,45 @@ function renderHome(){
 
  const q=($("homeSearch")?.value||"").toLowerCase();
 
- $("offers").innerHTML=data.offers.filter(o=>o.active!==false).map(o=>
+ $("offers").innerHTML=data.offers
 
- `<article class="card"><img class="card-img" src="${imageUrl(o.image)}" onerror="this.src=imgFallback">
+  .filter(o=>o.active!==false)
 
- <div class="card-body"><span class="pill">OFFRE</span><h3>${safe(o.name)}</h3><p class="muted">${safe(o.description||"")}</p></div></article>`).join("");
+  .map(o=>`<article class="card">
 
- $("restaurants").innerHTML=data.restaurants.filter(r=>(r.active!==false)&&(!q||r.name.toLowerCase().includes(q))).map(restaurantCard).join("")||'<div class="empty">Aucun restaurant disponible.</div>';
+   <img class="card-img" src="${imageUrl(o.image)}" onerror="this.src=imgFallback">
 
- $("homeCategories").innerHTML=data.categories.map(c=>`<button class="cat" onclick="goCategory('${c.id}')">${safe(c.emoji||"▦")} ${safe(c.name)}</button>`).join("");
+   <div class="card-body"><span class="pill">OFFRE</span><h3>${safe(o.name)}</h3><p class="muted">${safe(o.description||"")}</p></div>
 
- $("homeProducts").innerHTML=data.products.filter(p=>p.active!==false&&(!q||p.name.toLowerCase().includes(q)||String(p.category).toLowerCase().includes(q))).slice(0,12).map(productCard).join("")||'<div class="empty">Aucun produit disponible.</div>';
+  </article>`).join("");
+
+ $("restaurants").innerHTML=data.restaurants
+
+  .filter(r=>r.active!==false&&(!q||String(r.name||"").toLowerCase().includes(q)))
+
+  .map(restaurantCard).join("")||'<div class="empty">Aucun restaurant disponible.</div>';
+
+ $("homeCategories").innerHTML=data.categories
+
+  .map(c=>`<button class="cat" onclick="goCategory('${c.id}')">${safe(c.emoji||"▦")} ${safe(c.name)}</button>`).join("");
+
+ $("homeProducts").innerHTML=data.products
+
+  .filter(p=>p.active!==false&&(!q||String(p.name||"").toLowerCase().includes(q)||String(p.category||"").toLowerCase().includes(q)))
+
+  .slice(0,12).map(productCard).join("")||'<div class="empty">Aucun produit disponible.</div>';
 
 }
 
-function filterHome(type){showPage("home");}
+function filterHome(type){showPage("home")}
 
 function goCategory(id){selectedCategory=id;showPage("everything")}
 
 function renderEverything(){
 
- $("categories").innerHTML=`<button class="cat ${selectedCategory==="all"?"active":""}" onclick="selectCategory('all')">Tout</button>`+data.categories.map(c=>`<button class="cat ${selectedCategory===c.id?"active":""}" onclick="selectCategory('${c.id}')">${safe(c.emoji||"")} ${safe(c.name)}</button>`).join("");
+ $("categories").innerHTML=`<button class="cat ${selectedCategory==="all"?"active":""}" onclick="selectCategory('all')">Tout</button>`+
+
+ data.categories.map(c=>`<button class="cat ${selectedCategory===c.id?"active":""}" onclick="selectCategory('${c.id}')">${safe(c.emoji||"")} ${safe(c.name)}</button>`).join("");
 
  const c=data.categories.find(x=>x.id===selectedCategory);
 
@@ -616,9 +738,19 @@ function renderEverything(){
 
  const q=($("everythingSearch")?.value||"").toLowerCase();
 
- const products=data.products.filter(p=>p.active!==false&&(selectedCategory==="all"||p.category===selectedCategory)&&(!q||p.name.toLowerCase().includes(q)));
+ const products=data.products.filter(p=>
 
- $("everythingProducts").innerHTML=products.map(productCard).join("")||'<div class="empty"><b>🛍️</b>Aucun produit dans cette catégorie.</div>';
+  p.active!==false&&
+
+  (selectedCategory==="all"||p.category===selectedCategory)&&
+
+  (!q||String(p.name||"").toLowerCase().includes(q))
+
+ );
+
+ $("everythingProducts").innerHTML=products.map(productCard).join("")||
+
+  '<div class="empty"><b>🛍️</b>Aucun produit dans cette catégorie.</div>';
 
 }
 
@@ -626,7 +758,9 @@ function selectCategory(id){selectedCategory=id;renderEverything()}
 
 function openRestaurant(id){
 
- const r=data.restaurants.find(x=>x.id===id);if(!r)return;
+ const r=data.restaurants.find(x=>x.id===id);
+
+ if(!r)return;
 
  const items=data.products.filter(p=>p.restaurantId===id&&p.active!==false);
 
@@ -648,13 +782,19 @@ function openRestaurant(id){
 
 function addToCart(id){
 
- const p=data.products.find(x=>x.id===id);if(!p)return;
+ const p=data.products.find(x=>x.id===id);
+
+ if(!p)return;
 
  const existing=cart.find(x=>x.id===id);
 
- if(existing)existing.qty++;else cart.push({id:p.id,name:p.name,price:Number(p.price),qty:1,restaurantId:p.restaurantId||null});
+ if(existing)existing.qty++;
 
- updateCart();toast("Ajouté au panier");
+ else cart.push({id:p.id,name:p.name,price:Number(p.price),qty:1,restaurantId:p.restaurantId||null});
+
+ updateCart();
+
+ toast("Ajouté au panier");
 
 }
 
@@ -668,11 +808,21 @@ function cartTotal(){return cart.reduce((s,x)=>s+x.price*x.qty,0)}
 
 function openCart(){
 
- if(!cart.length){openModal('<button class="close" onclick="closeModal()">×</button><div class="empty"><b>🛒</b>Votre panier est vide.</div>');return}
+ if(!cart.length){
+
+  openModal('<button class="close" onclick="closeModal()">×</button><div class="empty"><b>🛒</b>Votre panier est vide.</div>');
+
+  return;
+
+ }
 
  const restaurantIds=[...new Set(cart.map(x=>x.restaurantId).filter(Boolean))];
 
- const delivery=restaurantIds.length?Math.max(...restaurantIds.map(id=>Number(data.restaurants.find(r=>r.id===id)?.deliveryPrice??data.settings.deliveryPrice))):Number(data.settings.deliveryPrice);
+ const delivery=restaurantIds.length?
+
+  Math.max(...restaurantIds.map(id=>Number(data.restaurants.find(r=>r.id===id)?.deliveryPrice??data.settings.deliveryPrice))):
+
+  Number(data.settings.deliveryPrice);
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Votre panier 🛒</h2>
 
@@ -706,15 +856,23 @@ function openCart(){
 
 function changeQty(i,d){
 
- cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);
+ cart[i].qty+=d;
 
- updateCart();openCart();
+ if(cart[i].qty<=0)cart.splice(i,1);
+
+ updateCart();
+
+ openCart();
 
 }
 
 async function submitOrder(delivery){
 
- const name=$("orderName").value.trim(),phone=$("orderPhone").value.trim(),address=$("orderAddress").value.trim();
+ const name=$("orderName").value.trim();
+
+ const phone=$("orderPhone").value.trim();
+
+ const address=$("orderAddress").value.trim();
 
  if(!name||!phone||!address){toast("Remplissez tous les champs obligatoires.");return}
 
@@ -722,13 +880,31 @@ async function submitOrder(delivery){
 
  const order={
 
-  id:uid(),customerName:name,phone,address,note:$("orderNote").value,
+  id:uid(),
 
-  items:cart.map(x=>({...x})),subtotal:cartTotal(),deliveryPrice:delivery,
+  customerName:name,
 
-  total:cartTotal()+delivery,status:"pending",workerId:null,
+  phone,
 
-  createdAt:Date.now(),customerUid:auth.currentUser?.uid||""
+  address,
+
+  note:$("orderNote").value,
+
+  items:cart.map(x=>({...x})),
+
+  subtotal:cartTotal(),
+
+  deliveryPrice:delivery,
+
+  total:cartTotal()+delivery,
+
+  status:"pending",
+
+  workerId:null,
+
+  createdAt:Date.now(),
+
+  customerUid:auth.currentUser?.uid||""
 
  };
 
@@ -736,13 +912,21 @@ async function submitOrder(delivery){
 
   await db.ref(ROOT+"/orders/"+order.id).set(order);
 
-  data.orders.unshift(order);
+  cart=[];
 
-  cart=[];updateCart();closeModal();toast("Commande envoyée avec succès !");
+  updateCart();
+
+  closeModal();
+
+  toast("Commande envoyée avec succès !");
 
   notify("Commande confirmée","Votre demande a été enregistrée.");
 
- }catch(e){toast("Erreur : "+e.message)}
+ }catch(e){
+
+  toast("Erreur : "+e.message);
+
+ }
 
 }
 
@@ -758,7 +942,17 @@ function renderProfile(){
 
  if(worker){
 
-  $("profileContent").innerHTML=`<div class="panel"><div class="row"><img class="avatar" src="${imageUrl(worker.image)}"><div><h3>${safe(worker.firstName)} ${safe(worker.lastName)}</h3><span class="tag">Membre de l'équipe</span></div></div><p style="margin-top:15px">Votre candidature a été acceptée.</p><button class="primary" style="margin-top:15px" onclick="showPage('work')">Accéder à WORK</button></div>`;
+  $("profileContent").innerHTML=`<div class="panel">
+
+   <div class="row"><img class="avatar" src="${imageUrl(worker.image)}">
+
+   <div><h3>${safe(worker.firstName)} ${safe(worker.lastName)}</h3><span class="tag">Membre de l'équipe</span></div></div>
+
+   <p style="margin-top:15px">Votre candidature a été acceptée.</p>
+
+   <button class="primary" style="margin-top:15px" onclick="showPage('work')">Accéder à WORK</button>
+
+  </div>`;
 
   return;
 
@@ -766,7 +960,19 @@ function renderProfile(){
 
  if(existing){
 
-  $("profileContent").innerHTML=`<div class="panel"><h3>Votre candidature</h3><span class="pill">${safe(existing.status==="pending"?"En attente":existing.status==="rejected"?"Refusée":"Acceptée")}</span><p class="muted" style="margin-top:15px">${safe(existing.firstName)} ${safe(existing.lastName)}</p><p class="muted">${safe(existing.phone)}</p>${existing.status==="rejected"?'<p style="color:var(--red);margin-top:10px">Votre demande a été refusée.</p>':""}</div>`;
+  $("profileContent").innerHTML=`<div class="panel">
+
+   <h3>Votre candidature</h3>
+
+   <span class="pill">${safe(existing.status==="pending"?"En attente":existing.status==="rejected"?"Refusée":"Acceptée")}</span>
+
+   <p class="muted" style="margin-top:15px">${safe(existing.firstName)} ${safe(existing.lastName)}</p>
+
+   <p class="muted">${safe(existing.phone)}</p>
+
+   ${existing.status==="rejected"?'<p style="color:var(--red);margin-top:10px">Votre demande a été refusée.</p>':""}
+
+  </div>`;
 
   return;
 
@@ -802,29 +1008,55 @@ function renderProfile(){
 
 async function submitApplication(){
 
- const firstName=$("appFirst").value.trim(),lastName=$("appLast").value.trim(),age=Number($("appAge").value),phone=$("appPhone").value.trim(),moto=$("appMoto").value.trim();
+ const firstName=$("appFirst").value.trim();
+
+ const lastName=$("appLast").value.trim();
+
+ const age=Number($("appAge").value);
+
+ const phone=$("appPhone").value.trim();
+
+ const moto=$("appMoto").value.trim();
 
  if(!firstName||!lastName||!age||!phone||!moto){toast("Veuillez remplir les champs obligatoires.");return}
 
  if(age<16){toast("Âge non admissible.");return}
 
- const uidUser=auth.currentUser?.uid;if(!uidUser)return;
+ if(!dbReady){toast("Connexion Firebase en cours.");return}
 
- let image="",motoImage="";
+ const uidUser=auth.currentUser?.uid;
 
- const f=$("appImage").files[0],mf=$("appMotoImage").files[0];
+ if(!uidUser)return;
 
  try{
+
+  let image="",motoImage="";
+
+  const f=$("appImage").files[0];
+
+  const mf=$("appMotoImage").files[0];
 
   if(f)image=await fileToData(f);
 
   if(mf)motoImage=await fileToData(mf);
 
-  const app={id:uid(),uid:uidUser,firstName,lastName,age,phone,moto,image,motoImage,note:$("appNote").value,status:"pending",createdAt:Date.now()};
+  const app={
+
+   id:uid(),
+
+   uid:uidUser,
+
+   firstName,lastName,age,phone,moto,image,motoImage,
+
+   note:$("appNote").value,
+
+   status:"pending",
+
+   createdAt:Date.now()
+
+  };
 
   await db.ref(ROOT+"/applications/"+app.id).set(app);
-
-  data.applications.push(app);
 
   toast("Candidature envoyée !");
 
@@ -832,13 +1064,11 @@ async function submitApplication(){
 
   renderProfile();
 
- }catch(e){toast("Erreur : "+e.message)}
+ }catch(e){
 
-}
+  toast("Erreur : "+e.message);
 
-function fileToData(file){
-
- return new Promise(resolve=>readImage(file,resolve));
+ }
 
 }
 
@@ -850,7 +1080,9 @@ function renderWork(){
 
  if(isAdmin){
 
-  content.innerHTML=`<div class="between"><h2>WORK — Administration</h2><button class="secondary" onclick="logoutWork()">Déconnexion</button></div><p class="muted" style="margin:8px 0 18px">Vue globale de l'équipe et des opérations.</p>${workerDashboard()}`;
+  content.innerHTML=`<div class="between"><h2>WORK — Administration</h2><button class="secondary" onclick="logoutWork()">Déconnexion</button></div>
+
+  <p class="muted" style="margin:8px 0 18px">Vue globale de l'équipe et des opérations.</p>${workerDashboard()}`;
 
   return;
 
@@ -868,9 +1100,19 @@ function renderWork(){
 
   content.innerHTML=`<div class="between"><h2>Mon espace</h2><button class="secondary" onclick="logoutWork()">Quitter</button></div>
 
-  <div class="panel" style="margin-top:15px"><div class="row"><img class="avatar" src="${imageUrl(w.image)}"><div><h3>${safe(w.firstName)} ${safe(w.lastName)}</h3><span class="tag">Livreur actif</span></div></div>
+  <div class="panel" style="margin-top:15px">
 
-  <div class="stat-grid" style="margin-top:18px"><div class="stat"><strong>${money(earnings)}</strong><small>Mes gains</small></div><div class="stat"><strong>${myOrders.filter(o=>o.status==="delivered").length}</strong><small>Livraisons terminées</small></div></div></div>
+   <div class="row"><img class="avatar" src="${imageUrl(w.image)}"><div><h3>${safe(w.firstName)} ${safe(w.lastName)}</h3><span class="tag">Livreur actif</span></div></div>
+
+   <div class="stat-grid" style="margin-top:18px">
+
+    <div class="stat"><strong>${money(earnings)}</strong><small>Mes gains</small></div>
+
+    <div class="stat"><strong>${myOrders.filter(o=>o.status==="delivered").length}</strong><small>Livraisons terminées</small></div>
+
+   </div>
+
+  </div>
 
   <div class="section-head"><h2>Commandes disponibles</h2></div>
 
@@ -888,11 +1130,25 @@ function renderWork(){
 
  }
 
- content.innerHTML=`<h2 style="font-size:25px">Espace WORK</h2><p class="muted" style="margin:7px 0 20px">Accédez à votre espace professionnel.</p>
+ content.innerHTML=`<h2 style="font-size:25px">Espace WORK</h2>
 
- <div class="panel"><h3>Connexion livreur</h3><div class="field"><label>Mot de passe personnel</label><input id="workerPassword" type="password" placeholder="Votre mot de passe"></div><button class="primary" onclick="loginWorker()">Se connecter</button></div>
+ <p class="muted" style="margin:7px 0 20px">Accédez à votre espace professionnel.</p>
 
- <div class="panel"><h3>Administration</h3><div class="field"><label>Mot de passe administrateur</label><input id="workAdminPassword" type="password" placeholder="Mot de passe"></div><button class="secondary" style="width:100%" onclick="loginAdminWork()">Connexion administrateur</button></div>`;
+ <div class="panel"><h3>Connexion livreur</h3>
+
+  <div class="field"><label>Mot de passe personnel</label><input id="workerPassword" type="password" placeholder="Votre mot de passe"></div>
+
+  <button class="primary" onclick="loginWorker()">Se connecter</button>
+
+ </div>
+
+ <div class="panel"><h3>Administration</h3>
+
+  <div class="field"><label>Mot de passe administrateur</label><input id="workAdminPassword" type="password" placeholder="Mot de passe"></div>
+
+  <button class="secondary" style="width:100%" onclick="loginAdminWork()">Connexion administrateur</button>
+
+ </div>`;
 
 }
 
@@ -902,7 +1158,7 @@ function availableOrdersHTML(){
 
  <div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="tag">Disponible</span></div>
 
- <p class="muted" style="margin:8px 0">${o.items.map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
+ <p class="muted" style="margin:8px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
 
  <div class="between"><span>Montant</span><b class="price">${money(o.total)}</b></div>
 
@@ -916,7 +1172,9 @@ function availableOrdersHTML(){
 
 function orderWorkerCard(o){
 
- return `<div class="panel"><div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
+ return `<div class="panel">
+
+ <div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
 
  <p class="muted" style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p>
 
@@ -930,7 +1188,7 @@ function orderWorkerCard(o){
 
 }
 
-async function loginWorker(){
+function loginWorker(){
 
  const pass=$("workerPassword").value;
 
@@ -938,7 +1196,11 @@ async function loginWorker(){
 
  if(!w){toast("Mot de passe incorrect.");return}
 
- currentWorker=w;isAdmin=false;renderWork();
+ currentWorker=w;
+
+ isAdmin=false;
+
+ renderWork();
 
 }
 
@@ -946,7 +1208,11 @@ function loginAdminWork(){
 
  if($("workAdminPassword").value!==ADMIN_PASSWORD){toast("Mot de passe incorrect.");return}
 
- isAdmin=true;currentWorker=null;renderWork();
+ isAdmin=true;
+
+ currentWorker=null;
+
+ renderWork();
 
 }
 
@@ -964,7 +1230,11 @@ async function acceptOrder(id){
 
    if(!o||o.status!=="pending"||o.workerId)return;
 
-   o.workerId=currentWorker.id;o.status="accepted";o.acceptedAt=Date.now();
+   o.workerId=currentWorker.id;
+
+   o.status="accepted";
+
+   o.acceptedAt=Date.now();
 
    return o;
 
@@ -978,7 +1248,11 @@ async function acceptOrder(id){
 
   renderWork();
 
- }catch(e){toast(e.message)}
+ }catch(e){
+
+  toast(e.message);
+
+ }
 
 }
 
@@ -998,9 +1272,17 @@ async function updateOrderStatus(id,status){
 
  }
 
- await db.ref(ROOT+"/orders/"+id).update(update);
+ try{
 
- toast("Statut mis à jour.");renderWork();
+  await db.ref(ROOT+"/orders/"+id).update(update);
+
+  toast("Statut mis à jour.");
+
+ }catch(e){
+
+  toast("Erreur : "+e.message);
+
+ }
 
 }
 
@@ -1020,7 +1302,17 @@ function workerDashboard(){
 
  <div class="stat"><strong>${data.applications.filter(a=>a.status==="pending").length}</strong><small>Candidatures</small></div>
 
- </div><div class="section-head"><h2>Commandes récentes</h2></div>${data.orders.slice(0,10).map(o=>`<div class="panel"><b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span><p class="muted">${safe(o.customerName)} · ${safe(o.phone)}</p><b>${money(o.total)}</b></div>`).join("")}`;
+ </div>
+
+ <div class="section-head"><h2>Commandes récentes</h2></div>
+
+ ${data.orders.slice(0,10).map(o=>`<div class="panel">
+
+ <b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span>
+
+ <p class="muted">${safe(o.customerName)} · ${safe(o.phone)}</p><b>${money(o.total)}</b>
+
+ </div>`).join("")}`;
 
 }
 
@@ -1030,9 +1322,15 @@ function renderStaff(){
 
  if(!isAdmin){
 
-  $("staffContent").innerHTML=`<h2 style="font-size:25px">STAFF</h2><p class="muted" style="margin:7px 0 20px">Centre de contrôle Tout de suite.</p>
+  $("staffContent").innerHTML=`<h2 style="font-size:25px">STAFF</h2>
 
-  <div class="panel"><h3>Accès administrateur</h3><div class="field"><label>Mot de passe</label><input id="staffPassword" type="password" placeholder="Mot de passe administrateur"></div><button class="primary" onclick="loginStaff()">Entrer dans STAFF</button></div>`;
+  <p class="muted" style="margin:7px 0 20px">Centre de contrôle Tout de suite.</p>
+
+  <div class="panel"><h3>Accès administrateur</h3>
+
+  <div class="field"><label>Mot de passe</label><input id="staffPassword" type="password" placeholder="Mot de passe administrateur"></div>
+
+  <button class="primary" onclick="loginStaff()">Entrer dans STAFF</button></div>`;
 
   return;
 
@@ -1040,9 +1338,19 @@ function renderStaff(){
 
  const tabs=["dashboard","applications","workers","orders","products","restaurants","categories","offers","finance","settings"];
 
- $("staffContent").innerHTML=`<div class="between"><div><h2>STAFF</h2><p class="muted">Control Center</p></div><button class="secondary" onclick="logoutStaff()">Quitter</button></div>
+ $("staffContent").innerHTML=`<div class="between">
 
- <div class="admin-tabs" style="margin-top:18px">${tabs.map(t=>`<button class="admin-tab ${selectedAdminTab===t?"active":""}" onclick="adminTab('${t}')">${t.toUpperCase()}</button>`).join("")}</div>
+ <div><h2>STAFF</h2><p class="muted">Control Center</p></div>
+
+ <button class="secondary" onclick="logoutStaff()">Quitter</button>
+
+ </div>
+
+ <div class="admin-tabs" style="margin-top:18px">
+
+ ${tabs.map(t=>`<button class="admin-tab ${selectedAdminTab===t?"active":""}" onclick="adminTab('${t}')">${t.toUpperCase()}</button>`).join("")}
+
+ </div>
 
  <div id="adminContent"></div>`;
 
@@ -1054,7 +1362,11 @@ function loginStaff(){
 
  if($("staffPassword").value!==ADMIN_PASSWORD){toast("Mot de passe incorrect.");return}
 
- isAdmin=true;selectedAdminTab="dashboard";renderStaff();
+ isAdmin=true;
+
+ selectedAdminTab="dashboard";
+
+ renderStaff();
 
 }
 
@@ -1064,13 +1376,17 @@ function adminTab(t){selectedAdminTab=t;renderStaff()}
 
 function renderAdminTab(){
 
- const el=$("adminContent");if(!el)return;
+ const el=$("adminContent");
+
+ if(!el)return;
 
  switch(selectedAdminTab){
 
  case"dashboard":
 
- el.innerHTML=`<h3>Dashboard</h3><div class="stat-grid">
+ el.innerHTML=`<h3>Dashboard</h3>
+
+ <div class="stat-grid">
 
  <div class="stat"><strong>${data.products.length}</strong><small>Produits</small></div>
 
@@ -1084,7 +1400,17 @@ function renderAdminTab(){
 
  <div class="stat"><strong>${data.applications.filter(a=>a.status==="pending").length}</strong><small>Demandes en attente</small></div>
 
- </div><div class="panel" style="margin-top:15px"><h3>Actions rapides</h3><button class="secondary" onclick="adminTab('products')">+ Produit</button> <button class="secondary" onclick="adminTab('restaurants')">+ Restaurant</button> <button class="secondary" onclick="adminTab('offers')">+ Offre</button></div>`;
+ </div>
+
+ <div class="panel" style="margin-top:15px"><h3>Actions rapides</h3>
+
+ <button class="secondary" onclick="adminTab('products')">+ Produit</button>
+
+ <button class="secondary" onclick="adminTab('restaurants')">+ Restaurant</button>
+
+ <button class="secondary" onclick="adminTab('offers')">+ Offre</button>
+
+ </div>`;
 
  break;
 
@@ -1094,7 +1420,9 @@ function renderAdminTab(){
 
  data.applications.slice().reverse().map(a=>`<div class="panel">
 
- <div class="row"><img class="avatar" src="${imageUrl(a.image)}"><div><b>${safe(a.firstName)} ${safe(a.lastName)}</b><p class="muted">${safe(a.phone)} · ${safe(a.age)} ans</p></div></div>
+ <div class="row"><img class="avatar" src="${imageUrl(a.image)}">
+
+ <div><b>${safe(a.firstName)} ${safe(a.lastName)}</b><p class="muted">${safe(a.phone)} · ${safe(a.age)} ans</p></div></div>
 
  <p style="margin-top:12px">Moto : ${safe(a.moto)}</p><p class="muted">${safe(a.note)}</p>
 
@@ -1102,7 +1430,9 @@ function renderAdminTab(){
 
  <p class="muted" style="margin:10px 0">Statut : ${safe(a.status)}</p>
 
- ${a.status==="pending"?`<button class="primary" onclick="approveApplication('${a.id}')">ACCEPTER</button><button class="danger" style="margin:8px" onclick="rejectApplication('${a.id}')">REFUSER</button>`:""}
+ ${a.status==="pending"?`<button class="primary" onclick="approveApplication('${a.id}')">ACCEPTER</button>
+
+ <button class="danger" style="margin:8px" onclick="rejectApplication('${a.id}')">REFUSER</button>`:""}
 
  </div>`).join("")||'<div class="empty">Aucune candidature.</div>';
 
@@ -1112,27 +1442,47 @@ function renderAdminTab(){
 
  el.innerHTML=`<div class="between"><h3>Équipe (${data.workers.length})</h3></div>`+
 
- data.workers.map(w=>`<div class="panel"><div class="row"><img class="avatar" src="${imageUrl(w.image)}"><div><b>${safe(w.firstName)} ${safe(w.lastName)}</b><p class="muted">${safe(w.phone)} · ${safe(w.moto)}</p></div></div>
+ data.workers.map(w=>`<div class="panel">
+
+ <div class="row"><img class="avatar" src="${imageUrl(w.image)}">
+
+ <div><b>${safe(w.firstName)} ${safe(w.lastName)}</b><p class="muted">${safe(w.phone)} · ${safe(w.moto)}</p></div></div>
 
  <p class="muted" style="margin:10px 0">Livraisons : ${data.orders.filter(o=>o.workerId===w.id&&o.status==="delivered").length}</p>
 
- <div class="row"><button class="secondary" onclick="editWorker('${w.id}')">Modifier</button><button class="danger" onclick="toggleWorker('${w.id}')">${w.active===false?"Activer":"Désactiver"}</button></div></div>`).join("")||'<div class="empty">Aucun livreur.</div>';
+ <div class="row">
+
+ <button class="secondary" onclick="editWorker('${w.id}')">Modifier</button>
+
+ <button class="danger" onclick="toggleWorker('${w.id}')">${w.active===false?"Activer":"Désactiver"}</button>
+
+ </div></div>`).join("")||'<div class="empty">Aucun livreur.</div>';
 
  break;
 
  case"orders":
 
- el.innerHTML=`<h3>Toutes les commandes</h3>`+data.orders.slice().reverse().map(o=>`<div class="panel">
+ el.innerHTML=`<h3>Toutes les commandes</h3>`+
+
+ data.orders.slice().reverse().map(o=>`<div class="panel">
 
  <div class="between"><b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
 
- <p style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p><p class="muted">${safe(o.address)}</p>
+ <p style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p>
+
+ <p class="muted">${safe(o.address)}</p>
 
  <p class="muted" style="margin:7px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
 
  <div class="between"><b>${money(o.total)}</b><span class="muted">${new Date(o.createdAt).toLocaleString("fr-FR")}</span></div>
 
- <div class="field"><label>Changer le statut</label><select onchange="adminOrderStatus('${o.id}',this.value)">${["pending","accepted","picked_up","delivered","cancelled"].map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+ <div class="field"><label>Changer le statut</label>
+
+ <select onchange="adminOrderStatus('${o.id}',this.value)">
+
+ ${["pending","accepted","picked_up","delivered","cancelled"].map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${s}</option>`).join("")}
+
+ </select></div>
 
  </div>`).join("")||'<div class="empty">Aucune commande.</div>';
 
@@ -1142,7 +1492,15 @@ function renderAdminTab(){
 
  el.innerHTML=`<div class="between"><h3>Produits</h3><button class="primary" style="width:auto" onclick="productForm()">+ Ajouter</button></div>`+
 
- data.products.map(p=>`<div class="list-item between"><div class="product-line"><img src="${imageUrl(p.image)}"><div><b>${safe(p.name)}</b><p class="muted">${money(p.price)}</p></div></div><div><button class="secondary" onclick="productForm('${p.id}')">✎</button><button class="danger" onclick="deleteItem('products','${p.id}')">×</button></div></div>`).join("")||'<div class="empty">Aucun produit.</div>';
+ data.products.map(p=>`<div class="list-item between">
+
+ <div class="product-line"><img src="${imageUrl(p.image)}"><div><b>${safe(p.name)}</b><p class="muted">${money(p.price)}</p></div></div>
+
+ <div><button class="secondary" onclick="productForm('${p.id}')">✎</button>
+
+ <button class="danger" onclick="deleteItem('products','${p.id}')">×</button></div>
+
+ </div>`).join("")||'<div class="empty">Aucun produit.</div>';
 
  break;
 
@@ -1150,7 +1508,15 @@ function renderAdminTab(){
 
  el.innerHTML=`<div class="between"><h3>Restaurants</h3><button class="primary" style="width:auto" onclick="restaurantForm()">+ Ajouter</button></div>`+
 
- data.restaurants.map(r=>`<div class="list-item between"><div class="product-line"><img src="${imageUrl(r.image)}"><div><b>${safe(r.name)}</b><p class="muted">Livraison : ${money(r.deliveryPrice??data.settings.deliveryPrice)}</p></div></div><div><button class="secondary" onclick="restaurantForm('${r.id}')">✎</button><button class="danger" onclick="deleteItem('restaurants','${r.id}')">×</button></div></div>`).join("")||'<div class="empty">Aucun restaurant.</div>';
+ data.restaurants.map(r=>`<div class="list-item between">
+
+ <div class="product-line"><img src="${imageUrl(r.image)}"><div><b>${safe(r.name)}</b><p class="muted">Livraison : ${money(r.deliveryPrice??data.settings.deliveryPrice)}</p></div></div>
+
+ <div><button class="secondary" onclick="restaurantForm('${r.id}')">✎</button>
+
+ <button class="danger" onclick="deleteItem('restaurants','${r.id}')">×</button></div>
+
+ </div>`).join("")||'<div class="empty">Aucun restaurant.</div>';
 
  break;
 
@@ -1158,7 +1524,15 @@ function renderAdminTab(){
 
  el.innerHTML=`<div class="between"><h3>Catégories</h3><button class="primary" style="width:auto" onclick="categoryForm()">+ Ajouter</button></div>`+
 
- data.categories.map(c=>`<div class="list-item between"><b>${safe(c.emoji)} ${safe(c.name)}</b><div><button class="secondary" onclick="categoryForm('${c.id}')">✎</button><button class="danger" onclick="deleteItem('categories','${c.id}')">×</button></div></div>`).join("");
+ data.categories.map(c=>`<div class="list-item between">
+
+ <b>${safe(c.emoji)} ${safe(c.name)}</b>
+
+ <div><button class="secondary" onclick="categoryForm('${c.id}')">✎</button>
+
+ <button class="danger" onclick="deleteItem('categories','${c.id}')">×</button></div>
+
+ </div>`).join("");
 
  break;
 
@@ -1166,7 +1540,15 @@ function renderAdminTab(){
 
  el.innerHTML=`<div class="between"><h3>Offres spéciales</h3><button class="primary" style="width:auto" onclick="offerForm()">+ Ajouter</button></div>`+
 
- data.offers.map(o=>`<div class="list-item between"><div><b>${safe(o.name)}</b><p class="muted">${safe(o.description)}</p></div><div><button class="secondary" onclick="offerForm('${o.id}')">✎</button><button class="danger" onclick="deleteItem('offers','${o.id}')">×</button></div></div>`).join("");
+ data.offers.map(o=>`<div class="list-item between">
+
+ <div><b>${safe(o.name)}</b><p class="muted">${safe(o.description)}</p></div>
+
+ <div><button class="secondary" onclick="offerForm('${o.id}')">✎</button>
+
+ <button class="danger" onclick="deleteItem('offers','${o.id}')">×</button></div>
+
+ </div>`).join("");
 
  break;
 
@@ -1178,7 +1560,9 @@ function renderAdminTab(){
 
  const workerTotal=completed.reduce((s,o)=>s+Number(o.workerEarning||0),0);
 
- el.innerHTML=`<h3>Finances</h3><div class="stat-grid">
+ el.innerHTML=`<h3>Finances</h3>
+
+ <div class="stat-grid">
 
  <div class="stat"><strong>${money(gross)}</strong><small>Montant des commandes livrées</small></div>
 
@@ -1186,9 +1570,15 @@ function renderAdminTab(){
 
  <div class="stat"><strong>${money(gross-workerTotal)}</strong><small>Solde théorique</small></div>
 
- </div><p class="notice" style="margin-top:15px">Ces montants sont calculés à partir des commandes enregistrées. Ils ne représentent pas une confirmation de paiement réel.</p>
+ </div>
 
- <h3>Par livreur</h3>${data.workers.map(w=>`<div class="panel"><b>${safe(w.firstName)} ${safe(w.lastName)}</b><p class="muted">${money(completed.filter(o=>o.workerId===w.id).reduce((s,o)=>s+Number(o.workerEarning||0),0))}</p></div>`).join("")}`;
+ <p class="notice" style="margin-top:15px">Ces montants sont calculés à partir des commandes enregistrées. Ils ne représentent pas une confirmation de paiement réel.</p>
+
+ <h3>Par livreur</h3>
+
+ ${data.workers.map(w=>`<div class="panel"><b>${safe(w.firstName)} ${safe(w.lastName)}</b>
+
+ <p class="muted">${money(completed.filter(o=>o.workerId===w.id).reduce((s,o)=>s+Number(o.workerEarning||0),0))}</p></div>`).join("")}`;
 
  break;
 
@@ -1196,11 +1586,15 @@ function renderAdminTab(){
 
  el.innerHTML=`<h3>Paramètres du site</h3>
 
- <div class="panel"><div class="field"><label>Nom du site</label><input id="settingName" value="${safe(data.settings.name)}"></div>
+ <div class="panel">
+
+ <div class="field"><label>Nom du site</label><input id="settingName" value="${safe(data.settings.name)}"></div>
 
  <div class="field"><label>Prix de livraison par défaut (DT)</label><input id="settingDelivery" type="number" step=".1" value="${Number(data.settings.deliveryPrice)}"></div>
 
- <button class="primary" onclick="saveSettings()">Enregistrer</button></div>`;
+ <button class="primary" onclick="saveSettings()">Enregistrer</button>
+
+ </div>`;
 
  break;
 
@@ -1208,9 +1602,13 @@ function renderAdminTab(){
 
 }
 
+/* ADMIN ACTIONS */
+
 async function approveApplication(id){
 
- const a=data.applications.find(x=>x.id===id);if(!a)return;
+ const a=data.applications.find(x=>x.id===id);
+
+ if(!a)return;
 
  const pass=prompt("Définir le mot de passe du livreur :");
 
@@ -1220,19 +1618,19 @@ async function approveApplication(id){
 
  delete w.status;
 
- await db.ref(ROOT+"/workers/"+w.id).set(w);
+ try{
 
- await db.ref(ROOT+"/applications/"+id).update({status:"accepted",workerId:w.id});
+  await db.ref(ROOT+"/workers/"+w.id).set(w);
 
- a.status="accepted";
+  await db.ref(ROOT+"/applications/"+id).update({status:"accepted",workerId:w.id});
 
- data.workers.push(w);
+  toast("Livreur accepté.");
 
- notifyWorker(w.id,"Candidature acceptée","Bienvenue dans l'équipe Tout de suite !");
+ }catch(e){
 
- toast("Livreur accepté.");
+  toast("Erreur : "+e.message);
 
- renderStaff();
+ }
 
 }
 
@@ -1240,27 +1638,39 @@ async function rejectApplication(id){
 
  if(!confirm("Refuser cette candidature ?"))return;
 
- await db.ref(ROOT+"/applications/"+id).update({status:"rejected"});
+ try{
 
- toast("Candidature refusée.");renderStaff();
+  await db.ref(ROOT+"/applications/"+id).update({status:"rejected"});
+
+  toast("Candidature refusée.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
 async function toggleWorker(id){
 
- const w=data.workers.find(x=>x.id===id);if(!w)return;
+ const w=data.workers.find(x=>x.id===id);
+
+ if(!w)return;
 
  const active=w.active===false;
 
- await db.ref(ROOT+"/workers/"+id).update({active});
+ try{
 
- toast(active?"Compte activé":"Compte désactivé");renderStaff();
+  await db.ref(ROOT+"/workers/"+id).update({active});
+
+  toast(active?"Compte activé":"Compte désactivé");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
 function editWorker(id){
 
- const w=data.workers.find(x=>x.id===id);if(!w)return;
+ const w=data.workers.find(x=>x.id===id);
+
+ if(!w)return;
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Modifier le livreur</h2>
 
@@ -1280,41 +1690,79 @@ function editWorker(id){
 
 async function saveWorker(id){
 
- const w=data.workers.find(x=>x.id===id);
+ const update={
 
- const update={firstName:$("editWFirst").value,lastName:$("editWLast").value,phone:$("editWPhone").value,moto:$("editWMoto").value};
+  firstName:$("editWFirst").value,
+
+  lastName:$("editWLast").value,
+
+  phone:$("editWPhone").value,
+
+  moto:$("editWMoto").value
+
+ };
 
  if($("editWPass").value)update.password=$("editWPass").value;
 
- await db.ref(ROOT+"/workers/"+id).update(update);closeModal();toast("Profil modifié");renderStaff();
+ try{
+
+  await db.ref(ROOT+"/workers/"+id).update(update);
+
+  closeModal();
+
+  toast("Profil modifié");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
 async function adminOrderStatus(id,status){
 
- await db.ref(ROOT+"/orders/"+id).update({status,updatedAt:Date.now()});
+ try{
 
- toast("Statut modifié.");renderStaff();
+  await db.ref(ROOT+"/orders/"+id).update({status,updatedAt:Date.now()});
+
+  toast("Statut modifié.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
-function deleteItem(collection,id){
+async function deleteItem(collection,id){
 
  if(!confirm("Confirmer la suppression ?"))return;
 
- db.ref(ROOT+"/"+collection+"/"+id).remove().then(()=>toast("Supprimé."));
+ try{
+
+  await db.ref(ROOT+"/"+collection+"/"+id).remove();
+
+  toast("Supprimé.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
 async function saveSettings(){
 
- data.settings.name=$("settingName").value;
+ const name=$("settingName").value.trim();
 
- data.settings.deliveryPrice=Number($("settingDelivery").value);
+ const deliveryPrice=Number($("settingDelivery").value);
 
- await db.ref(ROOT+"/settings").set(data.settings);
+ if(!name||!Number.isFinite(deliveryPrice)||deliveryPrice<0){
 
- toast("Paramètres enregistrés.");
+  toast("Vérifiez les paramètres.");
+
+  return;
+
+ }
+
+ try{
+
+  await db.ref(ROOT+"/settings").set({name,deliveryPrice,currency:"DT"});
+
+  toast("Paramètres enregistrés.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1322,7 +1770,11 @@ async function saveSettings(){
 
 function productForm(id){
 
- const p=data.products.find(x=>x.id===id)||{name:"",price:"",description:"",category:"",restaurantId:"",image:""};
+ const p=data.products.find(x=>x.id===id)||{
+
+  name:"",price:"",description:"",category:"",restaurantId:"",image:""
+
+ };
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?"Modifier":"Ajouter"} un produit</h2>
 
@@ -1332,9 +1784,21 @@ function productForm(id){
 
  <div class="field"><label>Prix (DT)</label><input id="pPrice" type="number" step=".01" value="${safe(p.price)}"></div>
 
- <div class="field"><label>Catégorie</label><select id="pCategory"><option value="">Aucune</option>${data.categories.map(c=>`<option value="${c.id}" ${p.category===c.id?"selected":""}>${safe(c.name)}</option>`).join("")}</select></div>
+ <div class="field"><label>Catégorie</label><select id="pCategory">
 
- <div class="field"><label>Restaurant (facultatif)</label><select id="pRestaurant"><option value="">Produit indépendant</option>${data.restaurants.map(r=>`<option value="${r.id}" ${p.restaurantId===r.id?"selected":""}>${safe(r.name)}</option>`).join("")}</select></div>
+ <option value="">Aucune</option>
+
+ ${data.categories.map(c=>`<option value="${c.id}" ${p.category===c.id?"selected":""}>${safe(c.name)}</option>`).join("")}
+
+ </select></div>
+
+ <div class="field"><label>Restaurant (facultatif)</label><select id="pRestaurant">
+
+ <option value="">Produit indépendant</option>
+
+ ${data.restaurants.map(r=>`<option value="${r.id}" ${p.restaurantId===r.id?"selected":""}>${safe(r.name)}</option>`).join("")}
+
+ </select></div>
 
  ${imageInput("pImage")}
 
@@ -1344,27 +1808,67 @@ function productForm(id){
 
 async function saveProduct(id){
 
- const name=$("pName").value.trim(),price=Number($("pPrice").value);
+ const name=$("pName").value.trim();
 
- if(!name||!Number.isFinite(price)||price<0){toast("Nom et prix valides obligatoires.");return}
+ const price=Number($("pPrice").value);
+
+ if(!name||!Number.isFinite(price)||price<0){
+
+  toast("Nom et prix valides obligatoires.");
+
+  return;
+
+ }
+
+ if(!dbReady){toast("Connexion Firebase en cours.");return}
 
  const old=data.products.find(x=>x.id===id);
 
  let image=old?.image||"";
 
- const f=$("pImage").files[0];if(f)image=await fileToData(f);
+ try{
 
- const p={id:id||uid(),name,price,description:$("pDesc").value,category:$("pCategory").value,restaurantId:$("pRestaurant").value,image,active:true};
+  const f=$("pImage").files[0];
 
- await db.ref(ROOT+"/products/"+p.id).set(p);
+  if(f)image=await fileToData(f);
 
- closeModal();toast("Produit enregistré.");renderStaff();
+  const p={
+
+   id:id||uid(),
+
+   name,
+
+   price,
+
+   description:$("pDesc").value,
+
+   category:$("pCategory").value,
+
+   restaurantId:$("pRestaurant").value,
+
+   image,
+
+   active:true
+
+  };
+
+  await db.ref(ROOT+"/products/"+p.id).set(p);
+
+  closeModal();
+
+  toast("Produit enregistré.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
 function restaurantForm(id){
 
- const r=data.restaurants.find(x=>x.id===id)||{name:"",description:"",deliveryPrice:data.settings.deliveryPrice,image:""};
+ const r=data.restaurants.find(x=>x.id===id)||{
+
+  name:"",description:"",deliveryPrice:data.settings.deliveryPrice,image:""
+
+ };
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?"Modifier":"Ajouter"} un restaurant</h2>
 
@@ -1382,17 +1886,43 @@ function restaurantForm(id){
 
 async function saveRestaurant(id){
 
- const name=$("rName").value.trim();if(!name){toast("Nom obligatoire.");return}
+ const name=$("rName").value.trim();
 
- const old=data.restaurants.find(x=>x.id===id);let image=old?.image||"";
+ if(!name){toast("Nom obligatoire.");return}
 
- if($("rImage").files[0])image=await fileToData($("rImage").files[0]);
+ if(!dbReady){toast("Connexion Firebase en cours.");return}
 
- const r={id:id||uid(),name,description:$("rDesc").value,deliveryPrice:Number($("rDelivery").value),image,active:true};
+ const old=data.restaurants.find(x=>x.id===id);
 
- await db.ref(ROOT+"/restaurants/"+r.id).set(r);
+ let image=old?.image||"";
 
- closeModal();toast("Restaurant enregistré.");renderStaff();
+ try{
+
+  if($("rImage").files[0])image=await fileToData($("rImage").files[0]);
+
+  const r={
+
+   id:id||uid(),
+
+   name,
+
+   description:$("rDesc").value,
+
+   deliveryPrice:Number($("rDelivery").value),
+
+   image,
+
+   active:true
+
+  };
+
+  await db.ref(ROOT+"/restaurants/"+r.id).set(r);
+
+  closeModal();
+
+  toast("Restaurant enregistré.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1412,11 +1942,29 @@ function categoryForm(id){
 
 async function saveCategory(id){
 
- const c={id:id||uid(),name:$("cName").value.trim(),emoji:$("cEmoji").value.trim()};
+ const c={
 
- if(!c.name)return;
+  id:id||uid(),
 
- await db.ref(ROOT+"/categories/"+c.id).set(c);closeModal();renderStaff();
+  name:$("cName").value.trim(),
+
+  emoji:$("cEmoji").value.trim()
+
+ };
+
+ if(!c.name){toast("Nom obligatoire.");return}
+
+ if(!dbReady){toast("Connexion Firebase en cours.");return}
+
+ try{
+
+  await db.ref(ROOT+"/categories/"+c.id).set(c);
+
+  closeModal();
+
+  toast("Catégorie enregistrée.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1438,15 +1986,39 @@ function offerForm(id){
 
 async function saveOffer(id){
 
- const old=data.offers.find(x=>x.id===id);let image=old?.image||"";
+ const old=data.offers.find(x=>x.id===id);
 
- if($("oImage").files[0])image=await fileToData($("oImage").files[0]);
+ let image=old?.image||"";
 
- const o={id:id||uid(),name:$("oName").value,description:$("oDesc").value,image,active:true};
+ if(!dbReady){toast("Connexion Firebase en cours.");return}
 
- if(!o.name.trim())return;
+ try{
 
- await db.ref(ROOT+"/offers/"+o.id).set(o);closeModal();renderStaff();
+  if($("oImage").files[0])image=await fileToData($("oImage").files[0]);
+
+  const o={
+
+   id:id||uid(),
+
+   name:$("oName").value.trim(),
+
+   description:$("oDesc").value,
+
+   image,
+
+   active:true
+
+  };
+
+  if(!o.name){toast("Titre obligatoire.");return}
+
+  await db.ref(ROOT+"/offers/"+o.id).set(o);
+
+  closeModal();
+
+  toast("Offre enregistrée.");
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1464,27 +2036,51 @@ setInterval(()=>{
 
 },5000);
 
-/* DATA MIGRATION / STRUCTURE */
+/* INITIALISATION DE LA STRUCTURE SANS ECRASER LES DONNEES */
 
-db.ref(ROOT).once("value").then(s=>{
+async function initializeDatabase(){
 
- if(!s.exists()){
+ try{
 
-  const initial={
+  const snapshot=await db.ref(ROOT).once("value");
 
-   settings:data.settings,
+  if(!snapshot.exists()){
 
-   categories:Object.fromEntries(data.categories.map(x=>[x.id,x])),
+   const initial={
 
-   products:{},restaurants:{},workers:{},applications:{},orders:{},offers:{},notifications:{}
+    settings:data.settings,
 
-  };
+    categories:collectionToObject(data.categories),
 
-  return db.ref(ROOT).set(initial);
+    products:{},
+
+    restaurants:{},
+
+    workers:{},
+
+    applications:{},
+
+    orders:{},
+
+    offers:{},
+
+    notifications:{}
+
+   };
+
+   await db.ref(ROOT).set(initial);
+
+  }
+
+ }catch(e){
+
+  console.error("Initialisation Firebase:",e);
 
  }
 
-}).catch(e=>console.error(e));
+}
+
+initializeDatabase();
 
 /* SYSTEM */
 
