@@ -172,6 +172,22 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 #toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#17243a;color:white;padding:12px 18px;border-radius:12px;z-index:100;display:none;max-width:90%;font-size:13px}
 
+.admin-danger-zone{border:1px solid #ffd7dc;background:#fffafa}
+
+.admin-danger-zone h3{color:var(--red)}
+
+.delete-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+.delete-actions button{flex:1;min-width:130px}
+
+.order-admin{border:1px solid var(--border);border-radius:13px;padding:12px;margin:10px 0;background:#fff}
+
+.order-admin-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+.order-admin-actions button{flex:1}
+
+.worker-profile-actions{margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+
 @media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.card-img{height:155px}.modal{align-items:center}.modal-box{border-radius:22px}}
 
 </style>
@@ -312,11 +328,13 @@ const ADMIN_PASSWORD="RASLEN199";
 
 const ROOT="ToutDeSuite";
 
-let data={
+const defaultData=()=>({
 
  settings:{name:"Tout de suite",deliveryPrice:3,currency:"DT"},
 
- products:[],restaurants:[],categories:[
+ products:[],restaurants:[],
+
+ categories:[
 
   {id:"c1",name:"Fruits",emoji:"🍎"},
 
@@ -336,7 +354,9 @@ let data={
 
  workers:[],applications:[],orders:[],offers:[],notifications:[]
 
-};
+});
+
+let data=defaultData();
 
 let cart=[];
 
@@ -368,13 +388,11 @@ const imageUrl=s=>s||imgFallback;
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 
-/* تحويل بيانات Firebase إلى قوائم JavaScript */
-
 function normalizeCollection(value){
 
  if(Array.isArray(value))return value.filter(Boolean);
 
- if(value&&typeof value==="object")return Object.values(value).filter(Boolean);
+ if(value&&typeof value==="object")return Object.entries(value).filter(([,v])=>v).map(([key,v])=>({...v,id:v.id||key}));
 
  return [];
 
@@ -418,17 +436,11 @@ function showPage(page){
 
 }
 
-/* حفظ آمن يحافظ على بنية Firebase */
-
 function collectionToObject(list){
 
  const result={};
 
- (Array.isArray(list)?list:[]).filter(Boolean).forEach(item=>{
-
-  if(item.id)result[item.id]=item;
-
- });
+ (Array.isArray(list)?list:[]).filter(Boolean).forEach(item=>{if(item.id)result[item.id]=item});
 
  return result;
 
@@ -460,17 +472,11 @@ function save(){
 
  };
 
- return db.ref(ROOT).update(payload).catch(e=>{
-
-  toast("Erreur Firebase : "+e.message);
-
-  throw e;
-
- });
+ return db.ref(ROOT).update(payload).catch(e=>{toast("Erreur Firebase : "+e.message);throw e});
 
 }
 
-/* الاستماع إلى قاعدة البيانات */
+/* DATABASE */
 
 function subscribe(){
 
@@ -480,41 +486,13 @@ function subscribe(){
 
    const d=snap.val()||{};
 
-   data.settings={
+   data.settings={name:"Tout de suite",deliveryPrice:3,currency:"DT",...(d.settings||{})};
 
-    name:"Tout de suite",
-
-    deliveryPrice:3,
-
-    currency:"DT",
-
-    ...(d.settings||{})
-
-   };
-
-   ["products","restaurants","categories","workers","applications","orders","offers","notifications"].forEach(k=>{
-
-    data[k]=normalizeCollection(d[k]);
-
-   });
+   ["products","restaurants","categories","workers","applications","orders","offers","notifications"].forEach(k=>data[k]=normalizeCollection(d[k]));
 
   }else{
 
-   data.settings={name:"Tout de suite",deliveryPrice:3,currency:"DT"};
-
-   data.products=[];
-
-   data.restaurants=[];
-
-   data.workers=[];
-
-   data.applications=[];
-
-   data.orders=[];
-
-   data.offers=[];
-
-   data.notifications=[];
+   data=defaultData();
 
   }
 
@@ -546,27 +524,21 @@ function subscribe(){
 
 }
 
-auth.signInAnonymously()
+auth.signInAnonymously().then(()=>{
 
- .then(()=>{
+ console.log("Firebase Auth connecté.");
 
-  console.log("Firebase Auth connecté.");
+ subscribe();
 
-  subscribe();
+}).catch(e=>{
 
- })
+ dbReady=false;
 
- .catch(e=>{
+ toast("Connexion Firebase impossible : "+e.message);
 
-  dbReady=false;
+ console.error("Firebase Auth:",e);
 
-  toast("Connexion Firebase impossible : "+e.message);
-
-  console.error("Firebase Auth:",e);
-
- });
-
-if("Notification"in window){}
+});
 
 function askNotifications(){
 
@@ -586,7 +558,9 @@ function notify(title,body){
 
 function notifyWorker(id,title,message){
 
- data.notifications.unshift({id:uid(),workerId:id,title,message,createdAt:Date.now(),read:false});
+ const n={id:uid(),workerId:id,title,message,createdAt:Date.now(),read:false};
+
+ db.ref(ROOT+"/notifications/"+n.id).set(n).catch(e=>console.error(e));
 
 }
 
@@ -692,11 +666,9 @@ function renderHome(){
 
  const q=($("homeSearch")?.value||"").toLowerCase();
 
- $("offers").innerHTML=data.offers
+ $("offers").innerHTML=data.offers.filter(o=>o.active!==false).map(o=>`
 
-  .filter(o=>o.active!==false)
-
-  .map(o=>`<article class="card">
+  <article class="card">
 
    <img class="card-img" src="${imageUrl(o.image)}" onerror="this.src=imgFallback">
 
@@ -704,21 +676,11 @@ function renderHome(){
 
   </article>`).join("");
 
- $("restaurants").innerHTML=data.restaurants
+ $("restaurants").innerHTML=data.restaurants.filter(r=>r.active!==false&&(!q||String(r.name||"").toLowerCase().includes(q))).map(restaurantCard).join("")||'<div class="empty">Aucun restaurant disponible.</div>';
 
-  .filter(r=>r.active!==false&&(!q||String(r.name||"").toLowerCase().includes(q)))
+ $("homeCategories").innerHTML=data.categories.map(c=>`<button class="cat" onclick="goCategory('${c.id}')">${safe(c.emoji||"▦")} ${safe(c.name)}</button>`).join("");
 
-  .map(restaurantCard).join("")||'<div class="empty">Aucun restaurant disponible.</div>';
-
- $("homeCategories").innerHTML=data.categories
-
-  .map(c=>`<button class="cat" onclick="goCategory('${c.id}')">${safe(c.emoji||"▦")} ${safe(c.name)}</button>`).join("");
-
- $("homeProducts").innerHTML=data.products
-
-  .filter(p=>p.active!==false&&(!q||String(p.name||"").toLowerCase().includes(q)||String(p.category||"").toLowerCase().includes(q)))
-
-  .slice(0,12).map(productCard).join("")||'<div class="empty">Aucun produit disponible.</div>';
+ $("homeProducts").innerHTML=data.products.filter(p=>p.active!==false&&(!q||String(p.name||"").toLowerCase().includes(q)||String(p.category||"").toLowerCase().includes(q))).slice(0,12).map(productCard).join("")||'<div class="empty">Aucun produit disponible.</div>';
 
 }
 
@@ -738,19 +700,9 @@ function renderEverything(){
 
  const q=($("everythingSearch")?.value||"").toLowerCase();
 
- const products=data.products.filter(p=>
+ const products=data.products.filter(p=>p.active!==false&&(selectedCategory==="all"||p.category===selectedCategory)&&(!q||String(p.name||"").toLowerCase().includes(q)));
 
-  p.active!==false&&
-
-  (selectedCategory==="all"||p.category===selectedCategory)&&
-
-  (!q||String(p.name||"").toLowerCase().includes(q))
-
- );
-
- $("everythingProducts").innerHTML=products.map(productCard).join("")||
-
-  '<div class="empty"><b>🛍️</b>Aucun produit dans cette catégorie.</div>';
+ $("everythingProducts").innerHTML=products.map(productCard).join("")||'<div class="empty"><b>🛍️</b>Aucun produit dans cette catégorie.</div>';
 
 }
 
@@ -790,7 +742,7 @@ function addToCart(id){
 
  if(existing)existing.qty++;
 
- else cart.push({id:p.id,name:p.name,price:Number(p.price),qty:1,restaurantId:p.restaurantId||null});
+ else cart.push({id:p.id,name:p.name,price:Number(p.price),qty:1,restaurantId:p.restaurantId||null,image:p.image||"",description:p.description||""});
 
  updateCart();
 
@@ -798,11 +750,7 @@ function addToCart(id){
 
 }
 
-function updateCart(){
-
- $("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
-
-}
+function updateCart(){$("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0)}
 
 function cartTotal(){return cart.reduce((s,x)=>s+x.price*x.qty,0)}
 
@@ -818,11 +766,7 @@ function openCart(){
 
  const restaurantIds=[...new Set(cart.map(x=>x.restaurantId).filter(Boolean))];
 
- const delivery=restaurantIds.length?
-
-  Math.max(...restaurantIds.map(id=>Number(data.restaurants.find(r=>r.id===id)?.deliveryPrice??data.settings.deliveryPrice))):
-
-  Number(data.settings.deliveryPrice);
+ const delivery=restaurantIds.length?Math.max(...restaurantIds.map(id=>Number(data.restaurants.find(r=>r.id===id)?.deliveryPrice??data.settings.deliveryPrice))):Number(data.settings.deliveryPrice);
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Votre panier 🛒</h2>
 
@@ -880,31 +824,13 @@ async function submitOrder(delivery){
 
  const order={
 
-  id:uid(),
+  id:uid(),customerName:name,phone,address,note:$("orderNote").value,
 
-  customerName:name,
+  items:cart.map(x=>({...x})),subtotal:cartTotal(),deliveryPrice:delivery,
 
-  phone,
+  total:cartTotal()+delivery,status:"pending",workerId:null,
 
-  address,
-
-  note:$("orderNote").value,
-
-  items:cart.map(x=>({...x})),
-
-  subtotal:cartTotal(),
-
-  deliveryPrice:delivery,
-
-  total:cartTotal()+delivery,
-
-  status:"pending",
-
-  workerId:null,
-
-  createdAt:Date.now(),
-
-  customerUid:auth.currentUser?.uid||""
+  createdAt:Date.now(),customerUid:auth.currentUser?.uid||""
 
  };
 
@@ -912,21 +838,13 @@ async function submitOrder(delivery){
 
   await db.ref(ROOT+"/orders/"+order.id).set(order);
 
-  cart=[];
-
-  updateCart();
-
-  closeModal();
+  cart=[];updateCart();closeModal();
 
   toast("Commande envoyée avec succès !");
 
   notify("Commande confirmée","Votre demande a été enregistrée.");
 
- }catch(e){
-
-  toast("Erreur : "+e.message);
-
- }
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1008,15 +926,9 @@ function renderProfile(){
 
 async function submitApplication(){
 
- const firstName=$("appFirst").value.trim();
+ const firstName=$("appFirst").value.trim(),lastName=$("appLast").value.trim();
 
- const lastName=$("appLast").value.trim();
-
- const age=Number($("appAge").value);
-
- const phone=$("appPhone").value.trim();
-
- const moto=$("appMoto").value.trim();
+ const age=Number($("appAge").value),phone=$("appPhone").value.trim(),moto=$("appMoto").value.trim();
 
  if(!firstName||!lastName||!age||!phone||!moto){toast("Veuillez remplir les champs obligatoires.");return}
 
@@ -1032,29 +944,11 @@ async function submitApplication(){
 
   let image="",motoImage="";
 
-  const f=$("appImage").files[0];
+  if($("appImage").files[0])image=await fileToData($("appImage").files[0]);
 
-  const mf=$("appMotoImage").files[0];
+  if($("appMotoImage").files[0])motoImage=await fileToData($("appMotoImage").files[0]);
 
-  if(f)image=await fileToData(f);
-
-  if(mf)motoImage=await fileToData(mf);
-
-  const app={
-
-   id:uid(),
-
-   uid:uidUser,
-
-   firstName,lastName,age,phone,moto,image,motoImage,
-
-   note:$("appNote").value,
-
-   status:"pending",
-
-   createdAt:Date.now()
-
-  };
+  const app={id:uid(),uid:uidUser,firstName,lastName,age,phone,moto,image,motoImage,note:$("appNote").value,status:"pending",createdAt:Date.now()};
 
   await db.ref(ROOT+"/applications/"+app.id).set(app);
 
@@ -1064,11 +958,7 @@ async function submitApplication(){
 
   renderProfile();
 
- }catch(e){
-
-  toast("Erreur : "+e.message);
-
- }
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1104,11 +994,23 @@ function renderWork(){
 
    <div class="row"><img class="avatar" src="${imageUrl(w.image)}"><div><h3>${safe(w.firstName)} ${safe(w.lastName)}</h3><span class="tag">Livreur actif</span></div></div>
 
+   <p class="muted" style="margin-top:12px">Téléphone : ${safe(w.phone)}</p>
+
+   <p class="muted">Moto : ${safe(w.moto)}</p>
+
    <div class="stat-grid" style="margin-top:18px">
 
     <div class="stat"><strong>${money(earnings)}</strong><small>Mes gains</small></div>
 
     <div class="stat"><strong>${myOrders.filter(o=>o.status==="delivered").length}</strong><small>Livraisons terminées</small></div>
+
+   </div>
+
+   <div class="worker-profile-actions">
+
+    <p class="muted">Vous pouvez supprimer votre compte livreur. Cette action est définitive.</p>
+
+    <button class="danger" style="width:100%;margin-top:10px" onclick="deleteOwnWorkerProfile()">🗑️ Supprimer mon profil livreur</button>
 
    </div>
 
@@ -1120,11 +1022,11 @@ function renderWork(){
 
   <div class="section-head"><h2>Mes commandes</h2></div>
 
-  <div>${myOrders.map(orderWorkerCard).join("")||'<div class="empty">Aucune commande pour le moment.</div>'}</div>
+  <div>${myOrders.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).map(orderWorkerCard).join("")||'<div class="empty">Aucune commande pour le moment.</div>'}</div>
 
   <div class="section-head"><h2>Notifications</h2></div>
 
-  ${data.notifications.filter(n=>n.workerId===w.id).slice(0,15).map(n=>`<div class="panel"><b>${safe(n.title)}</b><p class="muted">${safe(n.message)}</p></div>`).join("")}`;
+  ${data.notifications.filter(n=>n.workerId===w.id).slice(0,15).map(n=>`<div class="panel"><b>${safe(n.title)}</b><p class="muted">${safe(n.message)}</p></div>`).join("")||'<div class="empty">Aucune notification.</div>'}`;
 
   return;
 
@@ -1154,17 +1056,25 @@ function renderWork(){
 
 function availableOrdersHTML(){
 
- return data.orders.filter(o=>o.status==="pending"&&!o.workerId).map(o=>`<div class="panel">
+ return data.orders.filter(o=>o.status==="pending"&&!o.workerId).sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0)).map(o=>`
 
- <div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="tag">Disponible</span></div>
+ <div class="panel">
 
- <p class="muted" style="margin:8px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
+  <div class="between"><b>Commande #${safe(String(o.id).slice(-6))}</b><span class="tag">Disponible</span></div>
 
- <div class="between"><span>Montant</span><b class="price">${money(o.total)}</b></div>
+  <p class="muted" style="margin:8px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
 
- <p class="muted" style="margin:7px 0">Adresse : ${safe(o.address)}</p>
+  <div class="between"><span>Montant</span><b class="price">${money(o.total)}</b></div>
 
- <button class="primary" style="margin-top:12px" onclick="acceptOrder('${o.id}')">ACCEPTER LA COMMANDE</button>
+  <p class="muted" style="margin:7px 0">Adresse : ${safe(o.address)}</p>
+
+  <div class="order-admin-actions">
+
+   <button class="primary" onclick="acceptOrder('${o.id}')">ACCEPTER</button>
+
+   <button class="danger" onclick="rejectOrder('${o.id}')">IGNORER</button>
+
+  </div>
 
  </div>`).join("")||'<div class="empty">Aucune commande disponible.</div>';
 
@@ -1172,17 +1082,27 @@ function availableOrdersHTML(){
 
 function orderWorkerCard(o){
 
+ const statusNames={pending:"En attente",accepted:"Acceptée",picked_up:"Récupérée",delivered:"Livrée",cancelled:"Annulée"};
+
  return `<div class="panel">
 
- <div class="between"><b>Commande #${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
+ <div class="between"><b>Commande #${safe(String(o.id).slice(-6))}</b><span class="pill">${safe(statusNames[o.status]||o.status)}</span></div>
 
  <p class="muted" style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p>
 
- <p class="muted">${safe(o.address)}</p><b class="price">${money(o.total)}</b>
+ <p class="muted">${safe(o.address)}</p>
 
- ${o.status==="accepted"?`<button class="primary" style="margin-top:12px" onclick="updateOrderStatus('${o.id}','picked_up')">Commande récupérée</button>`:""}
+ ${o.note?`<p class="notice" style="margin-top:8px">Note : ${safe(o.note)}</p>`:""}
 
- ${o.status==="picked_up"?`<button class="primary" style="margin-top:12px" onclick="updateOrderStatus('${o.id}','delivered')">Confirmer la livraison</button>`:""}
+ <p class="muted" style="margin:8px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
+
+ <b class="price">${money(o.total)}</b>
+
+ ${o.status==="accepted"?`<button class="primary" style="margin-top:12px" onclick="updateOrderStatus('${o.id}','picked_up')">📦 Commande récupérée</button>`:""}
+
+ ${o.status==="picked_up"?`<button class="primary" style="margin-top:12px" onclick="updateOrderStatus('${o.id}','delivered')">✓ Confirmer la livraison</button>`:""}
+
+ ${o.status==="delivered"?`<p class="success" style="margin-top:10px">Gain enregistré : ${money(o.workerEarning)}</p>`:""}
 
  </div>`;
 
@@ -1196,11 +1116,7 @@ function loginWorker(){
 
  if(!w){toast("Mot de passe incorrect.");return}
 
- currentWorker=w;
-
- isAdmin=false;
-
- renderWork();
+ currentWorker=w;isAdmin=false;renderWork();
 
 }
 
@@ -1208,11 +1124,7 @@ function loginAdminWork(){
 
  if($("workAdminPassword").value!==ADMIN_PASSWORD){toast("Mot de passe incorrect.");return}
 
- isAdmin=true;
-
- currentWorker=null;
-
- renderWork();
+ isAdmin=true;currentWorker=null;renderWork();
 
 }
 
@@ -1230,11 +1142,7 @@ async function acceptOrder(id){
 
    if(!o||o.status!=="pending"||o.workerId)return;
 
-   o.workerId=currentWorker.id;
-
-   o.status="accepted";
-
-   o.acceptedAt=Date.now();
+   o.workerId=currentWorker.id;o.status="accepted";o.acceptedAt=Date.now();o.updatedAt=Date.now();
 
    return o;
 
@@ -1248,41 +1156,75 @@ async function acceptOrder(id){
 
   renderWork();
 
- }catch(e){
+ }catch(e){toast(e.message)}
 
-  toast(e.message);
+}
 
- }
+async function rejectOrder(id){
+
+ if(!currentWorker)return;
+
+ try{
+
+  const result=await db.ref(ROOT+"/orders/"+id).transaction(o=>{
+
+   if(!o||o.status!=="pending"||o.workerId)return;
+
+   o.rejectedBy=o.rejectedBy||{};
+
+   o.rejectedBy[currentWorker.id]=true;
+
+   return o;
+
+  });
+
+  if(!result.committed){toast("Cette commande n'est plus disponible.");return}
+
+  toast("Commande ignorée.");
+
+  renderWork();
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
 async function updateOrderStatus(id,status){
 
- const o=data.orders.find(x=>x.id===id);
-
- if(!o||!currentWorker||o.workerId!==currentWorker.id)return;
-
- const update={status,updatedAt:Date.now()};
-
- if(status==="delivered"){
-
-  update.deliveredAt=Date.now();
-
-  update.workerEarning=Number(o.workerEarning??(Number(o.deliveryPrice||data.settings.deliveryPrice)*0.8));
-
- }
+ if(!currentWorker)return;
 
  try{
 
-  await db.ref(ROOT+"/orders/"+id).update(update);
+  const result=await db.ref(ROOT+"/orders/"+id).transaction(o=>{
 
-  toast("Statut mis à jour.");
+   if(!o||o.workerId!==currentWorker.id)return;
 
- }catch(e){
+   if(status==="picked_up"&&o.status!=="accepted")return;
 
-  toast("Erreur : "+e.message);
+   if(status==="delivered"&&o.status!=="picked_up")return;
 
- }
+   o.status=status;o.updatedAt=Date.now();
+
+   if(status==="picked_up")o.pickedUpAt=Date.now();
+
+   if(status==="delivered"){
+
+    o.deliveredAt=Date.now();
+
+    o.workerEarning=Number(o.workerEarning??(Number(o.deliveryPrice||data.settings.deliveryPrice)*.8));
+
+   }
+
+   return o;
+
+  });
+
+  if(!result.committed){toast("Impossible de modifier cette commande.");return}
+
+  toast(status==="delivered"?"Livraison terminée !":"Commande récupérée.");
+
+  renderWork();
+
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1306,9 +1248,9 @@ function workerDashboard(){
 
  <div class="section-head"><h2>Commandes récentes</h2></div>
 
- ${data.orders.slice(0,10).map(o=>`<div class="panel">
+ ${data.orders.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).slice(0,10).map(o=>`<div class="panel">
 
- <b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span>
+ <b>#${safe(String(o.id).slice(-6))}</b> <span class="pill">${safe(o.status)}</span>
 
  <p class="muted">${safe(o.customerName)} · ${safe(o.phone)}</p><b>${money(o.total)}</b>
 
@@ -1362,11 +1304,7 @@ function loginStaff(){
 
  if($("staffPassword").value!==ADMIN_PASSWORD){toast("Mot de passe incorrect.");return}
 
- isAdmin=true;
-
- selectedAdminTab="dashboard";
-
- renderStaff();
+ isAdmin=true;selectedAdminTab="dashboard";renderStaff();
 
 }
 
@@ -1410,13 +1348,29 @@ function renderAdminTab(){
 
  <button class="secondary" onclick="adminTab('offers')">+ Offre</button>
 
+ </div>
+
+ <div class="panel admin-danger-zone">
+
+  <h3>⚠️ Zone de danger</h3>
+
+  <p class="muted">Les actions ci-dessous suppriment définitivement des données de Firebase.</p>
+
+  <div class="delete-actions">
+
+   <button class="danger" onclick="deleteCompletedOrders()">Supprimer les commandes terminées</button>
+
+   <button class="danger" onclick="resetApplication()">RESET TOTAL</button>
+
+  </div>
+
  </div>`;
 
  break;
 
  case"applications":
 
- el.innerHTML=`<h3>Candidatures (${data.applications.filter(a=>a.status==="pending").length})</h3>`+
+ el.innerHTML=`<div class="between"><h3>Candidatures (${data.applications.filter(a=>a.status==="pending").length})</h3><button class="danger" onclick="deleteAllApplications()">Tout supprimer</button></div>`+
 
  data.applications.slice().reverse().map(a=>`<div class="panel">
 
@@ -1434,13 +1388,15 @@ function renderAdminTab(){
 
  <button class="danger" style="margin:8px" onclick="rejectApplication('${a.id}')">REFUSER</button>`:""}
 
+ <button class="danger" style="width:100%;margin-top:8px" onclick="deleteApplication('${a.id}')">🗑️ Supprimer cette candidature</button>
+
  </div>`).join("")||'<div class="empty">Aucune candidature.</div>';
 
  break;
 
  case"workers":
 
- el.innerHTML=`<div class="between"><h3>Équipe (${data.workers.length})</h3></div>`+
+ el.innerHTML=`<div class="between"><h3>Équipe (${data.workers.length})</h3><button class="danger" onclick="deleteAllWorkers()">Tout supprimer</button></div>`+
 
  data.workers.map(w=>`<div class="panel">
 
@@ -1450,11 +1406,15 @@ function renderAdminTab(){
 
  <p class="muted" style="margin:10px 0">Livraisons : ${data.orders.filter(o=>o.workerId===w.id&&o.status==="delivered").length}</p>
 
- <div class="row">
+ <p class="muted">Statut : ${w.active===false?"Désactivé":"Actif"}</p>
 
- <button class="secondary" onclick="editWorker('${w.id}')">Modifier</button>
+ <div class="row" style="flex-wrap:wrap;margin-top:10px">
 
- <button class="danger" onclick="toggleWorker('${w.id}')">${w.active===false?"Activer":"Désactiver"}</button>
+  <button class="secondary" onclick="editWorker('${w.id}')">Modifier</button>
+
+  <button class="secondary" onclick="toggleWorker('${w.id}')">${w.active===false?"Activer":"Désactiver"}</button>
+
+  <button class="danger" onclick="deleteWorker('${w.id}')">🗑️ Supprimer</button>
 
  </div></div>`).join("")||'<div class="empty">Aucun livreur.</div>';
 
@@ -1462,11 +1422,17 @@ function renderAdminTab(){
 
  case"orders":
 
- el.innerHTML=`<h3>Toutes les commandes</h3>`+
+ el.innerHTML=`<div class="between"><h3>Toutes les commandes (${data.orders.length})</h3><button class="danger" onclick="deleteCompletedOrders()">Supprimer terminées</button></div>
 
- data.orders.slice().reverse().map(o=>`<div class="panel">
+ <div class="delete-actions">
 
- <div class="between"><b>#${safe(o.id.slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
+  <button class="danger" onclick="deleteAllOrders()">🗑️ Supprimer toutes les commandes</button>
+
+ </div>`+
+
+ data.orders.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).map(o=>`<div class="order-admin">
+
+ <div class="between"><b>#${safe(String(o.id).slice(-6))}</b><span class="pill">${safe(o.status)}</span></div>
 
  <p style="margin:8px 0">${safe(o.customerName)} · ${safe(o.phone)}</p>
 
@@ -1474,7 +1440,7 @@ function renderAdminTab(){
 
  <p class="muted" style="margin:7px 0">${(o.items||[]).map(x=>safe(x.name)+" × "+x.qty).join(", ")}</p>
 
- <div class="between"><b>${money(o.total)}</b><span class="muted">${new Date(o.createdAt).toLocaleString("fr-FR")}</span></div>
+ <div class="between"><b>${money(o.total)}</b><span class="muted">${o.createdAt?new Date(o.createdAt).toLocaleString("fr-FR"):"Date inconnue"}</span></div>
 
  <div class="field"><label>Changer le statut</label>
 
@@ -1484,13 +1450,21 @@ function renderAdminTab(){
 
  </select></div>
 
+ <div class="order-admin-actions">
+
+  <button class="danger" onclick="deleteOrder('${o.id}')">🗑️ Supprimer</button>
+
+ </div>
+
  </div>`).join("")||'<div class="empty">Aucune commande.</div>';
 
  break;
 
  case"products":
 
- el.innerHTML=`<div class="between"><h3>Produits</h3><button class="primary" style="width:auto" onclick="productForm()">+ Ajouter</button></div>`+
+ el.innerHTML=`<div class="between"><h3>Produits</h3><button class="primary" style="width:auto" onclick="productForm()">+ Ajouter</button></div>
+
+ <div class="delete-actions"><button class="danger" onclick="deleteAllItems('products','tous les produits')">Supprimer tous les produits</button></div>`+
 
  data.products.map(p=>`<div class="list-item between">
 
@@ -1506,7 +1480,9 @@ function renderAdminTab(){
 
  case"restaurants":
 
- el.innerHTML=`<div class="between"><h3>Restaurants</h3><button class="primary" style="width:auto" onclick="restaurantForm()">+ Ajouter</button></div>`+
+ el.innerHTML=`<div class="between"><h3>Restaurants</h3><button class="primary" style="width:auto" onclick="restaurantForm()">+ Ajouter</button></div>
+
+ <div class="delete-actions"><button class="danger" onclick="deleteAllItems('restaurants','tous les restaurants')">Supprimer tous les restaurants</button></div>`+
 
  data.restaurants.map(r=>`<div class="list-item between">
 
@@ -1522,7 +1498,9 @@ function renderAdminTab(){
 
  case"categories":
 
- el.innerHTML=`<div class="between"><h3>Catégories</h3><button class="primary" style="width:auto" onclick="categoryForm()">+ Ajouter</button></div>`+
+ el.innerHTML=`<div class="between"><h3>Catégories</h3><button class="primary" style="width:auto" onclick="categoryForm()">+ Ajouter</button></div>
+
+ <div class="delete-actions"><button class="danger" onclick="deleteAllItems('categories','toutes les catégories')">Supprimer toutes les catégories</button></div>`+
 
  data.categories.map(c=>`<div class="list-item between">
 
@@ -1538,7 +1516,9 @@ function renderAdminTab(){
 
  case"offers":
 
- el.innerHTML=`<div class="between"><h3>Offres spéciales</h3><button class="primary" style="width:auto" onclick="offerForm()">+ Ajouter</button></div>`+
+ el.innerHTML=`<div class="between"><h3>Offres spéciales</h3><button class="primary" style="width:auto" onclick="offerForm()">+ Ajouter</button></div>
+
+ <div class="delete-actions"><button class="danger" onclick="deleteAllItems('offers','toutes les offres')">Supprimer toutes les offres</button></div>`+
 
  data.offers.map(o=>`<div class="list-item between">
 
@@ -1594,6 +1574,16 @@ function renderAdminTab(){
 
  <button class="primary" onclick="saveSettings()">Enregistrer</button>
 
+ </div>
+
+ <div class="panel admin-danger-zone">
+
+ <h3>⚠️ Réinitialisation complète</h3>
+
+ <p class="muted">Supprime les produits, restaurants, catégories personnalisées, livreurs, candidatures, commandes, offres et notifications. Les paramètres reviennent aux valeurs par défaut.</p>
+
+ <button class="danger" style="width:100%;margin-top:12px" onclick="resetApplication()">RESET TOTAL DE L'APPLICATION</button>
+
  </div>`;
 
  break;
@@ -1626,11 +1616,7 @@ async function approveApplication(id){
 
   toast("Livreur accepté.");
 
- }catch(e){
-
-  toast("Erreur : "+e.message);
-
- }
+ }catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1638,13 +1624,9 @@ async function rejectApplication(id){
 
  if(!confirm("Refuser cette candidature ?"))return;
 
- try{
+ try{await db.ref(ROOT+"/applications/"+id).update({status:"rejected"});toast("Candidature refusée.");}
 
-  await db.ref(ROOT+"/applications/"+id).update({status:"rejected"});
-
-  toast("Candidature refusée.");
-
- }catch(e){toast("Erreur : "+e.message)}
+ catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1656,13 +1638,9 @@ async function toggleWorker(id){
 
  const active=w.active===false;
 
- try{
+ try{await db.ref(ROOT+"/workers/"+id).update({active});toast(active?"Compte activé":"Compte désactivé");}
 
-  await db.ref(ROOT+"/workers/"+id).update({active});
-
-  toast(active?"Compte activé":"Compte désactivé");
-
- }catch(e){toast("Erreur : "+e.message)}
+ catch(e){toast("Erreur : "+e.message)}
 
 }
 
@@ -1690,39 +1668,221 @@ function editWorker(id){
 
 async function saveWorker(id){
 
- const update={
-
-  firstName:$("editWFirst").value,
-
-  lastName:$("editWLast").value,
-
-  phone:$("editWPhone").value,
-
-  moto:$("editWMoto").value
-
- };
+ const update={firstName:$("editWFirst").value,lastName:$("editWLast").value,phone:$("editWPhone").value,moto:$("editWMoto").value};
 
  if($("editWPass").value)update.password=$("editWPass").value;
 
- try{
+ try{await db.ref(ROOT+"/workers/"+id).update(update);closeModal();toast("Profil modifié");}
 
-  await db.ref(ROOT+"/workers/"+id).update(update);
-
-  closeModal();
-
-  toast("Profil modifié");
-
- }catch(e){toast("Erreur : "+e.message)}
+ catch(e){toast("Erreur : "+e.message)}
 
 }
 
 async function adminOrderStatus(id,status){
 
+ try{await db.ref(ROOT+"/orders/"+id).update({status,updatedAt:Date.now()});toast("Statut modifié.");}
+
+ catch(e){toast("Erreur : "+e.message)}
+
+}
+
+/* DELETE WORKERS */
+
+async function deleteWorker(id){
+
+ const w=data.workers.find(x=>x.id===id);
+
+ if(!w)return;
+
+ if(!confirm(`Supprimer définitivement le compte de ${w.firstName||""} ${w.lastName||""} ?\n\nLes anciennes commandes livrées seront conservées dans l'historique. Les commandes non terminées seront libérées pour les autres livreurs.`))return;
+
  try{
 
-  await db.ref(ROOT+"/orders/"+id).update({status,updatedAt:Date.now()});
+  const updates={};
 
-  toast("Statut modifié.");
+  updates[ROOT+"/workers/"+id]=null;
+
+  data.orders.filter(o=>o.workerId===id&&o.status!=="delivered").forEach(o=>{
+
+   updates[ROOT+"/orders/"+o.id+"/workerId"]=null;
+
+   updates[ROOT+"/orders/"+o.id+"/status"]="pending";
+
+   updates[ROOT+"/orders/"+o.id+"/updatedAt"]=Date.now();
+
+  });
+
+  await db.ref().update(updates);
+
+  if(currentWorker?.id===id){currentWorker=null;isAdmin=false;}
+
+  toast("Livreur supprimé.");
+
+  renderStaff();
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+async function deleteAllWorkers(){
+
+ if(!data.workers.length){toast("Aucun livreur à supprimer.");return}
+
+ if(!confirm("Supprimer TOUS les livreurs ? Les commandes non terminées seront libérées. Les commandes livrées resteront dans l'historique."))return;
+
+ try{
+
+  const updates={};
+
+  data.workers.forEach(w=>updates[ROOT+"/workers/"+w.id]=null);
+
+  data.orders.filter(o=>o.workerId&&o.status!=="delivered").forEach(o=>{
+
+   updates[ROOT+"/orders/"+o.id+"/workerId"]=null;
+
+   updates[ROOT+"/orders/"+o.id+"/status"]="pending";
+
+  });
+
+  await db.ref().update(updates);
+
+  currentWorker=null;toast("Tous les livreurs ont été supprimés.");renderStaff();
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+async function deleteOwnWorkerProfile(){
+
+ if(!currentWorker)return;
+
+ const id=currentWorker.id;
+
+ if(!confirm("Voulez-vous vraiment supprimer définitivement votre profil livreur ? Cette action ne peut pas être annulée. Vos commandes terminées resteront dans l'historique."))return;
+
+ try{
+
+  const updates={};
+
+  updates[ROOT+"/workers/"+id]=null;
+
+  data.orders.filter(o=>o.workerId===id&&o.status!=="delivered").forEach(o=>{
+
+   updates[ROOT+"/orders/"+o.id+"/workerId"]=null;
+
+   updates[ROOT+"/orders/"+o.id+"/status"]="pending";
+
+   updates[ROOT+"/orders/"+o.id+"/updatedAt"]=Date.now();
+
+  });
+
+  await db.ref().update(updates);
+
+  currentWorker=null;isAdmin=false;
+
+  toast("Votre profil livreur a été supprimé.");
+
+  showPage("profile");
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+/* DELETE ORDERS */
+
+async function deleteOrder(id){
+
+ if(!confirm("Supprimer définitivement cette commande ?"))return;
+
+ try{await db.ref(ROOT+"/orders/"+id).remove();toast("Commande supprimée.");renderStaff();}
+
+ catch(e){toast("Erreur : "+e.message)}
+
+}
+
+async function deleteCompletedOrders(){
+
+ const completed=data.orders.filter(o=>o.status==="delivered"||o.status==="cancelled");
+
+ if(!completed.length){toast("Aucune commande terminée à supprimer.");return}
+
+ if(!confirm(`Supprimer ${completed.length} commande(s) terminée(s) ou annulée(s) ? Cette action est définitive.`))return;
+
+ try{
+
+  const updates={};
+
+  completed.forEach(o=>updates[ROOT+"/orders/"+o.id]=null);
+
+  await db.ref().update(updates);
+
+  toast(`${completed.length} commande(s) supprimée(s).`);
+
+  renderStaff();
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+async function deleteAllOrders(){
+
+ if(!data.orders.length){toast("Aucune commande à supprimer.");return}
+
+ if(!confirm(`ATTENTION : supprimer les ${data.orders.length} commandes de l'application ? Cette action est irréversible.`))return;
+
+ if(!confirm("Dernière confirmation : toutes les commandes, y compris les commandes livrées, seront effacées."))return;
+
+ try{
+
+  await db.ref(ROOT+"/orders").remove();
+
+  toast("Toutes les commandes ont été supprimées.");
+
+  renderStaff();
+
+ }catch(e){toast("Erreur : "+e.message)}
+
+}
+
+/* DELETE APPLICATIONS / COLLECTIONS */
+
+async function deleteApplication(id){
+
+ if(!confirm("Supprimer cette candidature définitivement ?"))return;
+
+ try{await db.ref(ROOT+"/applications/"+id).remove();toast("Candidature supprimée.");renderStaff();}
+
+ catch(e){toast("Erreur : "+e.message)}
+
+}
+
+async function deleteAllApplications(){
+
+ if(!data.applications.length){toast("Aucune candidature.");return}
+
+ if(!confirm("Supprimer toutes les candidatures ?"))return;
+
+ try{await db.ref(ROOT+"/applications").remove();toast("Toutes les candidatures ont été supprimées.");renderStaff();}
+
+ catch(e){toast("Erreur : "+e.message)}
+
+}
+
+async function deleteAllItems(collection,label){
+
+ const items=data[collection]||[];
+
+ if(!items.length){toast("Aucun élément à supprimer.");return}
+
+ if(!confirm(`Supprimer ${label} définitivement ?`))return;
+
+ try{
+
+  await db.ref(ROOT+"/"+collection).remove();
+
+  toast("Suppression effectuée.");
+
+  renderStaff();
 
  }catch(e){toast("Erreur : "+e.message)}
 
@@ -1732,15 +1892,73 @@ async function deleteItem(collection,id){
 
  if(!confirm("Confirmer la suppression ?"))return;
 
- try{
+ try{await db.ref(ROOT+"/"+collection+"/"+id).remove();toast("Supprimé.");}
 
-  await db.ref(ROOT+"/"+collection+"/"+id).remove();
-
-  toast("Supprimé.");
-
- }catch(e){toast("Erreur : "+e.message)}
+ catch(e){toast("Erreur : "+e.message)}
 
 }
+
+/* FULL RESET */
+
+async function resetApplication(){
+
+ if(!isAdmin){toast("Accès administrateur requis.");return}
+
+ const answer=prompt('Pour confirmer le RESET TOTAL, écrivez exactement : RESET');
+
+ if(answer!=="RESET"){toast("Réinitialisation annulée.");return}
+
+ if(!confirm("DERNIÈRE CONFIRMATION : toutes les données de Tout de suite seront supprimées de Firebase. Continuer ?"))return;
+
+ try{
+
+  const fresh=defaultData();
+
+  const initial={
+
+   settings:fresh.settings,
+
+   products:{},
+
+   restaurants:{},
+
+   categories:collectionToObject(fresh.categories),
+
+   workers:{},
+
+   applications:{},
+
+   orders:{},
+
+   offers:{},
+
+   notifications:{}
+
+  };
+
+  await db.ref(ROOT).set(initial);
+
+  cart=[];updateCart();
+
+  currentWorker=null;
+
+  isAdmin=true;
+
+  selectedAdminTab="dashboard";
+
+  toast("Application réinitialisée avec succès.");
+
+  renderStaff();
+
+ }catch(e){
+
+  toast("Échec du RESET : "+e.message);
+
+ }
+
+}
+
+/* SETTINGS */
 
 async function saveSettings(){
 
@@ -1748,13 +1966,7 @@ async function saveSettings(){
 
  const deliveryPrice=Number($("settingDelivery").value);
 
- if(!name||!Number.isFinite(deliveryPrice)||deliveryPrice<0){
-
-  toast("Vérifiez les paramètres.");
-
-  return;
-
- }
+ if(!name||!Number.isFinite(deliveryPrice)||deliveryPrice<0){toast("Vérifiez les paramètres.");return}
 
  try{
 
@@ -1770,11 +1982,7 @@ async function saveSettings(){
 
 function productForm(id){
 
- const p=data.products.find(x=>x.id===id)||{
-
-  name:"",price:"",description:"",category:"",restaurantId:"",image:""
-
- };
+ const p=data.products.find(x=>x.id===id)||{name:"",price:"",description:"",category:"",restaurantId:"",image:""};
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?"Modifier":"Ajouter"} un produit</h2>
 
@@ -1784,21 +1992,13 @@ function productForm(id){
 
  <div class="field"><label>Prix (DT)</label><input id="pPrice" type="number" step=".01" value="${safe(p.price)}"></div>
 
- <div class="field"><label>Catégorie</label><select id="pCategory">
+ <div class="field"><label>Catégorie</label><select id="pCategory"><option value="">Aucune</option>
 
- <option value="">Aucune</option>
+ ${data.categories.map(c=>`<option value="${c.id}" ${p.category===c.id?"selected":""}>${safe(c.name)}</option>`).join("")}</select></div>
 
- ${data.categories.map(c=>`<option value="${c.id}" ${p.category===c.id?"selected":""}>${safe(c.name)}</option>`).join("")}
+ <div class="field"><label>Restaurant (facultatif)</label><select id="pRestaurant"><option value="">Produit indépendant</option>
 
- </select></div>
-
- <div class="field"><label>Restaurant (facultatif)</label><select id="pRestaurant">
-
- <option value="">Produit indépendant</option>
-
- ${data.restaurants.map(r=>`<option value="${r.id}" ${p.restaurantId===r.id?"selected":""}>${safe(r.name)}</option>`).join("")}
-
- </select></div>
+ ${data.restaurants.map(r=>`<option value="${r.id}" ${p.restaurantId===r.id?"selected":""}>${safe(r.name)}</option>`).join("")}</select></div>
 
  ${imageInput("pImage")}
 
@@ -1808,17 +2008,9 @@ function productForm(id){
 
 async function saveProduct(id){
 
- const name=$("pName").value.trim();
+ const name=$("pName").value.trim(),price=Number($("pPrice").value);
 
- const price=Number($("pPrice").value);
-
- if(!name||!Number.isFinite(price)||price<0){
-
-  toast("Nom et prix valides obligatoires.");
-
-  return;
-
- }
+ if(!name||!Number.isFinite(price)||price<0){toast("Nom et prix valides obligatoires.");return}
 
  if(!dbReady){toast("Connexion Firebase en cours.");return}
 
@@ -1828,47 +2020,23 @@ async function saveProduct(id){
 
  try{
 
-  const f=$("pImage").files[0];
+  if($("pImage").files[0])image=await fileToData($("pImage").files[0]);
 
-  if(f)image=await fileToData(f);
-
-  const p={
-
-   id:id||uid(),
-
-   name,
-
-   price,
-
-   description:$("pDesc").value,
-
-   category:$("pCategory").value,
-
-   restaurantId:$("pRestaurant").value,
-
-   image,
-
-   active:true
-
-  };
+  const p={id:id||uid(),name,price,description:$("pDesc").value,category:$("pCategory").value,restaurantId:$("pRestaurant").value,image,active:true};
 
   await db.ref(ROOT+"/products/"+p.id).set(p);
 
-  closeModal();
-
-  toast("Produit enregistré.");
+  closeModal();toast("Produit enregistré.");
 
  }catch(e){toast("Erreur : "+e.message)}
 
 }
 
+/* RESTAURANT EDITOR */
+
 function restaurantForm(id){
 
- const r=data.restaurants.find(x=>x.id===id)||{
-
-  name:"",description:"",deliveryPrice:data.settings.deliveryPrice,image:""
-
- };
+ const r=data.restaurants.find(x=>x.id===id)||{name:"",description:"",deliveryPrice:data.settings.deliveryPrice,image:""};
 
  openModal(`<button class="close" onclick="closeModal()">×</button><h2>${id?"Modifier":"Ajouter"} un restaurant</h2>
 
@@ -1900,31 +2068,17 @@ async function saveRestaurant(id){
 
   if($("rImage").files[0])image=await fileToData($("rImage").files[0]);
 
-  const r={
-
-   id:id||uid(),
-
-   name,
-
-   description:$("rDesc").value,
-
-   deliveryPrice:Number($("rDelivery").value),
-
-   image,
-
-   active:true
-
-  };
+  const r={id:id||uid(),name,description:$("rDesc").value,deliveryPrice:Number($("rDelivery").value),image,active:true};
 
   await db.ref(ROOT+"/restaurants/"+r.id).set(r);
 
-  closeModal();
-
-  toast("Restaurant enregistré.");
+  closeModal();toast("Restaurant enregistré.");
 
  }catch(e){toast("Erreur : "+e.message)}
 
 }
+
+/* CATEGORY EDITOR */
 
 function categoryForm(id){
 
@@ -1942,31 +2096,19 @@ function categoryForm(id){
 
 async function saveCategory(id){
 
- const c={
-
-  id:id||uid(),
-
-  name:$("cName").value.trim(),
-
-  emoji:$("cEmoji").value.trim()
-
- };
+ const c={id:id||uid(),name:$("cName").value.trim(),emoji:$("cEmoji").value.trim()};
 
  if(!c.name){toast("Nom obligatoire.");return}
 
  if(!dbReady){toast("Connexion Firebase en cours.");return}
 
- try{
+ try{await db.ref(ROOT+"/categories/"+c.id).set(c);closeModal();toast("Catégorie enregistrée.");}
 
-  await db.ref(ROOT+"/categories/"+c.id).set(c);
-
-  closeModal();
-
-  toast("Catégorie enregistrée.");
-
- }catch(e){toast("Erreur : "+e.message)}
+ catch(e){toast("Erreur : "+e.message)}
 
 }
+
+/* OFFER EDITOR */
 
 function offerForm(id){
 
@@ -1996,27 +2138,13 @@ async function saveOffer(id){
 
   if($("oImage").files[0])image=await fileToData($("oImage").files[0]);
 
-  const o={
-
-   id:id||uid(),
-
-   name:$("oName").value.trim(),
-
-   description:$("oDesc").value,
-
-   image,
-
-   active:true
-
-  };
+  const o={id:id||uid(),name:$("oName").value.trim(),description:$("oDesc").value,image,active:true};
 
   if(!o.name){toast("Titre obligatoire.");return}
 
   await db.ref(ROOT+"/offers/"+o.id).set(o);
 
-  closeModal();
-
-  toast("Offre enregistrée.");
+  closeModal();toast("Offre enregistrée.");
 
  }catch(e){toast("Erreur : "+e.message)}
 
@@ -2036,7 +2164,7 @@ setInterval(()=>{
 
 },5000);
 
-/* INITIALISATION DE LA STRUCTURE SANS ECRASER LES DONNEES */
+/* INITIALISATION SANS ECRASER LES DONNEES */
 
 async function initializeDatabase(){
 
@@ -2052,19 +2180,7 @@ async function initializeDatabase(){
 
     categories:collectionToObject(data.categories),
 
-    products:{},
-
-    restaurants:{},
-
-    workers:{},
-
-    applications:{},
-
-    orders:{},
-
-    offers:{},
-
-    notifications:{}
+    products:{},restaurants:{},workers:{},applications:{},orders:{},offers:{},notifications:{}
 
    };
 
@@ -2072,17 +2188,11 @@ async function initializeDatabase(){
 
   }
 
- }catch(e){
-
-  console.error("Initialisation Firebase:",e);
-
- }
+ }catch(e){console.error("Initialisation Firebase:",e)}
 
 }
 
 initializeDatabase();
-
-/* SYSTEM */
 
 window.addEventListener("online",()=>toast("Connexion rétablie."));
 
