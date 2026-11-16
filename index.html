@@ -1,785 +1,2535 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080808">
-<title>VYRO_01</title>
+
+<meta name="theme-color" content="#000103">
+
+<meta name="description" content="VYRO — Independent premium streetwear label. Beyond the ordinary.">
+
+<title>VYRO | Official Store</title>
+
 <style>
-:root{--bg:#080808;--panel:#151515;--line:#303030;--muted:#999;--red:#ed3038;--green:#28d17c;--yellow:#f3c84b}
+
+:root{
+
+  --bg:#000103;
+
+  --panel:#05070b;
+
+  --panel2:#080c13;
+
+  --line:#111a27;
+
+  --muted:#778292;
+
+  --blue:#071b35;
+
+  --blue-light:#174a7d;
+
+  --blue-glow:#0b315c;
+
+  --green:#35c98b;
+
+  --yellow:#e6bd69;
+
+  --white:#f4f6fa;
+
+}
+
 *{box-sizing:border-box}
+
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,Helvetica,sans-serif;letter-spacing:.1px}
+
+body{
+
+  margin:0;background:#000103;color:var(--white);
+
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,Helvetica,sans-serif;
+
+  letter-spacing:.1px;
+
+}
+
+body:before{
+
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+
+  background:
+
+    radial-gradient(ellipse at 80% 15%,#06152a 0%,transparent 35%),
+
+    radial-gradient(ellipse at 5% 75%,#020b18 0%,transparent 35%),
+
+    #000103;
+
+}
+
 button,input,textarea,select{font:inherit}
-button{cursor:pointer;transition:transform .18s ease,background .2s ease,border-color .2s ease,opacity .2s ease}
-button:active{transform:scale(.97)}
-button:disabled{opacity:.5;cursor:not-allowed}
+
+button{cursor:pointer;transition:transform .2s ease,background .25s ease,border-color .25s ease,opacity .2s ease}
+
+button:active{transform:scale(.975)}
+
+button:disabled{opacity:.4;cursor:not-allowed}
+
 .hidden{display:none!important}
-header{height:68px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,8,8,.94);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);z-index:10}
-.logo{font-weight:950;font-size:22px;letter-spacing:2.6px;text-shadow:0 0 22px #e6323220}
-.logo span{color:var(--red)}
-.actions{display:flex;gap:8px}
-.btn{border:1px solid white;background:white;color:#080808;padding:12px 17px;font-weight:850;border-radius:15px;box-shadow:0 2px 8px #0002}
-.btn:hover{opacity:.87}
-.outline{background:#ffffff08;color:white;border-color:#444}
-.red{background:var(--red);border-color:var(--red);color:white}
-.small{padding:9px 12px;font-size:12px;border-radius:12px}
-.hero{min-height:calc(100vh - 68px);min-height:calc(100svh - 68px);display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:radial-gradient(ellipse at 50% 25%,#352020 0%,#171313 42%,#080808 78%);position:relative;overflow:hidden}
-.hero:before{content:"";position:absolute;width:310px;height:310px;border:1px solid #e6323230;border-radius:50%;top:12%;left:50%;transform:translateX(-50%);box-shadow:0 0 90px #e6323215,inset 0 0 70px #e6323210;pointer-events:none}
-.hero:after{content:"";position:absolute;width:180px;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);top:24%;left:50%;transform:translateX(-50%) rotate(-25deg);opacity:.65;pointer-events:none}
-.hero-content{max-width:760px;position:relative;z-index:1;animation:rise .8s ease both}
-.eyebrow{color:#ddd;letter-spacing:3px;font-size:10px;font-weight:800}
-.hero h1{font-size:clamp(58px,13vw,118px);letter-spacing:-3px;line-height:.95;margin:24px 0 18px;font-weight:950;text-shadow:0 8px 35px #000}
-.hero h1:after{content:".";color:var(--red)}
-.hero p{color:#ddd;line-height:1.8;font-size:clamp(15px,2vw,18px);max-width:560px;margin:16px auto 0}
-.hero-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
-.section{max-width:1400px;margin:auto;padding:40px 5% 65px;min-height:70vh}
-.heading{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:25px}
-.heading h2{margin:8px 0 0;font-size:clamp(25px,4vw,34px);font-weight:900;letter-spacing:-.7px}
+
+/* HEADER */
+
+header{
+
+  height:72px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;
+
+  border-bottom:1px solid #101722;position:sticky;top:0;
+
+  background:rgba(0,1,3,.94);backdrop-filter:blur(25px);
+
+  -webkit-backdrop-filter:blur(25px);z-index:10;
+
+}
+
+.logo{font-weight:950;font-size:22px;letter-spacing:4px}
+
+.logo span{color:#31577f;font-weight:500;letter-spacing:2px}
+
+.actions{display:flex;gap:9px}
+
+.btn{
+
+  border:1px solid #e8edf4;background:#e8edf4;color:#02050a;
+
+  padding:13px 19px;font-weight:850;border-radius:3px;
+
+  letter-spacing:1px;font-size:11px;
+
+  box-shadow:0 5px 20px #0008;
+
+}
+
+.btn:hover{background:#fff;opacity:.92}
+
+.outline{background:#03060a;color:#dce4ef;border-color:#26364a}
+
+.outline:hover{background:#071323;border-color:#31577f}
+
+.blue{background:#09213c;border-color:#173c64;color:#eaf4ff}
+
+.small{padding:10px 13px;font-size:10px;border-radius:3px}
+
+/* HERO */
+
+.hero{
+
+  min-height:calc(100vh - 72px);min-height:calc(100svh - 72px);
+
+  display:flex;align-items:center;position:relative;overflow:hidden;
+
+  padding:75px 7%;
+
+  background:
+
+    radial-gradient(ellipse at 76% 45%,#06152a 0%,#020711 25%,transparent 57%),
+
+    linear-gradient(110deg,#000103 0%,#010309 54%,#020711 100%);
+
+}
+
+.hero:before{
+
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.45;
+
+  background:
+
+    linear-gradient(115deg,transparent 0 62%,#0a2542 62.1%,transparent 62.4%),
+
+    linear-gradient(70deg,transparent 0 83%,#102d4b 83.1%,transparent 83.25%);
+
+  mask-image:linear-gradient(90deg,transparent 35%,#000 100%);
+
+}
+
+.hero:after{
+
+  content:"";position:absolute;right:-12%;top:-25%;width:70%;height:150%;
+
+  pointer-events:none;opacity:.22;filter:blur(55px);
+
+  background:radial-gradient(ellipse,#0a2a4d 0%,#041326 27%,transparent 68%);
+
+}
+
+.hero-inner{
+
+  width:100%;max-width:1500px;margin:auto;position:relative;z-index:2;
+
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.9fr);
+
+  align-items:center;gap:6%;
+
+}
+
+.hero-content{max-width:680px;position:relative;z-index:3;animation:rise .9s ease both}
+
+.eyebrow{
+
+  color:#6383a7;letter-spacing:4px;font-size:10px;
+
+  font-weight:850;text-transform:uppercase;
+
+}
+
+.hero h1{
+
+  font-size:clamp(75px,12vw,160px);letter-spacing:-8px;
+
+  line-height:.83;margin:28px 0 25px;font-weight:950;
+
+  text-shadow:0 18px 70px #000;
+
+}
+
+.hero h1:after{content:".";color:#16375c}
+
+.hero-lead{
+
+  color:#d3d9e2;line-height:1.9;font-size:clamp(15px,1.5vw,18px);
+
+  max-width:530px;margin:0;
+
+}
+
+.hero-meta{
+
+  display:flex;align-items:center;gap:15px;margin-top:35px;
+
+  color:#68788c;font-size:9px;letter-spacing:3px;font-weight:800;
+
+}
+
+.hero-meta:before{content:"";width:38px;height:1px;background:#244b72}
+
+.hero-buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:35px}
+
+.hero-visual{
+
+  position:relative;min-height:570px;display:grid;
+
+  grid-template-columns:1fr .76fr;gap:13px;align-items:center;
+
+  animation:rise 1s .12s ease both;
+
+}
+
+.hero-photo{
+
+  position:relative;overflow:hidden;background:#03070d;
+
+  border:1px solid #15253a;box-shadow:0 35px 100px #000b;
+
+}
+
+.hero-photo img{width:100%;height:100%;display:block;object-fit:cover;filter:brightness(.72) contrast(1.12) saturate(.68)}
+
+.hero-photo.main{height:510px;margin-top:35px}
+
+.hero-photo.side{height:355px;margin-top:-65px}
+
+.hero-photo:after{
+
+  content:"";position:absolute;inset:0;
+
+  background:linear-gradient(180deg,transparent 45%,#000b 100%);
+
+  pointer-events:none;
+
+}
+
+.photo-label{
+
+  position:absolute;bottom:17px;left:16px;z-index:2;
+
+  font-size:9px;letter-spacing:3px;color:#e1e9f2;font-weight:800;
+
+}
+
+.visual-index{
+
+  position:absolute;top:0;right:0;color:#52708f;
+
+  font-size:9px;letter-spacing:3px;writing-mode:vertical-rl;
+
+}
+
+.thunder{
+
+  position:absolute;z-index:1;right:25%;top:4%;width:48%;height:90%;
+
+  pointer-events:none;opacity:.5;filter:drop-shadow(0 0 10px #0b315c) drop-shadow(0 0 35px #071c36);
+
+}
+
+.thunder path{fill:none;stroke:#0b315c;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+
+.thunder .fine{stroke:#163c62;stroke-width:1.1;opacity:.9}
+
+.hero-bottom{
+
+  position:absolute;bottom:24px;left:7%;right:7%;z-index:3;
+
+  display:flex;justify-content:space-between;gap:20px;
+
+  border-top:1px solid #152033;padding-top:13px;
+
+  color:#536175;font-size:8px;letter-spacing:3px;font-weight:800;
+
+}
+
+/* BRAND STORY */
+
+.brand-section{
+
+  position:relative;overflow:hidden;
+
+  max-width:none;margin:0 auto;padding:115px 7% 125px;
+
+  text-align:left;border-top:1px solid #111b29;
+
+  background:
+
+    radial-gradient(ellipse at 85% 50%,#061326 0%,transparent 38%),
+
+    linear-gradient(180deg,#000103,#01040a 55%,#000103);
+
+}
+
+.brand-section:before{
+
+  content:"V";position:absolute;right:5%;top:50%;transform:translateY(-50%);
+
+  font-size:clamp(250px,42vw,600px);font-weight:950;line-height:1;
+
+  color:#07101d;opacity:.35;pointer-events:none;
+
+}
+
+.brand-inner{max-width:1250px;margin:auto;position:relative;z-index:2}
+
+.brand-topline{
+
+  display:flex;align-items:center;gap:16px;color:#60738c;
+
+  letter-spacing:4px;font-size:9px;font-weight:800;margin-bottom:35px;
+
+}
+
+.brand-topline:before{content:"";width:40px;height:1px;background:#24476a}
+
+.brand-heading{
+
+  font-size:clamp(48px,9vw,112px);font-weight:950;
+
+  line-height:.9;letter-spacing:-4px;margin:0 0 25px;
+
+}
+
+.brand-heading span{color:#173958}
+
+.brand-tagline{
+
+  color:#7290b1;letter-spacing:5px;font-size:10px;font-weight:850;
+
+}
+
+.brand-columns{
+
+  display:grid;grid-template-columns:1.1fr .9fr;gap:9%;
+
+  margin-top:70px;align-items:start;
+
+}
+
+.brand-copy p{
+
+  color:#a0aaba;line-height:2.15;font-size:14px;
+
+  margin:0 0 20px;max-width:700px;
+
+}
+
+.brand-aside{
+
+  border-left:1px solid #1b2c40;padding:8px 0 8px 25px;
+
+}
+
+.brand-aside strong{
+
+  display:block;font-size:11px;letter-spacing:3px;color:#dce6f1;margin-bottom:13px;
+
+}
+
+.brand-aside p{
+
+  color:#6f7f92;font-size:12px;line-height:2;margin:0;
+
+}
+
+.brand-values{
+
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+
+  margin-top:75px;border-top:1px solid #172336;padding-top:25px;
+
+}
+
+.brand-value small{display:block;color:#49627e;font-size:9px;letter-spacing:3px;margin-bottom:12px}
+
+.brand-value strong{font-size:13px;letter-spacing:1px;color:#dbe2eb}
+
+.brand-signature{
+
+  margin-top:55px;font-size:10px;letter-spacing:5px;color:#426487;font-weight:900;
+
+}
+
+/* SHOP */
+
+.section{max-width:1500px;margin:auto;padding:65px 5% 90px;min-height:70vh}
+
+.heading{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:28px}
+
+.heading h2{margin:10px 0 0;font-size:clamp(27px,4vw,39px);font-weight:950;letter-spacing:-1px}
+
 .muted{color:var(--muted)}
-.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:19px}
-.product{background:linear-gradient(145deg,#191919,#0c0c0c);border:1px solid #292929;min-width:0;border-radius:20px;overflow:hidden;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;animation:rise .45s ease both}
-.product:hover{transform:translateY(-4px);border-color:#753638;box-shadow:0 12px 35px #0005}
-.product-image{aspect-ratio:4/4.7;background:radial-gradient(ellipse at center,#292929,#101010);position:relative;overflow:hidden;cursor:pointer;padding:10px}
+
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+
+.product{
+
+  background:#030509;border:1px solid #111c2a;min-width:0;
+
+  border-radius:2px;overflow:hidden;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
+
+  animation:rise .45s ease both;
+
+}
+
+.product:hover{transform:translateY(-5px);border-color:#1c3b5b;box-shadow:0 20px 55px #000b}
+
+.product-image{
+
+  aspect-ratio:4/4.7;background:radial-gradient(ellipse at center,#09111d,#020306);
+
+  position:relative;overflow:hidden;cursor:pointer;padding:12px;
+
+}
+
 .product-image img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .5s ease}
+
 .product:hover .product-image img{transform:scale(1.045)}
-.image-hint{position:absolute;right:10px;bottom:10px;width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:#080808c9;border:1px solid #ffffff45;backdrop-filter:blur(10px);font-size:20px}
-.product-info{padding:15px}
-.product-info h3{margin:0 0 8px;font-size:clamp(14px,1.3vw,17px);letter-spacing:-.2px;font-weight:850}
-.description{font-size:12px;line-height:1.7;color:#c1c1c1;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.price{font-weight:950;font-size:18px;margin:13px 0;color:#fff}
+
+.image-hint{
+
+  position:absolute;right:12px;bottom:12px;width:34px;height:34px;
+
+  display:grid;place-items:center;background:#000d;border:1px solid #34465b;
+
+  font-size:20px;color:#cbd8e8;
+
+}
+
+.product-info{padding:17px}
+
+.product-info h3{margin:0 0 9px;font-size:15px;font-weight:850;letter-spacing:.3px}
+
+.description{
+
+  font-size:12px;line-height:1.8;color:#8793a3;white-space:pre-wrap;
+
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+
+}
+
+.price{font-weight:950;font-size:19px;margin:15px 0;color:#f5f7fa}
+
 .product-info button{width:100%}
-.stock{font-size:11px;color:var(--green);margin-bottom:13px;display:flex;align-items:center;gap:6px}
-.stock:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;flex-shrink:0}
-.stock.low{color:#ffbd65}
-.stock.sold{color:#ff6c6c}
-.product .btn{border-radius:13px;box-shadow:0 5px 18px #e6323214}
-.empty{border:1px dashed #383838;border-radius:18px;padding:35px;text-align:center;color:#888;grid-column:1/-1}
-footer{padding:25px;text-align:center;color:#777;border-top:1px solid var(--line);font-size:12px}
-.overlay{position:fixed;inset:0;background:#000c;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:20;display:flex;align-items:center;justify-content:center;padding:18px;animation:fade .2s ease}
-.modal{width:min(440px,100%);max-height:90vh;max-height:90svh;overflow:auto;background:linear-gradient(150deg,#191919,#101010);border:1px solid #383838;border-radius:25px;padding:24px;box-shadow:0 25px 100px #0009;animation:rise .25s ease}
-.modal h2{margin-top:0;letter-spacing:-.5px}
+
+.stock{font-size:10px;letter-spacing:1px;color:var(--green);margin-bottom:13px;display:flex;align-items:center;gap:7px}
+
+.stock:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block;flex-shrink:0}
+
+.stock.low{color:var(--yellow)}
+
+.stock.sold{color:#c46e78}
+
+.size-preview{font-size:9px;color:#73859a;letter-spacing:1.5px;margin:-5px 0 14px}
+
+.empty{border:1px dashed #1b293a;padding:40px;text-align:center;color:#778292;grid-column:1/-1}
+
+/* FOOTER */
+
+footer{
+
+  padding:40px 18px;text-align:center;color:#576476;
+
+  border-top:1px solid #111b28;font-size:9px;
+
+  letter-spacing:2.5px;line-height:2.5;background:#000103;
+
+}
+
+footer strong{color:#dfe7f0;letter-spacing:5px;font-size:16px}
+
+footer .footer-line{display:block;width:38px;height:1px;background:#183858;margin:18px auto}
+
+/* MODALS */
+
+.overlay{
+
+  position:fixed;inset:0;background:#000e;backdrop-filter:blur(15px);
+
+  -webkit-backdrop-filter:blur(15px);z-index:20;display:flex;
+
+  align-items:center;justify-content:center;padding:18px;animation:fade .2s ease;
+
+}
+
+.modal{
+
+  width:min(460px,100%);max-height:90vh;max-height:90svh;overflow:auto;
+
+  background:linear-gradient(145deg,#080e17,#020407);
+
+  border:1px solid #1a2b40;border-radius:3px;padding:25px;
+
+  box-shadow:0 30px 110px #000e;animation:rise .25s ease;
+
+}
+
+.modal h2{margin-top:0;letter-spacing:1px}
+
 .modal.product-modal{width:min(1000px,100%);max-height:94vh;max-height:94svh;padding:0;overflow:auto}
+
 #productDetailContent{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);min-height:500px}
-.detail-image{min-height:500px;background:radial-gradient(ellipse at center,#292929,#101010);position:relative;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
-.detail-image img{width:100%;height:100%;max-height:75vh;min-height:0;object-fit:contain;display:block}
-.close-detail{position:absolute;z-index:2;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:1px solid #ffffff45;background:#080808d9;color:white;font-size:23px;display:grid;place-items:center}
+
+.detail-image{
+
+  min-height:500px;background:radial-gradient(ellipse at center,#0b1420,#020407);
+
+  position:relative;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;
+
+}
+
+.detail-image img{width:100%;height:100%;max-height:75vh;object-fit:contain;display:block}
+
+.close-detail{
+
+  position:absolute;z-index:2;top:12px;right:12px;width:40px;height:40px;
+
+  border:1px solid #34465b;background:#000e;color:white;font-size:23px;display:grid;place-items:center;
+
+}
+
 .detail-content{padding:clamp(22px,4vw,42px);align-self:center}
+
 .detail-content h2{font-size:clamp(25px,3vw,36px);font-weight:950;line-height:1.15;margin:14px 0}
-.detail-description{white-space:pre-wrap;line-height:1.9;color:#ccc;font-size:14px;margin:20px 0}
+
+.detail-description{white-space:pre-wrap;line-height:1.9;color:#a6b2c2;font-size:14px;margin:20px 0}
+
 .detail-price{font-size:30px;font-weight:950;margin:20px 0;color:white}
+
 .field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
-.field label{font-size:12px;color:#bbb;font-weight:700}
-.field input,.field textarea,.field select{width:100%;padding:13px;background:#080808;color:white;border:1px solid #383838;border-radius:13px;outline:none;transition:border-color .2s}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:#e63232}
+
+.field label{font-size:10px;color:#8495a9;font-weight:850;letter-spacing:1.5px}
+
+.field input,.field textarea,.field select{
+
+  width:100%;padding:13px;background:#010307;color:white;
+
+  border:1px solid #1d2a3b;border-radius:2px;outline:none;transition:border-color .2s;
+
+}
+
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#31577f}
+
 .field textarea{min-height:85px;resize:vertical}
+
 .field input[type=file]{padding:9px}
+
 .row{display:flex;gap:9px}
+
 .row>*{flex:1;min-width:0}
+
+.size-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+
+.size-option{
+
+  border:1px solid #26384e;background:#02060c;color:#dce3ed;
+
+  border-radius:2px;padding:12px 4px;font-size:13px;font-weight:850;
+
+}
+
+.size-option.selected{background:#07172b;border-color:#31577f;color:white;box-shadow:0 0 20px #0a23401c}
+
+.size-option:disabled{opacity:.25;text-decoration:line-through;cursor:not-allowed}
+
+/* ADMIN */
+
 .admin-layout{display:grid;grid-template-columns:185px minmax(0,1fr);gap:25px}
+
 .admin-nav{display:flex;flex-direction:column;gap:8px}
-.admin-nav button{text-align:left;border-radius:13px}
-.admin-nav button.active{border-color:var(--red);color:var(--red);background:#e6323210}
+
+.admin-nav button{text-align:left;border-radius:2px}
+
+.admin-nav button.active{border-color:#31577f;color:#9fc5ec;background:#071426}
+
 .admin-content{min-width:0}
-.notice{padding:14px;background:#191919;border:1px solid #333;border-radius:15px;color:#bbb;font-size:12px;line-height:1.7;margin-bottom:20px}
+
+.notice{padding:14px;background:#050b13;border:1px solid #1a2b40;color:#9eafc2;font-size:12px;line-height:1.8;margin-bottom:20px}
+
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}
-.stat{background:linear-gradient(145deg,#191919,#111);border:1px solid #303030;border-radius:17px;padding:16px}
-.stat span{display:block;color:#999;font-size:11px;margin-bottom:8px}
+
+.stat{background:#04080e;border:1px solid #172538;padding:17px}
+
+.stat span{display:block;color:#77889d;font-size:9px;letter-spacing:2px;margin-bottom:8px}
+
 .stat strong{font-size:25px;overflow-wrap:anywhere}
-.admin-product,.order-card{background:linear-gradient(145deg,#171717,#0d0d0d);border:1px solid #363636;border-radius:17px;padding:16px;margin-bottom:12px}
+
+.admin-product,.order-card{background:#03070c;border:1px solid #172538;padding:16px;margin-bottom:12px}
+
 .admin-product{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.admin-product img{width:65px;height:78px;object-fit:contain;background:#222;border-radius:10px}
+
+.admin-product img{width:65px;height:78px;object-fit:contain;background:#080e17}
+
 .admin-product-info{flex:1;min-width:100px}
+
 .admin-product-info strong{display:block;margin-bottom:6px;font-weight:900}
+
 .admin-product-actions{display:flex;gap:6px;flex-wrap:wrap}
+
 .order-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.order-top strong{font-size:17px;font-weight:950;letter-spacing:.2px}
-.order-details{white-space:pre-wrap;color:#f1f1f1;font-size:15px;line-height:1.9;margin:14px 0;font-weight:650;overflow-wrap:anywhere}
-.badge{font-size:12px;font-weight:900;padding:7px 10px;background:#292929;border-radius:9px}
-.badge.status-done{background:#157347;color:#fff;border:1px solid #28a66b}
-.badge.status-wait{background:#f3c84b;color:#171717;border:1px solid #f8d66e}
-.badge.status-reject{background:#d62832;color:#fff;border:1px solid #f0444d}
-.order-items{border-top:1px solid #383838;padding-top:12px;font-size:14px;line-height:1.9;color:#eee;overflow-wrap:anywhere}
-.order-items strong{font-size:16px;font-weight:950;color:#fff}
+
+.order-top strong{font-size:15px;font-weight:950}
+
+.order-details{white-space:pre-wrap;color:#d5dce6;font-size:13px;line-height:1.9;margin:14px 0;font-weight:600;overflow-wrap:anywhere}
+
+.badge{font-size:10px;font-weight:900;padding:7px 10px;background:#172131}
+
+.badge.status-done{background:#10402f;color:#d6ffed;border:1px solid #247e60}
+
+.badge.status-wait{background:#44371e;color:#ffe8ad;border:1px solid #806a3b}
+
+.badge.status-reject{background:#432126;color:#ffdadd;border:1px solid #79434a}
+
+.order-items{border-top:1px solid #1b2939;padding-top:12px;font-size:13px;line-height:1.9;color:#cbd4e0;overflow-wrap:anywhere}
+
+.order-items strong{font-size:15px;font-weight:950;color:#fff}
+
 .order-status-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:15px}
-.order-status-actions button{font-size:13px;font-weight:950;padding:12px 8px;border-radius:12px;border:1px solid transparent;min-width:0}
-.order-status-actions .status-done{background:#157347;color:#fff;border-color:#28a66b}
-.order-status-actions .status-wait{background:#f3c84b;color:#171717;border-color:#f8d66e}
-.order-status-actions .status-reject{background:#d62832;color:#fff;border-color:#f0444d}
-.order-status-actions button.current{outline:2px solid #fff;outline-offset:2px}
-.check{display:flex;align-items:center;gap:9px;font-size:13px}
+
+.order-status-actions button{font-size:11px;font-weight:950;padding:12px 8px;border:1px solid transparent;min-width:0}
+
+.order-status-actions .status-done{background:#10402f;color:#fff;border-color:#247e60}
+
+.order-status-actions .status-wait{background:#44371e;color:#ffe8ad;border-color:#806a3b}
+
+.order-status-actions .status-reject{background:#432126;color:#ffdadd;border-color:#79434a}
+
+.order-status-actions button.current{outline:1px solid #d9e8fa;outline-offset:2px}
+
+.check{display:flex;align-items:center;gap:9px;font-size:13px;color:#c3cad4}
+
 .check input{width:auto}
-#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#f6f6f6;color:#111;padding:13px 18px;z-index:40;max-width:90%;font-size:13px;border-radius:15px;box-shadow:0 8px 35px #0008;text-align:center}
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.size-stock-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+
+.size-stock-grid .field{margin:5px 0}
+
+.size-stock-grid input{text-align:center;padding:11px 5px}
+
+.stock-summary{font-size:10px;color:#8496aa;margin:9px 0 15px}
+
+#toast{
+
+  position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;
+
+  transform:translateX(-50%);background:#e9edf3;color:#080b10;
+
+  padding:13px 18px;z-index:40;max-width:90%;font-size:12px;
+
+  border-radius:2px;box-shadow:0 8px 35px #0008;text-align:center;font-weight:800;
+
+}
+
+@keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
 @keyframes fade{from{opacity:0}to{opacity:1}}
+
 @media(max-width:900px){
-.products{grid-template-columns:repeat(3,minmax(0,1fr))}
-.admin-layout{grid-template-columns:1fr}
-.admin-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
-.admin-nav button{text-align:center;font-size:12px;padding:10px 4px}
-#productDetailContent{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.detail-image{min-height:420px}
+
+  .products{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+  .admin-layout{grid-template-columns:1fr}
+
+  .admin-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+
+  .admin-nav button{text-align:center;font-size:10px;padding:10px 4px}
+
+  #productDetailContent{grid-template-columns:1fr 1fr}
+
+  .detail-image{min-height:420px}
+
+  .hero{padding-left:5%;padding-right:5%}
+
+  .hero-inner{gap:3%;grid-template-columns:1fr .9fr}
+
+  .hero-visual{min-height:470px}
+
+  .hero-photo.main{height:430px}
+
+  .hero-photo.side{height:310px}
+
 }
+
 @media(max-width:600px){
-header{height:60px;padding:0 4%}
-.logo{font-size:18px}
-.actions{gap:5px}
-.actions .btn{padding:9px 9px;font-size:10px}
-.hero{min-height:85vh;min-height:85svh}
-.hero h1{letter-spacing:-2px}
-.section{padding:30px 4% 50px}
-.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.product{border-radius:16px}
-.product-image{padding:6px}
-.product-info{padding:10px}
-.product-info h3{font-size:14px}
-.product-info button{font-size:11px;padding:11px 4px}
-.price{font-size:15px}
-.stock{font-size:10px}
-.stats{grid-template-columns:1fr 1fr}
-.stat:last-child{grid-column:1/-1}
-.admin-product-actions{width:100%}
-.admin-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
-#productDetailContent{grid-template-columns:1fr;min-height:0}
-.detail-image{min-height:0;height:min(48vh,420px);padding:14px}
-.detail-image img{height:100%;max-height:46vh;min-height:0}
-.detail-content{padding:20px}
-.detail-content h2{font-size:25px}
-.detail-price{font-size:27px}
-.modal.product-modal{max-height:92vh;max-height:92svh}
-.order-details{font-size:14px}
-.order-status-actions{gap:6px}
-.order-status-actions button{font-size:12px;padding:12px 4px}
+
+  header{height:60px;padding:0 4%}
+
+  .logo{font-size:18px}
+
+  .actions{gap:5px}
+
+  .actions .btn{padding:9px 9px;font-size:9px}
+
+  .hero{min-height:auto;padding:65px 5% 85px}
+
+  .hero-inner{grid-template-columns:1fr;gap:35px}
+
+  .hero h1{font-size:clamp(76px,20vw,112px);letter-spacing:-5px;margin:22px 0}
+
+  .hero-lead{font-size:14px;max-width:420px}
+
+  .hero-visual{min-height:0;grid-template-columns:1fr .72fr;gap:9px;margin:0 2%}
+
+  .hero-photo.main{height:330px;margin-top:0}
+
+  .hero-photo.side{height:235px;margin-top:35px}
+
+  .hero-meta{margin-top:25px;font-size:8px}
+
+  .hero-bottom{bottom:15px;left:5%;right:5%;font-size:7px;letter-spacing:1.5px}
+
+  .thunder{right:4%;top:35%;width:80%;height:55%;opacity:.35}
+
+  .brand-section{padding:80px 6% 85px}
+
+  .brand-heading{letter-spacing:-2px}
+
+  .brand-columns{grid-template-columns:1fr;gap:35px;margin-top:45px}
+
+  .brand-copy p{font-size:13px}
+
+  .brand-aside{padding-left:17px}
+
+  .brand-values{grid-template-columns:1fr;gap:22px;margin-top:45px}
+
+  .section{padding:35px 4% 55px}
+
+  .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+  .product{border-radius:1px}
+
+  .product-image{padding:6px}
+
+  .product-info{padding:10px}
+
+  .product-info h3{font-size:13px}
+
+  .product-info button{font-size:9px;padding:11px 4px}
+
+  .price{font-size:15px}
+
+  .stock{font-size:9px}
+
+  .stats{grid-template-columns:1fr 1fr}
+
+  .stat:last-child{grid-column:1/-1}
+
+  .admin-product-actions{width:100%}
+
+  .admin-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+  #productDetailContent{grid-template-columns:1fr;min-height:0}
+
+  .detail-image{min-height:0;height:min(48vh,420px);padding:14px}
+
+  .detail-image img{height:100%;max-height:46vh}
+
+  .detail-content{padding:20px}
+
+  .detail-content h2{font-size:25px}
+
+  .detail-price{font-size:27px}
+
+  .modal.product-modal{max-height:92vh;max-height:92svh}
+
+  .order-details{font-size:12px}
+
+  .order-status-actions{gap:6px}
+
+  .order-status-actions button{font-size:10px;padding:12px 4px}
+
+  .size-stock-grid{gap:5px}
+
+  .size-stock-grid input{font-size:12px;padding:10px 3px}
+
 }
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+
+}
+
 </style>
+
 </head>
+
 <body>
+
 <header>
+
   <div class="logo">VYRO<span>_01</span></div>
+
   <div class="actions">
+
     <button class="btn outline small" onclick="showPage('home')">HOME</button>
+
     <button class="btn small" onclick="openParameters()">PARAMETERS</button>
+
   </div>
+
 </header>
 
 <main>
+
 <section id="homePage" class="hero">
-  <div class="hero-content">
-    <div class="eyebrow" id="heroTag">THE OFFICIAL COLLECTION</div>
-    <h1 id="heroTitle">VYRO_01</h1>
-    <p id="heroDescription">Discover the collection. Define your style.</p>
-    <div class="hero-buttons">
-      <button class="btn" onclick="showPage('shop')">START SHOPPING</button>
-      <button class="btn outline" onclick="openParameters()">PARAMETERS</button>
+
+  <div class="hero-inner">
+
+    <div class="hero-content">
+
+      <div class="eyebrow" id="heroTag">INDEPENDENT STREETWEAR LABEL</div>
+
+      <h1 id="heroTitle">VYRO</h1>
+
+      <p class="hero-lead" id="heroDescription">
+
+        Beyond the ordinary. A different perspective on everyday streetwear.
+
+        Designed for those who never needed permission to stand apart.
+
+      </p>
+
+      <div class="hero-buttons">
+
+        <button class="btn" onclick="showPage('shop')">DISCOVER THE COLLECTION</button>
+
+        <button class="btn outline" onclick="document.getElementById('brandSection').scrollIntoView({behavior:'smooth'})">OUR STORY</button>
+
+      </div>
+
+      <div class="hero-meta">INDEPENDENT DESIGN · LIMITED RELEASES</div>
+
     </div>
+
+    <div class="hero-visual">
+
+      <svg class="thunder" viewBox="0 0 400 650" preserveAspectRatio="none" aria-hidden="true">
+
+        <path d="M260 0 L220 110 L265 145 L170 285 L215 310 L90 490 L150 435 L125 620"/>
+
+        <path class="fine" d="M220 110 L150 155 L175 205 L100 270 M170 285 L245 350 L210 410 L300 465 M150 435 L60 480 L85 545"/>
+
+        <path class="fine" d="M265 145 L330 185 L290 240 L350 285"/>
+
+      </svg>
+
+      <div class="hero-photo main">
+
+        <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=1000&q=85" alt="Streetwear editorial" fetchpriority="high">
+
+        <div class="photo-label">01 / THE VYRO ATTITUDE</div>
+
+      </div>
+
+      <div class="hero-photo side">
+
+        <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85" alt="Fashion editorial" fetchpriority="high">
+
+        <div class="photo-label">02 / NEW PERSPECTIVE</div>
+
+      </div>
+
+      <div class="visual-index">VYRO — INDEPENDENT STREETWEAR</div>
+
+    </div>
+
   </div>
+
+  <div class="hero-bottom">
+
+    <span>VYRO / OFFICIAL STORE</span>
+
+    <span>DESIGNED TO STAND APART</span>
+
+    <span>EST. 2026</span>
+
+  </div>
+
 </section>
 
 <section id="shopPage" class="section hidden">
+
   <div class="heading">
-    <div><div class="eyebrow">VYRO_01 COLLECTION</div><h2 id="shopTitle">OUR PRODUCTS</h2></div>
+
+    <div><div class="eyebrow">VYRO / THE COLLECTION</div><h2 id="shopTitle">LATEST DROPS</h2></div>
+
     <button class="btn outline small" onclick="showPage('home')">BACK HOME</button>
+
   </div>
+
   <p id="shopDescription" class="muted"></p>
+
   <div id="productsGrid" class="products"></div>
+
+</section>
+
+<section id="brandSection" class="brand-section">
+
+  <div class="brand-inner">
+
+    <div class="brand-topline">THE VYRO POINT OF VIEW / 001</div>
+
+    <h2 class="brand-heading">NOT MADE TO<br><span>BLEND IN.</span></h2>
+
+    <div class="brand-tagline">BEYOND THE ORDINARY.</div>
+
+    <div class="brand-columns">
+
+      <div class="brand-copy">
+
+        <p id="brandDescription">
+
+          VYRO is an independent streetwear label built around individuality,
+
+          confidence and the freedom to stand apart. We see clothing as more
+
+          than something you put on. It is a visual language, a personal
+
+          statement and a reflection of the attitude you carry every day.
+
+        </p>
+
+        <p>
+
+          Our approach is simple: create pieces with a clear identity.
+
+          Every release is considered, every detail has a purpose, and every
+
+          collection is an opportunity to express something different.
+
+          We are not interested in producing more just to follow what is
+
+          already out there. We believe in focused collections, distinctive
+
+          graphics and limited releases that keep each piece meaningful.
+
+        </p>
+
+        <p>
+
+          VYRO exists between street culture, personal expression and
+
+          contemporary design. It is for people who build their own direction,
+
+          who value individuality over approval and who understand that
+
+          confidence does not need to be loud.
+
+        </p>
+
+        <p>
+
+          No uniform. No permission. No need to fit the frame.
+
+          Wear what represents you, move at your own pace and define your
+
+          own standard.
+
+        </p>
+
+      </div>
+
+      <aside class="brand-aside">
+
+        <strong>OUR PHILOSOPHY</strong>
+
+        <p>
+
+          We do not design to follow a moment. We design to create a feeling.
+
+          The VYRO identity is built on contrast, restraint and character:
+
+          dark foundations, considered details and a perspective that refuses
+
+          to disappear into the crowd.
+
+        </p>
+
+      </aside>
+
+    </div>
+
+    <div class="brand-values">
+
+      <div class="brand-value">
+
+        <small>01 / IDENTITY</small>
+
+        <strong>OWN YOUR DIRECTION.</strong>
+
+      </div>
+
+      <div class="brand-value">
+
+        <small>02 / DESIGN</small>
+
+        <strong>DETAIL WITH PURPOSE.</strong>
+
+      </div>
+
+      <div class="brand-value">
+
+        <small>03 / RELEASES</small>
+
+        <strong>LESS, BUT BETTER.</strong>
+
+      </div>
+
+    </div>
+
+    <div class="brand-signature">VYRO — BUILT AROUND INDIVIDUALITY.</div>
+
+  </div>
+
 </section>
 
 <section id="adminPage" class="section hidden">
+
   <div class="heading">
+
     <div><div class="eyebrow">PRIVATE AREA</div><h2>CONTROL PANEL</h2></div>
+
     <button class="btn outline small" onclick="logout()">LOG OUT</button>
+
   </div>
+
   <div id="connectionNotice" class="notice"></div>
+
   <div class="admin-layout">
+
     <nav class="admin-nav">
+
       <button class="btn outline active" data-tab="dashboard" onclick="openTab('dashboard')">Dashboard</button>
+
       <button class="btn outline" data-tab="products" onclick="openTab('products')">Products</button>
+
       <button class="btn outline" data-tab="orders" onclick="openTab('orders')">Orders</button>
+
       <button class="btn outline" data-tab="customize" onclick="openTab('customize')">Customize</button>
+
       <button class="btn outline" data-tab="settings" onclick="openTab('settings')">Settings</button>
+
     </nav>
+
     <div id="adminContent" class="admin-content"></div>
+
   </div>
+
 </section>
+
 </main>
-<footer id="footerText">VYRO_01 · OFFICIAL STORE</footer>
+
+<footer id="footerText">
+
+  <strong>VYRO</strong>
+
+  <span class="footer-line"></span>
+
+  INDEPENDENT STREETWEAR LABEL<br>
+
+  DESIGNED WITH INTENTION. RELEASED WITH PURPOSE.<br>
+
+  © 2026 VYRO. ALL RIGHTS RESERVED.
+
+</footer>
 
 <div id="passwordOverlay" class="overlay hidden">
+
   <form class="modal" onsubmit="login(event)">
+
     <h2>STAFF ACCESS</h2>
+
     <p class="muted">Enter your staff password.</p>
+
     <div class="field"><label>PASSWORD</label><input id="passwordInput" type="password" required autocomplete="current-password"></div>
-    <div class="row"><button class="btn outline" type="button" onclick="closePassword()">CANCEL</button><button class="btn" type="submit">ENTER</button></div>
+
+    <div class="row">
+
+      <button class="btn outline" type="button" onclick="closePassword()">CANCEL</button>
+
+      <button class="btn" type="submit">ENTER</button>
+
+    </div>
+
   </form>
+
 </div>
 
 <div id="orderOverlay" class="overlay hidden">
+
   <form class="modal" onsubmit="submitOrder(event)">
+
     <h2>PLACE YOUR ORDER</h2>
+
     <p id="orderSummary" class="muted"></p>
+
+    <div class="field">
+
+      <label>SELECT SIZE *</label>
+
+      <div id="orderSizeOptions" class="size-options"></div>
+
+    </div>
+
     <div class="field"><label>FULL NAME *</label><input id="customerName" maxlength="100" required autocomplete="name"></div>
+
     <div class="field"><label>PHONE NUMBER *</label><input id="customerPhone" type="tel" maxlength="30" required autocomplete="tel"></div>
+
     <div class="field"><label>DELIVERY ADDRESS *</label><textarea id="customerAddress" maxlength="500" required autocomplete="street-address"></textarea></div>
+
     <div class="field"><label>QUANTITY *</label><input id="customerQuantity" type="number" min="1" step="1" value="1" required></div>
+
     <div id="orderStockInfo" class="stock"></div>
+
     <div class="field"><label>NOTES (OPTIONAL)</label><textarea id="customerNotes" maxlength="500"></textarea></div>
-    <div class="row"><button class="btn outline" type="button" onclick="closeOrder()">CANCEL</button><button class="btn" type="submit">CONFIRM ORDER</button></div>
+
+    <div class="row">
+
+      <button class="btn outline" type="button" onclick="closeOrder()">CANCEL</button>
+
+      <button class="btn" type="submit">CONFIRM ORDER</button>
+
+    </div>
+
   </form>
+
 </div>
 
 <div id="productDetailOverlay" class="overlay hidden" onclick="if(event.target===this)closeProductDetails()">
-  <div class="modal product-modal">
-    <div id="productDetailContent"></div>
-  </div>
+
+  <div class="modal product-modal"><div id="productDetailContent"></div></div>
+
 </div>
+
 <div id="toast" class="hidden" role="status" aria-live="polite"></div>
 
 <script>
-/*
-For shared data and photos across multiple phones:
-Configure Firebase below, enable Realtime Database and Storage,
-and configure their security rules. Without Firebase, data is stored
-only in this browser and cannot automatically sync across devices.
 
-This starter's password check is client-side and is not secure against
-someone inspecting the source code. A production store needs server-side
-authentication and authorization.
-*/
 const STAFF_PASSWORD="JIJI";
 
+const SIZES=["S","M","L","XL","XXL"];
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBg7mf9-RghLNKwspal_2d9jKHG4VMHy-w",
-  authDomain: "vyro-7d190.firebaseapp.com",
-  databaseURL: "https://vyro-7d190-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "vyro-7d190",
-  storageBucket: "vyro-7d190.firebasestorage.app",
-  messagingSenderId: "377590792321",
-  appId: "1:377590792321:web:f15a244aa0db16a7884d80",
-  measurementId: "G-QSB0BL3ECE"
+const firebaseConfig={
+
+  apiKey:"AIzaSyBg7mf9-RghLNKwspal_2d9jKHG4VMHy-w",
+
+  authDomain:"vyro-7d190.firebaseapp.com",
+
+  databaseURL:"https://vyro-7d190-default-rtdb.europe-west1.firebasedatabase.app",
+
+  projectId:"vyro-7d190",
+
+  storageBucket:"vyro-7d190.firebasestorage.app",
+
+  messagingSenderId:"377590792321",
+
+  appId:"1:377590792321:web:f15a244aa0db16a7884d80",
+
+  measurementId:"G-QSB0BL3ECE"
+
 };
 
 const SDK="https://www.gstatic.com/firebasejs/10.14.1/";
+
 const configured=firebaseConfig.apiKey.startsWith("AIza")&&
+
   !firebaseConfig.projectId.startsWith("PASTE_")&&
+
   !firebaseConfig.databaseURL.startsWith("PASTE_")&&
+
   !firebaseConfig.storageBucket.startsWith("PASTE_");
 
 const defaults={
+
   settings:{
-    heroTag:"THE OFFICIAL COLLECTION",
-    heroTitle:"VYRO_01",
-    heroDescription:"Discover the collection. Define your style.",
-    shopTitle:"OUR PRODUCTS",
-    shopDescription:"Find your next favourite piece.",
-    footerText:"VYRO_01 · OFFICIAL STORE",
+
+    heroTag:"INDEPENDENT STREETWEAR LABEL",
+
+    heroTitle:"VYRO",
+
+    heroDescription:"Beyond the ordinary. A different perspective on everyday streetwear. Designed for those who never needed permission to stand apart.",
+
+    shopTitle:"LATEST DROPS",
+
+    shopDescription:"Explore the latest VYRO pieces. Limited quantities. No compromises.",
+
+    footerText:"© 2026 VYRO. ALL RIGHTS RESERVED.",
+
+    brandDescription:"VYRO is an independent streetwear label built around individuality, confidence and the freedom to stand apart. We see clothing as more than something you put on. It is a visual language, a personal statement and a reflection of the attitude you carry every day.",
+
     currency:"TND"
+
   },
+
   products:[],
+
   orders:[]
+
 };
 
 let state=JSON.parse(JSON.stringify(defaults));
+
 let db=null,storage=null,cloudReady=false,loggedIn=false;
-let activeTab="dashboard",selectedProduct=null,editingProduct=null,toastTimer;
-let audioContext=null,lastCloudUpdate=0;
+
+let activeTab="dashboard",selectedProduct=null,selectedSize=null,editingProduct=null,toastTimer;
+
+let audioContext=null;
 
 const $=id=>document.getElementById(id);
+
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
 
 function esc(v){
-  return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  return String(v??"").replace(/[&<>"']/g,c=>({
+
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+
+  }[c]));
+
 }
+
 function imageURL(v){
+
   if(!v)return "";
+
   if(String(v).startsWith("data:image/"))return String(v);
-  try{const u=new URL(v,location.href);if(["https:","http:"].includes(u.protocol))return u.href;}catch(e){}
-  return "";
-}
-function money(v){
-  return (Number(v)||0).toLocaleString(undefined,{maximumFractionDigits:3})+" "+(state.settings.currency||"TND");
-}
-function stockOf(p){return Math.max(0,Math.floor(Number(p?.stock)||0));}
-function playClick(){
+
   try{
-    const AudioCtx=window.AudioContext||window.webkitAudioContext;
-    if(!AudioCtx)return;
-    if(!audioContext)audioContext=new AudioCtx();
-    if(audioContext.state==="suspended")audioContext.resume();
-    const oscillator=audioContext.createOscillator();
-    const gain=audioContext.createGain();
-    oscillator.type="sine";
-    oscillator.frequency.setValueAtTime(520,audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(390,audioContext.currentTime+.045);
-    gain.gain.setValueAtTime(.0001,audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(.025,audioContext.currentTime+.006);
-    gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.055);
-    oscillator.connect(gain);gain.connect(audioContext.destination);
-    oscillator.start();oscillator.stop(audioContext.currentTime+.06);
+
+    const u=new URL(v,location.href);
+
+    if(["https:","http:"].includes(u.protocol))return u.href;
+
   }catch(e){}
+
+  return "";
+
 }
-document.addEventListener("click",e=>{
-  if(e.target.closest("button"))playClick();
-});
+
+function money(v){
+
+  return (Number(v)||0).toLocaleString(undefined,{maximumFractionDigits:3})+" "+(state.settings.currency||"TND");
+
+}
+
+/* SIZE INVENTORY */
+
+function normalizeSizes(p){
+
+  const result={},raw=p?.sizes&&typeof p.sizes==="object"?p.sizes:{};
+
+  SIZES.forEach(size=>result[size]=Math.max(0,Math.floor(Number(raw[size])||0)));
+
+  return result;
+
+}
+
+function stockOf(p){
+
+  return Object.values(normalizeSizes(p)).reduce((sum,n)=>sum+n,0);
+
+}
+
+function stockForSize(p,size){
+
+  if(!SIZES.includes(size))return 0;
+
+  return normalizeSizes(p)[size]||0;
+
+}
+
+function hasSizeInventory(p){
+
+  return !!p?.sizes&&typeof p.sizes==="object";
+
+}
+
+function sizeSummary(p){
+
+  const sizes=normalizeSizes(p);
+
+  return SIZES.filter(s=>sizes[s]>0).map(s=>`${s}: ${sizes[s]}`).join(" · ")||"No sizes in stock";
+
+}
+
+function migrateProduct(p){
+
+  if(!p||typeof p!=="object")return p;
+
+  if(!hasSizeInventory(p)){
+
+    p.sizes={S:0,M:0,L:0,XL:0,XXL:0};
+
+    p.legacyStock=p.stock===undefined?0:Math.max(0,Number(p.stock)||0);
+
+  }else{
+
+    p.sizes=normalizeSizes(p);
+
+  }
+
+  delete p.stock;
+
+  return p;
+
+}
+
+function migrateState(data){
+
+  const next={
+
+    settings:{...defaults.settings,...(data?.settings||{})},
+
+    products:Array.isArray(data?.products)?data.products:[],
+
+    orders:Array.isArray(data?.orders)?data.orders:[]
+
+  };
+
+  next.products=next.products.map(migrateProduct);
+
+  return next;
+
+}
+
+function playClick(){
+
+  try{
+
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+
+    if(!AudioCtx)return;
+
+    if(!audioContext)audioContext=new AudioCtx();
+
+    if(audioContext.state==="suspended")audioContext.resume();
+
+    const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();
+
+    oscillator.type="sine";
+
+    oscillator.frequency.setValueAtTime(520,audioContext.currentTime);
+
+    oscillator.frequency.exponentialRampToValueAtTime(390,audioContext.currentTime+.045);
+
+    gain.gain.setValueAtTime(.0001,audioContext.currentTime);
+
+    gain.gain.exponentialRampToValueAtTime(.018,audioContext.currentTime+.006);
+
+    gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.055);
+
+    oscillator.connect(gain);gain.connect(audioContext.destination);
+
+    oscillator.start();oscillator.stop(audioContext.currentTime+.06);
+
+  }catch(e){}
+
+}
+
+document.addEventListener("click",e=>{if(e.target.closest("button"))playClick();});
 
 function notify(message){
+
   $("toast").textContent=message;
+
   $("toast").classList.remove("hidden");
+
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3000);
+
+  toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),3200);
+
 }
+
 function saveLocal(){
-  try{localStorage.setItem("vyro01_store",JSON.stringify(state));}catch(e){notify("Storage is full. Try using smaller product images.");}
+
+  try{localStorage.setItem("vyro01_store",JSON.stringify(state));}
+
+  catch(e){notify("Storage is full. Try using smaller product images.");}
+
 }
+
 function loadLocal(){
+
   try{
+
     const d=JSON.parse(localStorage.getItem("vyro01_store")||"null");
-    if(d)state={settings:{...defaults.settings,...(d.settings||{})},products:Array.isArray(d.products)?d.products:[],orders:Array.isArray(d.orders)?d.orders:[]};
+
+    if(d)state=migrateState(d);
+
   }catch(e){}
+
 }
+
 async function saveState(){
+
   saveLocal();
+
   renderStore();
+
   if(cloudReady){
+
     try{await db.ref("vyro01").set(state);}
-    catch(e){console.error(e);notify("Cloud save failed. Check Firebase configuration and permissions.");}
+
+    catch(e){console.error(e);notify("Cloud save failed. Check Firebase permissions.");}
+
   }
+
   updateNotice();
+
 }
+
 function renderSettings(){
+
   const s=state.settings;
+
   $("heroTag").textContent=s.heroTag;
+
   $("heroTitle").textContent=s.heroTitle;
+
   $("heroDescription").textContent=s.heroDescription;
+
   $("shopTitle").textContent=s.shopTitle;
+
   $("shopDescription").textContent=s.shopDescription;
-  $("footerText").textContent=s.footerText;
-  document.title=(s.heroTitle||"VYRO_01")+" | Official Store";
+
+  $("footerText").innerHTML=`<strong>VYRO</strong><span class="footer-line"></span>INDEPENDENT STREETWEAR LABEL<br>DESIGNED WITH INTENTION. RELEASED WITH PURPOSE.<br>${esc(s.footerText)}`;
+
+  $("brandDescription").textContent=s.brandDescription||defaults.settings.brandDescription;
+
+  document.title=(s.heroTitle||"VYRO")+" | Official Store";
+
 }
+
 function showPage(page){
+
   $("homePage").classList.toggle("hidden",page!=="home");
+
   $("shopPage").classList.toggle("hidden",page!=="shop");
+
   $("adminPage").classList.toggle("hidden",page!=="admin");
+
+  $("brandSection").classList.toggle("hidden",page==="admin"||page==="shop");
+
   if(page==="shop")renderStore();
+
   if(page==="admin"&&loggedIn)renderAdmin();
+
   window.scrollTo({top:0,behavior:"smooth"});
+
 }
+
 function openParameters(){
+
   if(loggedIn){showPage("admin");return;}
+
   $("passwordInput").value="";
+
   $("passwordOverlay").classList.remove("hidden");
+
 }
+
 function closePassword(){$("passwordOverlay").classList.add("hidden");}
+
 function login(e){
+
   e.preventDefault();
+
   if($("passwordInput").value!==STAFF_PASSWORD){notify("Incorrect password.");return;}
+
   loggedIn=true;closePassword();showPage("admin");notify("Welcome to the control panel.");
+
 }
+
 function logout(){loggedIn=false;editingProduct=null;showPage("home");}
 
+/* STOREFRONT */
+
 function renderStore(){
+
   renderSettings();
+
   const list=state.products.filter(p=>p&&p.active!==false);
+
   $("productsGrid").innerHTML=list.length?list.map((p,index)=>{
+
     const stock=stockOf(p),sold=stock<=0,img=imageURL(p.image);
+
     const stockClass=sold?"sold":stock<=3?"low":"";
+
     const stockText=sold?"OUT OF STOCK":stock<=3?`ONLY ${stock} LEFT`:`${stock} AVAILABLE`;
+
     return `<article class="product" style="animation-delay:${Math.min(index,8)*.045}s">
-      <div class="product-image" role="button" tabindex="0" aria-label="View ${esc(p.name)} details" onclick="openProductDetails('${esc(p.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProductDetails('${esc(p.id)}')}">
-        ${img?`<img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy">`:'<div style="height:100%;display:grid;place-items:center;color:#666;font-size:12px">NO IMAGE</div>'}
+
+      <div class="product-image" role="button" tabindex="0"
+
+        aria-label="View ${esc(p.name)} details"
+
+        onclick="openProductDetails('${esc(p.id)}')"
+
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProductDetails('${esc(p.id)}')}">
+
+        ${img?`<img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy">`:
+
+        '<div style="height:100%;display:grid;place-items:center;color:#666;font-size:12px">NO IMAGE</div>'}
+
         <span class="image-hint" aria-hidden="true">⌕</span>
+
       </div>
+
       <div class="product-info">
+
         <h3>${esc(p.name)}</h3>
+
         <div class="description">${esc(p.description||"")}</div>
+
         <div class="price">${money(p.price)}</div>
+
         <div class="stock ${stockClass}">${stockText}</div>
-        <button class="btn ${sold?"outline":""}" ${sold?"disabled":""} onclick="openOrder('${esc(p.id)}')">${sold?"SOLD OUT":"ORDER NOW"}</button>
-      </div></article>`;
+
+        <div class="size-preview">SIZES: ${SIZES.filter(s=>stockForSize(p,s)>0).join(" · ")||"SOLD OUT"}</div>
+
+        <button class="btn ${sold?"outline":""}" ${sold?"disabled":""}
+
+          onclick="openOrder('${esc(p.id)}')">${sold?"SOLD OUT":"SELECT SIZE"}</button>
+
+      </div>
+
+    </article>`;
+
   }).join(""):'<div class="empty">No products available yet.</div>';
+
 }
+
 function openProductDetails(id){
+
   const p=state.products.find(x=>x.id===id&&x.active!==false);
+
   if(!p){notify("Product unavailable.");return;}
+
   const stock=stockOf(p),img=imageURL(p.image),sold=stock<=0;
+
   $("productDetailContent").innerHTML=`
+
     <div class="detail-image">
+
       <button class="close-detail" type="button" aria-label="Close details" onclick="closeProductDetails()">×</button>
-      ${img?`<img src="${esc(img)}" alt="${esc(p.name)}">`:'<div style="height:100%;min-height:220px;display:grid;place-items:center;color:#777">NO IMAGE</div>'}
+
+      ${img?`<img src="${esc(img)}" alt="${esc(p.name)}">`:
+
+      '<div style="height:100%;min-height:220px;display:grid;place-items:center;color:#777">NO IMAGE</div>'}
+
     </div>
+
     <div class="detail-content">
-      <div class="eyebrow">VYRO_01 · PRODUCT DETAILS</div>
+
+      <div class="eyebrow">VYRO · THE COLLECTION</div>
+
       <h2>${esc(p.name)}</h2>
+
       <div class="detail-price">${money(p.price)}</div>
-      <div class="stock ${sold?"sold":stock<=3?"low":""}">${sold?"OUT OF STOCK":`${stock} PIECE${stock===1?"":"S"} LEFT`}</div>
+
+      <div class="stock ${sold?"sold":stock<=3?"low":""}">${sold?"OUT OF STOCK":`${stock} PIECES AVAILABLE`}</div>
+
       <div class="detail-description">${esc(p.description||"No additional description available.")}</div>
-      <button class="btn ${sold?"outline":""}" style="width:100%" ${sold?"disabled":""} onclick="closeProductDetails();openOrder('${esc(p.id)}')">${sold?"SOLD OUT":"ORDER THIS PRODUCT"}</button>
+
+      <div style="font-size:10px;letter-spacing:1.5px;color:#aeb8c5;margin:20px 0 10px">AVAILABLE SIZES</div>
+
+      <div class="size-options">
+
+        ${SIZES.map(s=>`<button type="button" class="size-option" ${stockForSize(p,s)<=0?"disabled":""}
+
+          onclick="closeProductDetails();openOrder('${esc(p.id)}','${s}')">${s}</button>`).join("")}
+
+      </div>
+
+      <button class="btn ${sold?"outline":""}" style="width:100%;margin-top:20px"
+
+        ${sold?"disabled":""} onclick="closeProductDetails();openOrder('${esc(p.id)}')">
+
+        ${sold?"SOLD OUT":"ORDER THIS PRODUCT"}
+
+      </button>
+
       <p class="muted" style="font-size:11px;margin-top:15px">Limited pieces. Availability may change.</p>
+
     </div>`;
+
   $("productDetailOverlay").classList.remove("hidden");
+
 }
+
 function closeProductDetails(){$("productDetailOverlay").classList.add("hidden");}
-function openOrder(id){
-  const p=state.products.find(x=>x.id===id);
-  if(!p||p.active===false||stockOf(p)<=0){notify("Product unavailable.");return;}
-  selectedProduct=id;
-  $("orderSummary").textContent=p.name+" — "+money(p.price);
-  $("customerQuantity").max=String(stockOf(p));
-  $("customerQuantity").value="1";
-  $("orderStockInfo").textContent=`${stockOf(p)} piece${stockOf(p)===1?"":"s"} currently available`;
-  ["customerName","customerPhone","customerAddress","customerNotes"].forEach(id=>$(id).value="");
-  $("orderOverlay").classList.remove("hidden");
+
+/* ORDER FORM */
+
+function renderOrderSizes(p,preferred){
+
+  const available=SIZES.filter(s=>stockForSize(p,s)>0);
+
+  if(!available.includes(selectedSize))selectedSize=available.includes(preferred)?preferred:(available[0]||null);
+
+  $("orderSizeOptions").innerHTML=SIZES.map(s=>`
+
+    <button type="button" class="size-option ${selectedSize===s?"selected":""}"
+
+      ${stockForSize(p,s)<=0?"disabled":""}
+
+      onclick="chooseOrderSize('${s}')">${s}</button>`).join("");
+
+  updateOrderStockInfo(p);
+
 }
-function closeOrder(){$("orderOverlay").classList.add("hidden");selectedProduct=null;}
+
+function chooseOrderSize(size){
+
+  const p=state.products.find(x=>x.id===selectedProduct);
+
+  if(!p||stockForSize(p,size)<=0)return;
+
+  selectedSize=size;renderOrderSizes(p,size);
+
+  $("customerQuantity").value="1";
+
+  $("customerQuantity").max=String(stockForSize(p,size));
+
+}
+
+function updateOrderStockInfo(p){
+
+  const available=selectedSize?stockForSize(p,selectedSize):0;
+
+  $("orderStockInfo").textContent=selectedSize?
+
+    `${available} unit${available===1?"":"s"} available in size ${selectedSize}`:
+
+    "Please select an available size.";
+
+  $("customerQuantity").max=String(available||1);
+
+}
+
+function openOrder(id,preferredSize=null){
+
+  const p=state.products.find(x=>x.id===id);
+
+  if(!p||p.active===false||stockOf(p)<=0){notify("Product unavailable.");return;}
+
+  selectedProduct=id;selectedSize=null;
+
+  $("orderSummary").textContent=p.name+" — "+money(p.price);
+
+  $("customerQuantity").value="1";
+
+  renderOrderSizes(p,preferredSize);
+
+  ["customerName","customerPhone","customerAddress","customerNotes"].forEach(id=>$(id).value="");
+
+  $("orderOverlay").classList.remove("hidden");
+
+}
+
+function closeOrder(){
+
+  $("orderOverlay").classList.add("hidden");
+
+  selectedProduct=null;selectedSize=null;
+
+}
 
 async function submitOrder(e){
+
   e.preventDefault();
+
   const p=state.products.find(x=>x.id===selectedProduct);
+
   if(!p||p.active===false){notify("Product not found or unavailable.");return;}
-  const qty=Number($("customerQuantity").value),available=stockOf(p);
+
+  if(!selectedSize||!SIZES.includes(selectedSize)){notify("Please select a size.");return;}
+
+  const qty=Number($("customerQuantity").value),available=stockForSize(p,selectedSize);
+
   if(!Number.isInteger(qty)||qty<1||qty>available){
-    notify(`Only ${available} piece${available===1?"":"s"} available.`);
-    $("customerQuantity").max=String(available);
-    $("orderStockInfo").textContent=`Only ${available} piece${available===1?"":"s"} available now`;
-    return;
+
+    notify(`Only ${available} unit(s) available in size ${selectedSize}.`);
+
+    updateOrderStockInfo(p);return;
+
   }
+
   const customer={
+
     name:$("customerName").value.trim(),
+
     phone:$("customerPhone").value.trim(),
+
     address:$("customerAddress").value.trim(),
+
     notes:$("customerNotes").value.trim()
+
   };
+
   if(!customer.name||!customer.phone||!customer.address){notify("Complete all required fields.");return;}
 
   const order={
+
     id:uid(),createdAt:new Date().toISOString(),status:"New",customer,
-    items:[{productId:p.id,name:p.name,price:Number(p.price)||0,quantity:qty}],
-    total:(Number(p.price)||0)*qty,
-    stockDeducted:true
+
+    items:[{productId:p.id,name:p.name,price:Number(p.price)||0,quantity:qty,size:selectedSize}],
+
+    total:(Number(p.price)||0)*qty,stockDeducted:true
+
   };
-  p.stock=available-qty;
+
+  p.sizes=normalizeSizes(p);
+
+  p.sizes[selectedSize]=available-qty;
+
   state.orders.unshift(order);
-  closeOrder();
-  await saveState();
+
+  closeOrder();await saveState();
+
   notify(cloudReady?"Order submitted.":"Order saved on this device only.");
+
   showPage("shop");
+
 }
+
+/* ADMIN */
 
 function updateNotice(){
+
   const n=$("connectionNotice");if(!n)return;
-  n.textContent=cloudReady
-    ?"CLOUD CONNECTED — products and orders synchronize through Firebase."
-    :"LOCAL MODE — configure Firebase to share changes and orders across phones.";
+
+  n.textContent=cloudReady?
+
+    "CLOUD CONNECTED — products, size inventory and orders synchronize through Firebase.":
+
+    "LOCAL MODE — configure Firebase to share changes and orders across phones.";
+
 }
+
 function openTab(tab){
+
   activeTab=tab;
+
   document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+
   renderAdmin();
+
 }
+
 function renderAdmin(){
+
   if(!loggedIn)return;
+
   updateNotice();
+
   const c=$("adminContent");
+
   if(activeTab==="dashboard")c.innerHTML=dashboardHTML();
+
   if(activeTab==="products")c.innerHTML=productsHTML();
+
   if(activeTab==="orders")c.innerHTML=ordersHTML();
+
   if(activeTab==="customize")c.innerHTML=customizeHTML();
+
   if(activeTab==="settings")c.innerHTML=settingsHTML();
+
 }
+
 function dashboardHTML(){
+
   const total=state.orders.reduce((s,o)=>s+(Number(o.total)||0),0);
-  return `<h2>Dashboard</h2><div class="stats">
-  <div class="stat"><span>PRODUCTS</span><strong>${state.products.length}</strong></div>
-  <div class="stat"><span>ORDERS</span><strong>${state.orders.length}</strong></div>
-  <div class="stat"><span>ORDER TOTALS</span><strong style="font-size:19px">${money(total)}</strong></div>
-  </div><div class="heading"><h3>Recent orders</h3><button class="btn outline small" onclick="openTab('orders')">VIEW ALL</button></div>
-  ${state.orders.length?state.orders.slice(0,5).map(orderHTML).join(""):'<div class="empty">No orders yet.</div>'}
-  <p><button class="btn" onclick="newProduct()">+ ADD PRODUCT</button></p>`;
+
+  const units=state.products.reduce((s,p)=>s+stockOf(p),0);
+
+  return `<h2>Dashboard</h2>
+
+    <div class="stats">
+
+      <div class="stat"><span>PRODUCTS</span><strong>${state.products.length}</strong></div>
+
+      <div class="stat"><span>ORDERS</span><strong>${state.orders.length}</strong></div>
+
+      <div class="stat"><span>TOTAL STOCK</span><strong>${units}</strong></div>
+
+      <div class="stat"><span>ORDER TOTALS</span><strong style="font-size:19px">${money(total)}</strong></div>
+
+    </div>
+
+    <div class="heading"><h3>Recent orders</h3><button class="btn outline small" onclick="openTab('orders')">VIEW ALL</button></div>
+
+    ${state.orders.length?state.orders.slice(0,5).map(orderHTML).join(""):'<div class="empty">No orders yet.</div>'}
+
+    <p><button class="btn" onclick="newProduct()">+ ADD PRODUCT</button></p>`;
+
 }
+
 function productsHTML(){
+
   return `<div class="heading"><h2>Products</h2><button class="btn" onclick="newProduct()">+ ADD PRODUCT</button></div>
-  <div id="productEditor"></div>
-  ${state.products.length?state.products.map(p=>`<div class="admin-product">
-  ${imageURL(p.image)?`<img src="${esc(imageURL(p.image))}" alt="">`:'<div style="width:65px;height:78px;background:#222;border-radius:10px"></div>'}
-  <div class="admin-product-info"><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} · Stock: ${stockOf(p)}</div><div class="muted">${p.active===false?"Hidden":"Visible"}</div></div>
-  <div class="admin-product-actions">
-  <button class="btn outline small" onclick="editProduct('${esc(p.id)}')">EDIT</button>
-  <button class="btn outline small" onclick="toggleProduct('${esc(p.id)}')">${p.active===false?"SHOW":"HIDE"}</button>
-  <button class="btn red small" onclick="deleteProduct('${esc(p.id)}')">DELETE</button>
-  </div></div>`).join(""):'<div class="empty">No products yet. Add your first product.</div>'}`;
+
+    <div id="productEditor"></div>
+
+    ${state.products.length?state.products.map(p=>`
+
+      <div class="admin-product">
+
+        ${imageURL(p.image)?`<img src="${esc(imageURL(p.image))}" alt="">`:
+
+        '<div style="width:65px;height:78px;background:#080e17"></div>'}
+
+        <div class="admin-product-info">
+
+          <strong>${esc(p.name)}</strong>
+
+          <div class="muted">${money(p.price)} · Total stock: ${stockOf(p)}</div>
+
+          <div class="stock-summary">${esc(sizeSummary(p))}</div>
+
+          ${p.legacyStock>0?`<div style="color:#e6bd69;font-size:10px">Old stock awaiting size assignment: ${Number(p.legacyStock)}</div>`:""}
+
+          <div class="muted">${p.active===false?"Hidden":"Visible"}</div>
+
+        </div>
+
+        <div class="admin-product-actions">
+
+          <button class="btn outline small" onclick="editProduct('${esc(p.id)}')">EDIT</button>
+
+          <button class="btn outline small" onclick="toggleProduct('${esc(p.id)}')">${p.active===false?"SHOW":"HIDE"}</button>
+
+          <button class="btn outline small" onclick="deleteProduct('${esc(p.id)}')">DELETE</button>
+
+        </div>
+
+      </div>`).join(""):'<div class="empty">No products yet. Add your first product.</div>'}`;
+
 }
+
 function newProduct(){editingProduct=null;openTab("products");setTimeout(()=>productEditor(null),0);}
-function editProduct(id){editingProduct=id;openTab("products");setTimeout(()=>{const p=state.products.find(x=>x.id===id);if(p)productEditor(p);},0);}
-function productEditor(p){
-  const root=$("productEditor");if(!root)return;
-  root.innerHTML=`<div class="modal" style="width:100%;max-height:none;margin-bottom:22px">
-  <h3>${p?"Edit product":"Add product"}</h3>
-  <form id="productForm" onsubmit="saveProduct(event)">
-  <div class="field"><label>PRODUCT NAME *</label><input name="name" required maxlength="120" value="${esc(p?.name||"")}"></div>
-  <div class="field"><label>DESCRIPTION</label><textarea name="description" maxlength="2000">${esc(p?.description||"")}</textarea></div>
-  <div class="row">
-  <div class="field"><label>PRICE *</label><input name="price" type="number" min="0" step="0.001" required value="${Number(p?.price||0)}"></div>
-  <div class="field"><label>STOCK *</label><input name="stock" type="number" min="0" step="1" required value="${Number(p?.stock??1)}"></div>
-  </div>
-  <div class="field"><label>UPLOAD IMAGE FROM PHONE</label><input id="imageFile" type="file" accept="image/*"></div>
-  <div class="field"><label>OR IMAGE URL</label><input name="imageUrl" type="url" value="${esc(p?.image||"")}" placeholder="https://..."></div>
-  <label class="check"><input id="productActive" type="checkbox" ${p?.active===false?"":"checked"}> Show product in store</label>
-  <div class="row" style="margin-top:18px"><button type="button" class="btn outline" onclick="renderAdmin()">CANCEL</button><button type="submit" class="btn">SAVE PRODUCT</button></div>
-  </form></div>`;
-  root.scrollIntoView({behavior:"smooth",block:"start"});
+
+function editProduct(id){
+
+  editingProduct=id;openTab("products");
+
+  setTimeout(()=>{const p=state.products.find(x=>x.id===id);if(p)productEditor(p);},0);
+
 }
+
+function productEditor(p){
+
+  const root=$("productEditor");if(!root)return;
+
+  const sizes=normalizeSizes(p||{});
+
+  root.innerHTML=`
+
+    <div class="modal" style="width:100%;max-height:none;margin-bottom:22px">
+
+      <h3>${p?"Edit product":"Add product"}</h3>
+
+      <form id="productForm" onsubmit="saveProduct(event)">
+
+        <div class="field"><label>PRODUCT NAME *</label><input name="name" required maxlength="120" value="${esc(p?.name||"")}"></div>
+
+        <div class="field"><label>DESCRIPTION</label><textarea name="description" maxlength="2000">${esc(p?.description||"")}</textarea></div>
+
+        <div class="field"><label>PRICE *</label><input name="price" type="number" min="0" step="0.001" required value="${Number(p?.price||0)}"></div>
+
+        <div class="field">
+
+          <label>INVENTORY BY SIZE *</label>
+
+          <div class="size-stock-grid">
+
+            ${SIZES.map(s=>`<div class="field"><label style="text-align:center">${s}</label>
+
+              <input name="size_${s}" type="number" min="0" step="1" required value="${sizes[s]}"></div>`).join("")}
+
+          </div>
+
+          <div class="stock-summary">Set the exact number of available units for each size. Total stock is calculated automatically.</div>
+
+          ${p?.legacyStock>0?`<div class="notice">This product has ${Number(p.legacyStock)} units in its old inventory. They have NOT been assigned to sizes. Enter the correct quantities above; the old stock will not be added automatically.</div>`:""}
+
+        </div>
+
+        <div class="field"><label>UPLOAD IMAGE FROM PHONE</label><input id="imageFile" type="file" accept="image/*"></div>
+
+        <div class="field"><label>OR IMAGE URL</label><input name="imageUrl" type="url" value="${esc(p?.image||"")}" placeholder="https://..."></div>
+
+        <label class="check"><input id="productActive" type="checkbox" ${p?.active===false?"":"checked"}> Show product in store</label>
+
+        <div class="row" style="margin-top:18px">
+
+          <button type="button" class="btn outline" onclick="renderAdmin()">CANCEL</button>
+
+          <button type="submit" class="btn">SAVE PRODUCT</button>
+
+        </div>
+
+      </form>
+
+    </div>`;
+
+  root.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+/* IMAGE UPLOAD */
 
 async function uploadImage(file){
+
   if(!file)return null;
-  if(!file.type.startsWith("image/"))
-    throw Error("Choose an image file.");
-  if(file.size>8*1024*1024)
-    throw Error("Image must be smaller than 8 MB.");
 
-  const original = await new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.onload=()=>resolve(reader.result);
-    reader.onerror=()=>reject(Error("Could not read image."));
-    reader.readAsDataURL(file);
+  if(!file.type.startsWith("image/"))throw Error("Choose an image file.");
+
+  if(file.size>8*1024*1024)throw Error("Image must be smaller than 8 MB.");
+
+  const original=await new Promise((resolve,reject)=>{
+
+    const reader=new FileReader();reader.onload=()=>resolve(reader.result);
+
+    reader.onerror=()=>reject(Error("Could not read image."));reader.readAsDataURL(file);
+
   });
 
-  const img = await new Promise((resolve,reject)=>{
-    const image = new Image();
-    image.onload=()=>resolve(image);
-    image.onerror=()=>reject(Error("Could not process image."));
-    image.src=original;
+  const img=await new Promise((resolve,reject)=>{
+
+    const image=new Image();image.onload=()=>resolve(image);
+
+    image.onerror=()=>reject(Error("Could not process image."));image.src=original;
+
   });
 
-  const maxSide=900;
-  const scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+  const maxSide=900,scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+
   const canvas=document.createElement("canvas");
+
   canvas.width=Math.max(1,Math.round(img.width*scale));
+
   canvas.height=Math.max(1,Math.round(img.height*scale));
 
-  const ctx=canvas.getContext("2d");
-  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
 
-  const blob=await new Promise(resolve=>
-    canvas.toBlob(resolve,"image/jpeg",0.7)
-  );
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.7));
+
   if(!blob)throw Error("Could not compress image.");
 
   return await new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve(reader.result);
-    reader.onerror=()=>reject(Error("Could not prepare image."));
-    reader.readAsDataURL(blob);
+
+    const reader=new FileReader();reader.onload=()=>resolve(reader.result);
+
+    reader.onerror=()=>reject(Error("Could not prepare image."));reader.readAsDataURL(blob);
+
   });
+
+}
+
+/* PRODUCT SAVE */
+
+function reservedForSize(productId,size){
+
+  return state.orders.reduce((sum,o)=>{
+
+    if(!o.stockDeducted||(o.status||"New")==="Cancelled")return sum;
+
+    return sum+(o.items||[]).reduce((n,i)=>{
+
+      if(i.productId!==productId||i.size!==size)return n;
+
+      return n+(Number(i.quantity)||0);
+
+    },0);
+
+  },0);
+
 }
 
 async function saveProduct(e){
+
   e.preventDefault();
+
   const form=e.target,data=new FormData(form),submit=form.querySelector('[type=submit]');
+
   submit.disabled=true;submit.textContent="SAVING...";
+
   try{
+
     const old=state.products.find(p=>p.id===editingProduct);
+
     let image=String(data.get("imageUrl")||"").trim();
+
     const file=$("imageFile").files[0];
+
     if(file)image=await uploadImage(file);
+
     else if(old&&!image)image=old.image||"";
-    const enteredStock=Number(data.get("stock"));
+
+    const sizes={};SIZES.forEach(s=>sizes[s]=Number(data.get("size_"+s)));
+
     const p={
-      id:editingProduct||uid(),name:String(data.get("name")||"").trim(),
+
+      id:editingProduct||uid(),
+
+      name:String(data.get("name")||"").trim(),
+
       description:String(data.get("description")||"").trim(),
-      price:Number(data.get("price")),stock:enteredStock,image,
-      active:$("productActive").checked,createdAt:old?.createdAt||new Date().toISOString(),
+
+      price:Number(data.get("price")),sizes,image,
+
+      active:$("productActive").checked,
+
+      createdAt:old?.createdAt||new Date().toISOString(),
+
       updatedAt:new Date().toISOString()
+
     };
-    if(!p.name||!Number.isFinite(p.price)||p.price<0||!Number.isInteger(p.stock)||p.stock<0)throw Error("Check product name, price and stock.");
+
+    if(!p.name||!Number.isFinite(p.price)||p.price<0)throw Error("Check product name and price.");
+
+    for(const s of SIZES)if(!Number.isInteger(sizes[s])||sizes[s]<0)throw Error("Enter a valid quantity for every size.");
 
     if(old){
-      const alreadyReserved=state.orders.reduce((sum,o)=>{
-        if(!o.stockDeducted||(o.status||"New")==="Cancelled")return sum;
-        return sum+(o.items||[]).reduce((n,i)=>n+(i.productId===old.id?(Number(i.quantity)||0):0),0);
-      },0);
-      if(enteredStock<alreadyReserved)throw Error(`Stock cannot be lower than ${alreadyReserved} pieces reserved by active orders.`);
-      state.products=state.products.map(x=>x.id===old.id?p:x);
-    }else state.products.unshift(p);
+
+      for(const s of SIZES){
+
+        const reserved=reservedForSize(old.id,s);
+
+        if(sizes[s]<reserved)throw Error(`Size ${s} cannot be lower than ${reserved} units reserved by active orders.`);
+
+      }
+
+      p.legacyStock=0;state.products=state.products.map(x=>x.id===old.id?p:x);
+
+    }else{
+
+      p.legacyStock=0;state.products.unshift(p);
+
+    }
 
     editingProduct=null;await saveState();renderAdmin();
-    notify(cloudReady?"Product saved and synchronized.":"Product saved locally. Configure Firebase to share it.");
-  }catch(err){notify(err.message||"Could not save product.");submit.disabled=false;submit.textContent="SAVE PRODUCT";}
+
+    notify(cloudReady?"Product saved and synchronized.":"Product saved locally.");
+
+  }catch(err){
+
+    notify(err.message||"Could not save product.");
+
+    submit.disabled=false;submit.textContent="SAVE PRODUCT";
+
+  }
+
 }
+
 async function toggleProduct(id){
+
   const p=state.products.find(x=>x.id===id);if(!p)return;
+
   p.active=p.active===false;await saveState();renderAdmin();
+
 }
+
 async function deleteProduct(id){
-  const p=state.products.find(x=>x.id===id);if(!p||!confirm("Delete "+p.name+"?"))return;
-  state.products=state.products.filter(x=>x.id!==id);await saveState();renderAdmin();notify("Product deleted.");
+
+  const p=state.products.find(x=>x.id===id);
+
+  if(!p||!confirm("Delete "+p.name+"?"))return;
+
+  state.products=state.products.filter(x=>x.id!==id);
+
+  await saveState();renderAdmin();notify("Product deleted.");
+
 }
+
+/* ORDERS */
+
 function ordersHTML(){
-  return `<div class="heading"><div><h2>Orders</h2><p class="muted">${state.orders.length} orders</p></div><button class="btn outline small" onclick="exportOrders()">EXPORT CSV</button></div>
-  <div class="field"><label>FILTER</label><select id="orderFilter" onchange="filterOrders()"><option value="all">All orders</option>${["New","Confirmed","Shipped","Completed","Cancelled"].map(s=>`<option value="${s}">${({New:"انتظار",Confirmed:"تم",Shipped:"تم",Completed:"تم",Cancelled:"رفض"})[s]}</option>`).join("")}</select></div>
-  <div id="ordersList">${state.orders.length?state.orders.map(orderHTML).join(""):'<div class="empty">No orders yet.</div>'}</div>`;
+
+  return `<div class="heading"><div><h2>Orders</h2><p class="muted">${state.orders.length} orders</p></div>
+
+      <button class="btn outline small" onclick="exportOrders()">EXPORT CSV</button></div>
+
+    <div class="field"><label>FILTER</label>
+
+      <select id="orderFilter" onchange="filterOrders()">
+
+        <option value="all">All orders</option>
+
+        ${["New","Confirmed","Shipped","Completed","Cancelled"].map(s=>
+
+          `<option value="${s}">${({New:"انتظار",Confirmed:"تم",Shipped:"تم",Completed:"تم",Cancelled:"رفض"})[s]}</option>`
+
+        ).join("")}
+
+      </select>
+
+    </div>
+
+    <div id="ordersList">${state.orders.length?state.orders.map(orderHTML).join(""):'<div class="empty">No orders yet.</div>'}</div>`;
+
 }
+
 function orderHTML(o){
-  const c=o.customer||{},items=Array.isArray(o.items)?o.items:[];
-  const status=o.status||"New";
-  const done=["Confirmed","Shipped","Completed"].includes(status);
-  const rejected=status==="Cancelled";
+
+  const c=o.customer||{},items=Array.isArray(o.items)?o.items:[],status=o.status||"New";
+
+  const done=["Confirmed","Shipped","Completed"].includes(status),rejected=status==="Cancelled";
+
   const label=rejected?"رفض":done?"تم":"انتظار";
+
   const badgeClass=rejected?"status-reject":done?"status-done":"status-wait";
+
   return `<div class="order-card" data-status="${esc(status)}">
-  <div class="order-top"><strong>طلب رقم #${esc(o.id)}</strong><span class="badge ${badgeClass}">${label}</span></div>
-  <p class="muted" style="font-size:12px;font-weight:700">${esc(o.createdAt?new Date(o.createdAt).toLocaleString():"")}</p>
-  <div class="order-details">الاسم: ${esc(c.name)}
+
+    <div class="order-top"><strong>ORDER #${esc(o.id)}</strong><span class="badge ${badgeClass}">${label}</span></div>
+
+    <p class="muted" style="font-size:11px;font-weight:700">${esc(o.createdAt?new Date(o.createdAt).toLocaleString():"")}</p>
+
+    <div class="order-details">
+
+الاسم: ${esc(c.name)}
+
 رقم الهاتف: ${esc(c.phone)}
+
 العنوان: ${esc(c.address)}
+
 ملاحظات: ${esc(c.notes||"—")}</div>
-  <div class="order-items">${items.map(i=>`<div><strong>${esc(i.name)} × ${Number(i.quantity)||1}</strong> — ${money((Number(i.price)||0)*(Number(i.quantity)||1))}</div>`).join("")}
-  <strong style="display:block;margin-top:8px;font-size:17px">المجموع: ${money(o.total)}</strong></div>
-  <div class="order-status-actions">
-    <button type="button" class="status-done ${done?"current":""}" onclick="changeStatus('${esc(o.id)}','Confirmed')">✓ تم</button>
-    <button type="button" class="status-wait ${status==="New"?"current":""}" onclick="changeStatus('${esc(o.id)}','New')">◷ انتظار</button>
-    <button type="button" class="status-reject ${rejected?"current":""}" onclick="changeStatus('${esc(o.id)}','Cancelled')">✕ رفض</button>
-  </div>
-  <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn red small" onclick="deleteOrder('${esc(o.id)}')">حذف الطلب</button></div>
+
+    <div class="order-items">
+
+      ${items.map(i=>`<div><strong>${esc(i.name)} × ${Number(i.quantity)||1}</strong>
+
+        ${i.size?`<span style="color:#75a9dc;font-weight:900"> · SIZE ${esc(i.size)}</span>`:
+
+        '<span style="color:#e6bd69;font-size:11px"> · LEGACY ORDER (NO SIZE)</span>'}
+
+        — ${money((Number(i.price)||0)*(Number(i.quantity)||1))}</div>`).join("")}
+
+      <strong style="display:block;margin-top:8px;font-size:17px">المجموع: ${money(o.total)}</strong>
+
+    </div>
+
+    <div class="order-status-actions">
+
+      <button type="button" class="status-done ${done?"current":""}" onclick="changeStatus('${esc(o.id)}','Confirmed')">✓ تم</button>
+
+      <button type="button" class="status-wait ${status==="New"?"current":""}" onclick="changeStatus('${esc(o.id)}','New')">◷ انتظار</button>
+
+      <button type="button" class="status-reject ${rejected?"current":""}" onclick="changeStatus('${esc(o.id)}','Cancelled')">✕ رفض</button>
+
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:12px">
+
+      <button class="btn outline small" onclick="deleteOrder('${esc(o.id)}')">DELETE ORDER</button>
+
+    </div>
+
   </div>`;
+
 }
+
 function filterOrders(){
+
   const f=$("orderFilter").value;
+
   document.querySelectorAll("#ordersList .order-card").forEach(card=>{
+
     const status=card.dataset.status;
+
     const matches=f==="all"||status===f||(f==="Confirmed"&&["Confirmed","Shipped","Completed"].includes(status));
+
     card.classList.toggle("hidden",!matches);
+
   });
+
 }
+
+function orderHasLegacyItems(o){return (o.items||[]).some(i=>!SIZES.includes(i.size));}
+
+function canRestoreOrder(o){return !orderHasLegacyItems(o);}
+
 async function changeStatus(id,status){
+
   const o=state.orders.find(x=>x.id===id);if(!o)return;
+
   const oldStatus=o.status||"New";
+
   if(status==="Cancelled"&&oldStatus!=="Cancelled"&&o.stockDeducted){
+
+    if(!canRestoreOrder(o)){notify("This old order has no size information. Its inventory cannot be restored automatically.");return;}
+
     for(const item of (o.items||[])){
+
       const p=state.products.find(x=>x.id===item.productId);
-      if(p)p.stock=stockOf(p)+(Number(item.quantity)||0);
+
+      if(p){p.sizes=normalizeSizes(p);p.sizes[item.size]+=Number(item.quantity)||0;}
+
     }
+
     o.stockDeducted=false;
+
   }else if(oldStatus==="Cancelled"&&status!=="Cancelled"&&!o.stockDeducted){
+
+    if(!canRestoreOrder(o)){notify("This old order has no size information and cannot be reactivated automatically.");return;}
+
     for(const item of (o.items||[])){
+
       const p=state.products.find(x=>x.id===item.productId);
-      if(!p||stockOf(p)<(Number(item.quantity)||0)){
-        notify(`Cannot reactivate order: insufficient stock for ${item.name}.`);
-        renderAdmin();return;
+
+      if(!p||stockForSize(p,item.size)<(Number(item.quantity)||0)){
+
+        notify(`Insufficient stock for ${item.name} — size ${item.size}.`);renderAdmin();return;
+
       }
+
     }
+
     for(const item of (o.items||[])){
+
       const p=state.products.find(x=>x.id===item.productId);
-      if(p)p.stock=stockOf(p)-(Number(item.quantity)||0);
+
+      if(p){p.sizes=normalizeSizes(p);p.sizes[item.size]-=Number(item.quantity)||0;}
+
     }
+
     o.stockDeducted=true;
+
   }
+
   o.status=status;await saveState();renderAdmin();notify("Order updated.");
+
 }
+
 async function deleteOrder(id){
+
   const o=state.orders.find(x=>x.id===id);
+
   if(!o||!confirm("Delete this order permanently?"))return;
+
   if(o.stockDeducted&&(o.status||"New")!=="Cancelled"){
+
+    if(!canRestoreOrder(o)){
+
+      notify("This legacy order has no size information. It cannot be deleted safely without manual stock adjustment.");return;
+
+    }
+
     for(const item of (o.items||[])){
+
       const p=state.products.find(x=>x.id===item.productId);
-      if(p)p.stock=stockOf(p)+(Number(item.quantity)||0);
+
+      if(p){p.sizes=normalizeSizes(p);p.sizes[item.size]+=Number(item.quantity)||0;}
+
     }
+
   }
-  state.orders=state.orders.filter(x=>x.id!==id);await saveState();renderAdmin();notify("Order deleted.");
+
+  state.orders=state.orders.filter(x=>x.id!==id);
+
+  await saveState();renderAdmin();notify("Order deleted.");
+
 }
+
+/* CSV EXPORT */
+
 function exportOrders(){
+
   const rows=[["Order ID","Date","Status","Name","Phone","Address","Notes","Products","Total"]];
-  state.orders.forEach(o=>{const c=o.customer||{};rows.push([o.id,o.createdAt,o.status,c.name,c.phone,c.address,c.notes,(o.items||[]).map(i=>i.name+" x"+i.quantity).join("; "),o.total]);});
-  const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  const url=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
-  const a=document.createElement("a");a.href=url;a.download="VYRO_01_orders.csv";a.click();URL.revokeObjectURL(url);
-}
-function customizeHTML(){
-  const s=state.settings;
-  return `<h2>Customize storefront</h2><form onsubmit="saveCustomization(event)">
-  <div class="field"><label>HERO LABEL</label><input name="heroTag" maxlength="100" value="${esc(s.heroTag)}"></div>
-  <div class="field"><label>HERO TITLE</label><input name="heroTitle" maxlength="100" value="${esc(s.heroTitle)}"></div>
-  <div class="field"><label>HERO DESCRIPTION</label><textarea name="heroDescription" maxlength="1000">${esc(s.heroDescription)}</textarea></div>
-  <div class="field"><label>SHOP TITLE</label><input name="shopTitle" maxlength="100" value="${esc(s.shopTitle)}"></div>
-  <div class="field"><label>SHOP DESCRIPTION</label><textarea name="shopDescription" maxlength="1000">${esc(s.shopDescription)}</textarea></div>
-  <div class="field"><label>FOOTER TEXT</label><input name="footerText" maxlength="200" value="${esc(s.footerText)}"></div>
-  <button class="btn">SAVE CHANGES</button></form><p><button class="btn outline" onclick="showPage('shop')">PREVIEW STORE</button></p>`;
-}
-async function saveCustomization(e){
-  e.preventDefault();const d=new FormData(e.target);
-  ["heroTag","heroTitle","heroDescription","shopTitle","shopDescription","footerText"].forEach(k=>state.settings[k]=String(d.get(k)||"").trim());
-  await saveState();renderAdmin();notify("Storefront updated.");
-}
-function settingsHTML(){
-  return `<h2>Settings</h2><div class="field"><label>CURRENCY</label><select id="currency">${["TND","EUR","USD","GBP","SAR","AED","DZD","MAD"].map(x=>`<option ${state.settings.currency===x?"selected":""}>${x}</option>`).join("")}</select></div>
-  <button class="btn" onclick="saveSettings()">SAVE SETTINGS</button><hr style="border:0;border-top:1px solid #333;margin:25px 0">
-  <h3>Backup</h3><div class="row"><button class="btn outline" onclick="exportBackup()">EXPORT</button><button class="btn outline" onclick="$('backupFile').click()">IMPORT</button></div>
-  <input id="backupFile" class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)">
-  <p class="muted" style="margin-top:20px">${cloudReady?"Firebase cloud synchronization is active.":"Firebase is not configured; data is limited to this browser."}</p>`;
-}
-async function saveSettings(){
-  state.settings.currency=$("currency").value;await saveState();renderAdmin();notify("Settings saved.");
-}
-function exportBackup(){
-  const url=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
-  const a=document.createElement("a");a.href=url;a.download="VYRO_01_backup.json";a.click();URL.revokeObjectURL(url);
-}
-async function importBackup(e){
-  const f=e.target.files[0];if(!f)return;
-  try{
-    const d=JSON.parse(await f.text());
-    if(!Array.isArray(d.products)||!Array.isArray(d.orders))throw Error("Invalid backup.");
-    if(!confirm("Replace current store data with this backup?"))return;
-    state={settings:{...defaults.settings,...(d.settings||{})},products:d.products,orders:d.orders};
-    await saveState();renderAdmin();notify("Backup imported.");
-  }catch(err){notify(err.message||"Import failed.");}
-  finally{e.target.value="";}
-}
-function loadScript(src){
-  return new Promise((resolve,reject)=>{
-    const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=()=>reject(Error("Firebase SDK failed to load."));document.head.appendChild(s);
+
+  state.orders.forEach(o=>{
+
+    const c=o.customer||{};
+
+    rows.push([
+
+      o.id,o.createdAt,o.status,c.name,c.phone,c.address,c.notes,
+
+      (o.items||[]).map(i=>i.name+" / Size "+(i.size||"Legacy")+" x"+i.quantity).join("; "),
+
+      o.total
+
+    ]);
+
   });
+
+  const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+
+  const url=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
+
+  const a=document.createElement("a");a.href=url;a.download="VYRO_orders.csv";a.click();
+
+  URL.revokeObjectURL(url);
+
 }
-async function initFirebase(){
-  if(!configured){updateNotice();return;}
+
+/* CUSTOMIZATION */
+
+function customizeHTML(){
+
+  const s=state.settings;
+
+  return `<h2>Customize storefront</h2>
+
+    <form onsubmit="saveCustomization(event)">
+
+      <div class="field"><label>HERO LABEL</label><input name="heroTag" maxlength="100" value="${esc(s.heroTag)}"></div>
+
+      <div class="field"><label>HERO TITLE</label><input name="heroTitle" maxlength="100" value="${esc(s.heroTitle)}"></div>
+
+      <div class="field"><label>HERO DESCRIPTION</label><textarea name="heroDescription" maxlength="1000">${esc(s.heroDescription)}</textarea></div>
+
+      <div class="field"><label>SHOP TITLE</label><input name="shopTitle" maxlength="100" value="${esc(s.shopTitle)}"></div>
+
+      <div class="field"><label>SHOP DESCRIPTION</label><textarea name="shopDescription" maxlength="1000">${esc(s.shopDescription)}</textarea></div>
+
+      <div class="field"><label>BRAND IDENTITY DESCRIPTION</label><textarea name="brandDescription" maxlength="1500">${esc(s.brandDescription||defaults.settings.brandDescription)}</textarea></div>
+
+      <div class="field"><label>FOOTER / COPYRIGHT TEXT</label><input name="footerText" maxlength="250" value="${esc(s.footerText)}"></div>
+
+      <button class="btn">SAVE CHANGES</button>
+
+    </form>
+
+    <p><button class="btn outline" onclick="showPage('shop')">PREVIEW STORE</button></p>`;
+
+}
+
+async function saveCustomization(e){
+
+  e.preventDefault();const d=new FormData(e.target);
+
+  ["heroTag","heroTitle","heroDescription","shopTitle","shopDescription","brandDescription","footerText"]
+
+    .forEach(k=>state.settings[k]=String(d.get(k)||"").trim());
+
+  await saveState();renderAdmin();notify("Storefront updated.");
+
+}
+
+/* SETTINGS AND BACKUP */
+
+function settingsHTML(){
+
+  return `<h2>Settings</h2>
+
+    <div class="field"><label>CURRENCY</label>
+
+      <select id="currency">${["TND","EUR","USD","GBP","SAR","AED","DZD","MAD"].map(x=>
+
+        `<option ${state.settings.currency===x?"selected":""}>${x}</option>`).join("")}
+
+      </select>
+
+    </div>
+
+    <button class="btn" onclick="saveSettings()">SAVE SETTINGS</button>
+
+    <hr style="border:0;border-top:1px solid #1b293a;margin:25px 0">
+
+    <h3>Backup</h3>
+
+    <div class="row">
+
+      <button class="btn outline" onclick="exportBackup()">EXPORT</button>
+
+      <button class="btn outline" onclick="$('backupFile').click()">IMPORT</button>
+
+    </div>
+
+    <input id="backupFile" class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)">
+
+    <p class="muted" style="margin-top:20px">
+
+      ${cloudReady?"Firebase cloud synchronization is active.":"Firebase is not configured; data is limited to this browser."}
+
+    </p>`;
+
+}
+
+async function saveSettings(){
+
+  state.settings.currency=$("currency").value;await saveState();renderAdmin();notify("Settings saved.");
+
+}
+
+function exportBackup(){
+
+  const url=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
+
+  const a=document.createElement("a");a.href=url;a.download="VYRO_backup.json";a.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+async function importBackup(e){
+
+  const f=e.target.files[0];if(!f)return;
+
   try{
-    await loadScript(SDK+"firebase-app-compat.js");
-    await loadScript(SDK+"firebase-database-compat.js");
-    await loadScript(SDK+"firebase-storage-compat.js");
-    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-    db=firebase.database();storage=firebase.storage();
-    const ref=db.ref("vyro01");
-    const snap=await ref.once("value");
-    const cloud=snap.val();
-    if(cloud&&typeof cloud==="object"){
-      state={settings:{...defaults.settings,...(cloud.settings||{})},products:Array.isArray(cloud.products)?cloud.products:[],orders:Array.isArray(cloud.orders)?cloud.orders:[]};
-    }else{
-      await ref.set(state);
-    }
-    cloudReady=true;saveLocal();renderStore();updateNotice();
-    ref.on("value",s=>{
-      const d=s.val();if(!d||typeof d!=="object")return;
-      lastCloudUpdate=Date.now();
-      state={settings:{...defaults.settings,...(d.settings||{})},products:Array.isArray(d.products)?d.products:[],orders:Array.isArray(d.orders)?d.orders:[]};
-      saveLocal();renderStore();
-      if(loggedIn&&!$("adminPage").classList.contains("hidden"))renderAdmin();
-    },err=>{console.error(err);cloudReady=false;updateNotice();});
-  }catch(err){console.error("Firebase initialization error:",err);cloudReady=false;updateNotice();}
+
+    const d=JSON.parse(await f.text());
+
+    if(!Array.isArray(d.products)||!Array.isArray(d.orders))throw Error("Invalid backup.");
+
+    if(!confirm("Replace current store data with this backup?"))return;
+
+    state=migrateState(d);await saveState();renderAdmin();notify("Backup imported.");
+
+  }catch(err){notify(err.message||"Import failed.");}
+
+  finally{e.target.value="";}
+
 }
-loadLocal();
-renderStore();
-updateNotice();
-initFirebase();
-$("passwordOverlay").addEventListener("click",e=>{if(e.target===$("passwordOverlay"))closePassword();});
-$("orderOverlay").addEventListener("click",e=>{if(e.target===$("orderOverlay"))closeOrder();});
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){
-    closePassword();
-    closeOrder();
-    closeProductDetails();
+
+/* FIREBASE */
+
+function loadScript(src){
+
+  return new Promise((resolve,reject)=>{
+
+    const s=document.createElement("script");s.src=src;
+
+    s.onload=resolve;s.onerror=()=>reject(Error("Firebase SDK failed to load."));
+
+    document.head.appendChild(s);
+
+  });
+
+}
+
+async function initFirebase(){
+
+  if(!configured){updateNotice();return;}
+
+  try{
+
+    await loadScript(SDK+"firebase-app-compat.js");
+
+    await loadScript(SDK+"firebase-database-compat.js");
+
+    await loadScript(SDK+"firebase-storage-compat.js");
+
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+
+    db=firebase.database();storage=firebase.storage();
+
+    const ref=db.ref("vyro01"),snap=await ref.once("value"),cloud=snap.val();
+
+    if(cloud&&typeof cloud==="object"){
+
+      state=migrateState(cloud);
+
+      await ref.set(state);
+
+    }else await ref.set(state);
+
+    cloudReady=true;saveLocal();renderStore();updateNotice();
+
+    ref.on("value",s=>{
+
+      const d=s.val();if(!d||typeof d!=="object")return;
+
+      state=migrateState(d);saveLocal();renderStore();
+
+      if(loggedIn&&!$("adminPage").classList.contains("hidden"))renderAdmin();
+
+    },err=>{console.error(err);cloudReady=false;updateNotice();});
+
+  }catch(err){
+
+    console.error("Firebase initialization error:",err);
+
+    cloudReady=false;updateNotice();
+
   }
+
+}
+
+/* START */
+
+loadLocal();
+
+renderStore();
+
+updateNotice();
+
+initFirebase();
+
+$("passwordOverlay").addEventListener("click",e=>{
+
+  if(e.target===$("passwordOverlay"))closePassword();
+
 });
+
+$("orderOverlay").addEventListener("click",e=>{
+
+  if(e.target===$("orderOverlay"))closeOrder();
+
+});
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="Escape"){closePassword();closeOrder();closeProductDetails();}
+
+});
+
 </script>
+
 </body>
+
 </html>
